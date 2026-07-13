@@ -1,0 +1,7 @@
+Tình huống người dùng vào ứng dụng và ứng dụng bắt đầu hiển thị các sản phẩm phù hợp với khách hàng
+
+TH1: người dùng mới (chưa có hoặc ít dữ liệu hành vi): gợi ý random theo trending
+
+TH2: người dùng đã có nhiều hành vi
+
+TH3: người dùng có hành vi nhiễu (đánh giá sao cao nhưng comment tiêu cực)
