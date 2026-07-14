@@ -39,7 +39,8 @@ amazon_recommender/
 ## 2. Dataset
 
 
-* User Reviews
+User Reviews
+
 rating (float): Rating of the product (from 1.0 to 5.0).
 title (str): Title of the user review.
 text (str): Text body of the user review.
@@ -51,7 +52,8 @@ timestamp (int): Time of the review (unix time).
 verified_purchase (bool): User purchase verification.
 helpful_vote (int): Helpful votes of the review.
 
-* Item Metadata 
+Item Metadata
+ 
 main_category (str): Main category (i.e., domain) of the product.
 title (str): Name of the product.
 average_rating (float): Rating of the product shown on the product page.
