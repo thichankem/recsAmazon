@@ -2,11 +2,11 @@
 
 Dự án này tập trung hiện thực hóa bài toán **Gợi ý Cá nhân hóa (Personalized Static Recommendation) - "Mua gì tiếp theo?"** dựa trên tập dữ liệu **Amazon Reviews 2023**. Hệ thống được thiết kế theo kiến trúc **Static Layered Serving** để đạt hiệu năng xử lý cực hạn trên Production (**CPU < 0.1%, RAM < 0.1% trên chip Ryzen 7 7840, Latency < 1ms**), đồng thời giải quyết triệt để bài toán **Cold Start** bằng chiến lược phòng thủ 3 lớp.
 
----
+
 
 ## 1. Cấu Trúc Thư Mục Dự Án (File Architecture)
 
-```text
+
 amazon_recommender/
 │
 ├── data/                              
@@ -33,11 +33,41 @@ amazon_recommender/
 ├── run_service.py                      # API Endpoint trực tuyến (FastAPI Wrapper)
 │   └── recommendations.db              # SQLite DB chứa dữ liệu đã huấn luyện
 └── recommender_demo.ipynb              # Jupyter Notebook minh họa và đo hiệu năng
-```
 
----
 
-## 2. Kiến Trúc Luồng Giải Quyết Bài Toán
+## 2. Dataset 
+
+
+* User Reviews
+rating (float): Rating of the product (from 1.0 to 5.0).
+title (str): Title of the user review.
+text (str): Text body of the user review.
+images (list): Images that users post after they have received the product. Each image has different sizes (small, medium, large), represented by the small_image_url, medium_image_url, and large_image_url respectively.
+asin (str): ID of the product.
+parent_asin (str): Parent ID of the product. Note: Products with different colors, styles, sizes usually belong to the same parent ID. The “asin” in previous Amazon datasets is actually parent ID. Please use parent ID to find product meta.
+user_id (str): ID of the reviewer.
+timestamp (int): Time of the review (unix time).
+verified_purchase (bool): User purchase verification.
+helpful_vote (int): Helpful votes of the review.
+
+* Item Metadata 
+main_category (str): Main category (i.e., domain) of the product.
+title (str): Name of the product.
+average_rating (float): Rating of the product shown on the product page.
+rating_number (int): Number of ratings in the product.
+features (list): Bullet-point format features of the product.
+description (list): Description of the product.
+price (float): Price in US dollars (at time of crawling).
+images (list): Images of the product. Each image has different sizes (thumb, large, hi_res). The “variant” field shows the position of image.
+videos (list): Videos of the product including title and url.
+store (str): Store name of the product.
+categories (list): Hierarchical categories of the product.
+details (dict): Product details, including materials, brand, sizes, etc.
+parent_asin (str): Parent ID of the product.
+bought_together (list): Recommended bundles from the websites.
+
+
+## 3. Kiến Trúc Luồng Giải Quyết Bài Toán
 
 ### LUỒNG 1: BỘ NÃO NGOẠI TUYẾN (OFFLINE BATCH PIPELINE)
 
