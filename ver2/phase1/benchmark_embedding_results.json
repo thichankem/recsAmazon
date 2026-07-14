@@ -1,0 +1,29 @@
+{
+    "model_name": "BAAI/bge-small-en-v1.5",
+    "device": "cpu",
+    "load_time_seconds": 8.59793996810913,
+    "model_memory_mb": 279.90234375,
+    "benchmark_runs": {
+        "1": {
+            "total_queries": 1,
+            "total_time_seconds": 0.021874666213989258,
+            "cpu_time_seconds": 0.03125,
+            "avg_latency_ms": 21.874666213989258,
+            "memory_usage_mb": 760.078125
+        },
+        "100": {
+            "total_queries": 100,
+            "total_time_seconds": 0.4546370506286621,
+            "cpu_time_seconds": 1.21875,
+            "avg_latency_ms": 4.546370506286621,
+            "memory_usage_mb": 792.4609375
+        },
+        "1000": {
+            "total_queries": 1000,
+            "total_time_seconds": 4.393663167953491,
+            "cpu_time_seconds": 12.859375,
+            "avg_latency_ms": 4.393663167953491,
+            "memory_usage_mb": 807.796875
+        }
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "num_reviews": 701528,
+    "num_users": 631986,
+    "num_parent_items_reviews": 112565,
+    "num_asin_items_reviews": 115709,
+    "num_items_meta": 112590,
+    "sparsity": 0.9999901386998831,
+    "mean_rating": 3.960245370864868,
+    "median_rating": 5.0,
+    "rating_counts": {
+        "1.0": 102080,
+        "2.0": 43034,
+        "3.0": 56307,
+        "4.0": 79381,
+        "5.0": 420726
+    },
+    "rating_percentages": {
+        "1.0": 14.551094182983432,
+        "2.0": 6.134323932900754,
+        "3.0": 8.02633679625047,
+        "4.0": 11.315442861867238,
+        "5.0": 59.97280222599811
+    },
+    "verified_counts": {
+        "True": 634969,
+        "False": 66559
+    },
+    "verified_percentages": {
+        "True": 90.51228176209645,
+        "False": 9.487718237903547
+    },
+    "reviews_missing": {
+        "rating": 0,
+        "title": 160,
+        "text": 212,
+        "asin": 0,
+        "parent_asin": 0,
+        "user_id": 0,
+        "timestamp": 0,
+        "helpful_vote": 0,
+        "verified_purchase": 0
+    },
+    "meta_missing": {
+        "main_category": 0,
+        "title": 12,
+        "average_rating": 0,
+        "rating_number": 0,
+        "price": 94886,
+        "store": 11344,
+        "categories": 0,
+        "parent_asin": 0
+    },
+    "user_item_duplicates": 7599,
+    "category_counts": {
+        "All Beauty": 112135,
+        "Premium Beauty": 455
+    },
+    "cold_start_users": {
+        "threshold": 2,
+        "count": 622827,
+        "percentage": 98.55075903580143
+    },
+    "cold_start_items": {
+        "threshold": 2,
+        "count": 67440,
+        "percentage": 59.91205081508462
+    },
+    "long_tail": {
+        "num_items_for_80_percent_reviews": 29162,
+        "percentage_items_for_80_percent_reviews": 25.906809399013902
+    }
+}
