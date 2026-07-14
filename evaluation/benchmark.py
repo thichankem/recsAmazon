@@ -9,9 +9,15 @@ from evaluation.metrics import recall_at_k, ndcg_at_k
 
 def prepare_benchmark_datasets(raw_reviews_path, train_path, test_path, limit=50000):
     """
-    Reads a subset of reviews, splits them temporally into train (80%) and test (20%).
+    Chuẩn bị tập dữ liệu kiểm thử (Benchmark Datasets).
+    Đọc một lượng giới hạn reviews, sắp xếp theo thời gian và chia theo tỷ lệ 80% huấn luyện / 20% kiểm thử.
+    
+    raw_reviews_path: Đường dẫn file tương tác gốc
+    train_path: Đường dẫn file train được chia
+    test_path: Đường dẫn file test được chia
+    limit: Số lượng reviews thô được lấy ra
     """
-    print(f"Preparing benchmark dataset from first {limit} reviews...")
+    print(f"Đang chuẩn bị tập dữ liệu benchmark từ {limit} reviews đầu tiên...")
     reviews = []
     
     with open(raw_reviews_path, "r", encoding="utf-8") as f:
@@ -25,15 +31,15 @@ def prepare_benchmark_datasets(raw_reviews_path, train_path, test_path, limit=50
             except Exception:
                 continue
                 
-    # Sort reviews by timestamp
+    # Sắp xếp các tương tác theo dòng thời gian (temporal split) để tránh rò rỉ dữ liệu (data leakage)
     reviews.sort(key=lambda x: x.get("timestamp", 0))
     
-    # Split
+    # Chia tập dữ liệu 80% train, 20% test
     split_idx = int(len(reviews) * 0.8)
     train_reviews = reviews[:split_idx]
     test_reviews = reviews[split_idx:]
     
-    # Write files
+    # Ghi dữ liệu ra các file tạm phục vụ benchmark
     os.makedirs(os.path.dirname(train_path), exist_ok=True)
     with open(train_path, "w", encoding="utf-8") as f:
         for r in train_reviews:
@@ -43,18 +49,20 @@ def prepare_benchmark_datasets(raw_reviews_path, train_path, test_path, limit=50
         for r in test_reviews:
             f.write(json.dumps(r) + "\n")
             
-    print(f"Prepared benchmark data. Train size: {len(train_reviews)}, Test size: {len(test_reviews)}")
+    print(f"Chuẩn bị xong benchmark data. Train size: {len(train_reviews)}, Test size: {len(test_reviews)}")
 
 def run_benchmark(db_path, schema_path, train_reviews_path, test_reviews_path, metadata_path):
     """
-    Runs the offline pipeline on train data and evaluates online recommendations using test data.
+    Khởi chạy toàn bộ quy trình benchmark:
+    1. Huấn luyện offline trên tập train.
+    2. Đánh giá chất lượng của Online Service bằng tập test (chỉ số Recall@10, NDCG@10, Latency).
     """
-    # 1. Run offline pipeline on train reviews
-    print("Running offline pipeline on train dataset...")
+    # 1. Chạy offline pipeline để nạp dữ liệu huấn luyện vào SQLite
+    print("Đang chạy offline pipeline trên tập train...")
     run_offline_pipeline(db_path, schema_path, train_reviews_path, metadata_path)
     
-    # 2. Load test reviews and group by user
-    print("Loading test reviews...")
+    # 2. Đọc tập kiểm thử (test) và gom tương tác thực tế theo từng user_id
+    print("Đang đọc tập reviews kiểm thử...")
     user_test_interactions = {}
     with open(test_reviews_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -70,20 +78,21 @@ def run_benchmark(db_path, schema_path, train_reviews_path, test_reviews_path, m
             except Exception:
                 continue
                 
-    print(f"Test data contains interactions for {len(user_test_interactions)} unique users.")
+    print(f"Tập kiểm thử chứa thông tin tương tác của {len(user_test_interactions)} users độc nhất.")
     
-    # 3. Initialize Online Service
+    # 3. Khởi tạo dịch vụ gợi ý trực tuyến (Online Service)
     service = OnlineRecommenderService(db_path=db_path)
     
-    # 4. Evaluate
+    # 4. Thực hiện đánh giá chất lượng gợi ý
     recalls = []
     ndcgs = []
     latencies = []
     
-    print("Evaluating recommendations...")
+    print("Đang đánh giá chất lượng gợi ý trên tập test...")
     start_eval_time = time.time()
     
     test_users = list(user_test_interactions.keys())
+    # Nếu số lượng người dùng quá nhiều, lấy mẫu ngẫu nhiên 1000 người dùng để tăng tốc độ tính benchmark
     if len(test_users) > 1000:
         np.random.seed(42)
         test_users = np.random.choice(test_users, 1000, replace=False)
@@ -91,12 +100,12 @@ def run_benchmark(db_path, schema_path, train_reviews_path, test_reviews_path, m
     for user_id in test_users:
         actual_items = user_test_interactions[user_id]
         
-        # Get recommendations (static layered serving only)
+        # Truy vấn danh sách gợi ý trực tuyến từ SQLite
         res = service.get_recommendations(user_id=user_id)
         predicted = res["recommendations"]
         latency = res["latency_ms"]
         
-        # Calculate metrics
+        # Tính toán các chỉ số chất lượng
         rec = recall_at_k(actual_items, predicted, k=10)
         ndcg = ndcg_at_k(actual_items, predicted, k=10)
         
@@ -105,7 +114,7 @@ def run_benchmark(db_path, schema_path, train_reviews_path, test_reviews_path, m
         latencies.append(latency)
         
     eval_duration = time.time() - start_eval_time
-    print(f"Evaluation completed in {eval_duration:.2f} seconds.")
+    print(f"Đánh giá hoàn tất trong {eval_duration:.2f} giây.")
     print("--------------------------------------------------")
     print(f"Average Recall@10: {np.mean(recalls):.4f}")
     print(f"Average NDCG@10:   {np.mean(ndcgs):.4f}")
@@ -132,7 +141,8 @@ if __name__ == "__main__":
     TEST_REVIEWS_PATH = "data/benchmark_test_reviews.json"
     
     if os.path.exists(RAW_REVIEWS_PATH) and os.path.exists(METADATA_PATH):
+        # Thiết lập chạy thử benchmark trên 30,000 dòng dữ liệu đầu tiên
         prepare_benchmark_datasets(RAW_REVIEWS_PATH, TRAIN_REVIEWS_PATH, TEST_REVIEWS_PATH, limit=30000)
         run_benchmark(DB_PATH, SCHEMA_PATH, TRAIN_REVIEWS_PATH, TEST_REVIEWS_PATH, METADATA_PATH)
     else:
-        print("Data files not found.")
+        print("Không tìm thấy các file dữ liệu trong data/.")
