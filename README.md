@@ -2,11 +2,11 @@
 
 Dự án này tập trung hiện thực hóa bài toán **Gợi ý Cá nhân hóa (Personalized Static Recommendation) - "Mua gì tiếp theo?"** dựa trên tập dữ liệu **Amazon Reviews 2023**. Hệ thống được thiết kế theo kiến trúc **Static Layered Serving** để đạt hiệu năng xử lý cực hạn trên Production (**CPU < 0.1%, RAM < 0.1% trên chip Ryzen 7 7840, Latency < 1ms**), đồng thời giải quyết triệt để bài toán **Cold Start** bằng chiến lược phòng thủ 3 lớp.
 
-
+---
 
 ## 1. Cấu Trúc Thư Mục Dự Án (File Architecture)
 
-
+```text
 amazon_recommender/
 │
 ├── data/                              
@@ -33,9 +33,10 @@ amazon_recommender/
 ├── run_service.py                      # API Endpoint trực tuyến (FastAPI Wrapper)
 │   └── recommendations.db              # SQLite DB chứa dữ liệu đã huấn luyện
 └── recommender_demo.ipynb              # Jupyter Notebook minh họa và đo hiệu năng
+```
 
-
-## 2. Dataset 
+---
+## 2. Dataset
 
 
 * User Reviews
