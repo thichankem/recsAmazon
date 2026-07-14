@@ -42,7 +42,7 @@ amazon_recommender/
 ### LUỒNG 1: BỘ NÃO NGOẠI TUYẾN (OFFLINE BATCH PIPELINE)
 
 * **Về bước trích xuất dữ liệu**:
-  File [pipeline_offline.py](file:///c:/Users/ADMIN/OneDrive/Máy tính/recsAmazon/src/pipeline_offline.py) thực hiện đọc dữ liệu thô từ thư mục `data/` theo dạng chunk-by-chunk để bảo vệ bộ nhớ RAM dưới 6GB của máy phát triển.
+  File [pipeline_offline.py] thực hiện đọc dữ liệu thô từ thư mục `data/` theo dạng chunk-by-chunk để bảo vệ bộ nhớ RAM dưới 6GB của máy phát triển.
 * **Về bước chuẩn hóa điểm tin cậy**:
   Hệ thống tính toán chỉ số điểm tương tác (Interaction Score) cho từng cặp quan hệ `(user_id, parent_asin)`. Công thức áp dụng các trọng số phạt và thưởng dựa trên hành vi thực tế bao gồm trạng thái xác thực mua hàng `verified_purchase`, độ hữu ích của bình luận `helpful_vote`, và hệ số suy giảm độ quan tâm theo thời gian `timestamp`.
 * **Về bước huấn luyện Collaborative Filtering**:
@@ -60,7 +60,7 @@ amazon_recommender/
 
 ### LUỒNG 2: PHỤC VỤ TRỰC TUYẾN & PHÂN TẦNG COLD START (ONLINE SERVING ENGINE)
 
-Khi nhận được một yêu cầu lấy danh sách gợi ý cho một người dùng bất kỳ `user_id`, dịch vụ trực tuyến nằm trong file [service_online.py](file:///c:/Users/ADMIN/OneDrive/Máy tính/recsAmazon/src/service_online.py) thực thi quy trình tối ưu hóa tài nguyên thông qua chiến lược Phân tầng Khử Cold Start làm hạ tầng phòng thủ:
+Khi nhận được một yêu cầu lấy danh sách gợi ý cho một người dùng bất kỳ `user_id`, dịch vụ trực tuyến nằm trong file [service_online.py] thực thi quy trình tối ưu hóa tài nguyên thông qua chiến lược Phân tầng Khử Cold Start làm hạ tầng phòng thủ:
 
 * **Tầng 1 (Áp dụng cho Người dùng cũ)**:
   Hệ thống tra cứu lịch sử mua sắm của user từ bảng `user_history`, sau đó truy vấn danh sách sản phẩm tương đồng từ bảng `item_similarities` để tổng hợp và chấm điểm. Nếu số lượng gợi ý thiếu, hệ thống tự động bổ sung thêm các sản phẩm nổi bật cùng danh mục mà user đã từng mua thông qua bảng `item_metadata` và `category_top_rated`. Toàn bộ quá trình truy vấn và tổng hợp chạy trực tiếp trên SQLite với độ trễ siêu nhỏ **< 0.5ms**.
