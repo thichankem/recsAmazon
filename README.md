@@ -32,6 +32,11 @@ details (dict): Product details, including materials, brand, sizes, etc.
 parent_asin (str): Parent ID of the product.
 bought_together (list): Recommended bundles from the websites.
 
+
+3. Bài toán: gợi ý các sản phẩm phù hợp nhất cho người dùng sử dụng công nghệ mới nhất 2026
+
+4. Điều kiện phần cứng: toàn bộ triển khai phát triển trên 1 laptop chip ryzen 7 7840, gpu rtx4080, ram 6gb trống
+
 3. Các công nghệ sử dụng:
 
 Ngôn ngữ python
