@@ -1,0 +1,27 @@
+{
+    "usr_alpha": [
+        "item_1",
+        "item_3",
+        "item_5"
+    ],
+    "usr_beta": [
+        "item_2",
+        "item_4",
+        "item_6"
+    ],
+    "usr_gamma": [
+        "item_1",
+        "item_2",
+        "item_10"
+    ],
+    "usr_delta": [
+        "item_8",
+        "item_12",
+        "item_15"
+    ],
+    "usr_epsilon": [
+        "item_3",
+        "item_7",
+        "item_11"
+    ]
+}
