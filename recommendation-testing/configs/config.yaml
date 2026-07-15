@@ -1,0 +1,21 @@
+# Global configuration for Recommendation Testing Framework
+
+dataset:
+  name: "Amazon Reviews 2023"
+  raw_path: "datasets/raw/raw_reviews.json"
+  processed_path: "datasets/processed/"
+  ground_truth_path: "datasets/ground_truth/ground_truth.json"
+
+model:
+  type: "hybrid" # Options: content_based, collaborative_filtering, hybrid
+  top_k: 10
+
+simulator:
+  threads: 10
+  timeout_ms: 5000
+  headless: true
+  slow_mo_ms: 50
+
+adapter:
+  type: "local" # Options: local, production
+  api_url: "http://localhost:8000/recommend"

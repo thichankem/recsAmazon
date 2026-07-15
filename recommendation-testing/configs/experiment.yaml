@@ -1,0 +1,10 @@
+# Experiment and benchmark execution configuration
+
+experiment:
+  name: "exp_baseline_001"
+  description: "Baseline benchmark for recommendation models"
+  seed: 42
+  num_runs: 5
+  output_dir: "experiments/exp_baseline_001"
+  save_raw_responses: true
+  enable_profiler: false
