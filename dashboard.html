@@ -4,211 +4,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Bots Tracker & Content-Based Evaluation Dashboard</title>
+    <title>AI Recommendation Dashboard – Content-Based vs Collaborative</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * { font-family: 'Inter', sans-serif; }
+
+        .tab-active {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white !important;
+        }
+
+        .score-ring {
+            background: conic-gradient(#10b981 var(--pct), #1f2937 var(--pct));
+            border-radius: 50%;
+            width: 64px; height: 64px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .score-ring-inner {
+            background: #111827;
+            border-radius: 50%;
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: #10b981;
+        }
+
+        .bot-btn { transition: all .18s; }
+        .bot-btn:hover { transform: translateX(3px); }
+
+        .rec-item {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.4;
+            transition: background .15s;
+        }
+        .rec-item:hover { background: rgba(255,255,255,.05); }
+        .rec-matched { border-left: 3px solid #10b981; }
+        .rec-unmatched { border-left: 3px solid #374151; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+    </style>
 </head>
 
-<body class="bg-gray-900 text-gray-100 min-h-screen p-6">
+<body class="bg-gray-950 text-gray-100 min-h-screen p-5">
+    <div class="max-w-[1400px] mx-auto">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="border-b border-gray-800 pb-5 mb-8 flex justify-between items-center">
+        <!-- Header -->
+        <header class="flex flex-wrap justify-between items-center border-b border-gray-800 pb-5 mb-7 gap-4">
             <div>
-                <h1
-                    class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-                    AI BOTS CRAWLER DASHBOARD
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                    🤖 AI Recommendation Dashboard
                 </h1>
-                <p class="text-gray-400 mt-1">Giám sát hành vi 10 Bot AI & So sánh trực tiếp kết quả Model (.pkl)</p>
+                <p class="text-gray-400 text-sm mt-1">
+                    So sánh trực tiếp <span class="text-blue-400 font-medium">Content-Based</span>
+                    vs <span class="text-emerald-400 font-medium">Item-Item Collaborative Filtering</span>
+                </p>
             </div>
-            <div class="bg-gray-800 px-4 py-2 rounded-lg text-sm text-emerald-400 font-mono">
-                Status: Auto-Compare Connected
+            <div class="flex gap-2 text-xs font-mono">
+                <span class="bg-blue-900/40 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-700/40">
+                    📄 Content-Based: TF-IDF + Cosine
+                </span>
+                <span class="bg-emerald-900/40 text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-700/40">
+                    🔗 Collab: Item-Item CF (MLCB)
+                </span>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Tab switcher -->
+        <div class="flex gap-2 mb-6">
+            <button id="tab-cb" onclick="switchTab('cb')"
+                class="tab-active bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700">
+                📄 Content-Based Bots (10)
+            </button>
+            <button id="tab-cf" onclick="switchTab('cf')"
+                class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
+                🔗 Collaboration Bots (5)
+            </button>
+            <button id="tab-compare" onclick="switchTab('compare')"
+                class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
+                📊 So sánh tổng hợp
+            </button>
+        </div>
 
-            <div class="bg-gray-800 p-4 rounded-xl border border-gray-750">
-                <h2 class="text-lg font-semibold mb-4 text-blue-400 border-b border-gray-700 pb-2">Danh sách AI Bots
-                </h2>
-                <ul class="space-y-2" id="bot-list">
-                </ul>
-            </div>
-
-            <div class="lg:col-span-3 space-y-6">
-
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-750">
-                    <h2 class="text-xl font-bold text-amber-400 mb-4">📥 DỮ LIỆU INPUT (Sản phẩm nguồn Bot tương tác)
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- TAB: Content-Based                                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="panel-cb">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+                <!-- Sidebar bots -->
+                <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
+                    <h2 class="text-sm font-semibold text-blue-400 mb-3 uppercase tracking-wider">
+                        📄 Content-Based Bots
                     </h2>
-                    <div id="input-section" class="space-y-4">
-                        <p class="text-gray-400 italic">Chọn một Bot bên trái để xem dữ liệu so sánh...</p>
-                    </div>
+                    <ul class="space-y-1.5" id="cb-bot-list"></ul>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-750">
-                        <h3 class="text-lg font-bold text-blue-400 mb-3 flex items-center">
-                            🛒 GỢI Ý THỰC TẾ TỪ AMAZON (Ground Truth)
-                        </h3>
-                        <ul id="amazon-outputs" class="space-y-2 list-disc pl-5 text-gray-300">
-                        </ul>
+                <!-- Main panel -->
+                <div class="lg:col-span-3 space-y-5">
+                    <!-- Input -->
+                    <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+                        <h2 class="text-base font-bold text-amber-400 mb-3">📥 Sản phẩm nguồn Bot đã xem</h2>
+                        <div id="cb-input" class="text-gray-400 italic text-sm">Chọn Bot bên trái...</div>
                     </div>
 
-                    <div
-                        class="bg-gray-800 p-6 rounded-xl border border-emerald-500/30 bg-gradient-to-b from-gray-800 to-blue-950/20">
-                        <h3 class="text-lg font-bold text-emerald-400 mb-3 flex items-center justify-between">
-                            <span>🧠 GỢI Ý TỪ MODEL CỦA BẠN (.pkl)</span>
-                            <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Auto
-                                Loaded</span>
-                        </h3>
+                    <!-- Outputs grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Amazon -->
+                        <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+                            <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
+                                🛒 Amazon Ground Truth
+                            </h3>
+                            <ul id="cb-amazon" class="space-y-1"></ul>
+                        </div>
 
-                        <ul id="my-model-outputs" class="space-y-2 list-disc pl-5 text-gray-300 mb-4">
-                        </ul>
-
-                        <div class="border-t border-gray-700 pt-3">
-                            <p class="text-sm font-semibold text-gray-400">Chỉ số đánh giá độ tương đồng (Overlap
-                                Metric):</p>
-                            <div class="grid grid-cols-2 gap-4 mt-2">
-                                <div class="bg-gray-900 p-3 rounded text-center">
-                                    <span class="text-xs text-gray-400">Độ khớp (Match Rate)</span>
-                                    <div id="match-rate" class="text-2xl font-bold text-emerald-400">0%</div>
+                        <!-- Model -->
+                        <div class="bg-gray-900 p-5 rounded-xl border border-blue-500/20">
+                            <h3 class="text-sm font-bold text-blue-300 mb-3 flex items-center justify-between">
+                                <span>🧠 Content-Based Model</span>
+                                <span class="text-xs bg-blue-900/40 text-blue-300 px-2 py-0.5 rounded border border-blue-700/30">TF-IDF</span>
+                            </h3>
+                            <ul id="cb-model" class="space-y-1 mb-4"></ul>
+                            <div class="border-t border-gray-800 pt-3 flex items-center gap-4">
+                                <div class="score-ring" id="cb-ring" style="--pct: 0%">
+                                    <div class="score-ring-inner" id="cb-pct-text">0%</div>
                                 </div>
-                                <div class="bg-gray-900 p-3 rounded text-center">
-                                    <span class="text-xs text-gray-400">Trùng khớp</span>
-                                    <div id="match-count" class="text-xl font-bold text-gray-300">0 / 0</div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Overlap với Amazon</p>
+                                    <p id="cb-score-detail" class="text-sm font-semibold text-gray-300">0 / 0 khớp</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
-    </div>
 
-    <script>
-        const BOTS = [
-            { id: 1, name: "Bot Apple Fan", search: "iPhone 16 pro max" },
-            { id: 2, name: "Bot Samsung Loyal", search: "Samsung Galaxy S26 Ultra" },
-            { id: 3, name: "Bot Gamer Phone", search: "Asus ROG Phone" },
-            { id: 4, name: "Bot Audiophile", search: "Wireless Earbuds Bluetooth" },
-            { id: 5, name: "Bot Safety First", search: "Heavy Duty Phone Case" },
-            { id: 6, name: "Bot Power User", search: "Anker Power Bank 20000mAh" },
-            { id: 7, name: "Bot Content Creator", search: "Phone Gimbal Stabilizer" },
-            { id: 8, name: "Bot Minimalist", search: "Magsafe Wallet Card Holder" },
-            { id: 9, name: "Bot Screen Protector", search: "Tempered Glass Screen Protector" },
-            { id: 10, name: "Bot Budget Hunter", search: "Cheap Android Phone unlocked" }
-        ];
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- TAB: Collaboration                                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="panel-cf" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+                <!-- Sidebar -->
+                <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
+                    <h2 class="text-sm font-semibold text-emerald-400 mb-3 uppercase tracking-wider">
+                        🔗 Collab Bots
+                    </h2>
+                    <ul class="space-y-1.5" id="cf-bot-list"></ul>
+                </div>
 
-        let currentBotData = null;
-
-        // Khởi tạo danh sách Bot bên Sidebar
-        const botListEl = document.getElementById('bot-list');
-        BOTS.forEach(bot => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <button onclick="loadBotData(${bot.id})" id="btn-bot-${bot.id}" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-gray-700 text-gray-300 flex items-center justify-between">
-                    <span>🤖 ${bot.name}</span>
-                    <span class="text-xs bg-gray-900 px-2 py-0.5 rounded text-gray-500">ID: ${bot.id}</span>
-                </button>
-            `;
-            botListEl.appendChild(li);
-        });
-
-        // Hàm load dữ liệu và tự động so sánh
-        async function loadBotData(botId) {
-            BOTS.forEach(b => {
-                const btn = document.getElementById(`btn-bot-${b.id}`);
-                btn.className = btn.className.replace('bg-blue-600 text-white', 'text-gray-300').replace('hover:bg-blue-500', 'hover:bg-gray-700');
-            });
-            const activeBtn = document.getElementById(`btn-bot-${botId}`);
-            activeBtn.className += ' bg-blue-600 text-white hover:bg-blue-500';
-
-            try {
-                const response = await fetch(`./output/content-based-bot-${botId}.json`);
-                if (!response.ok) throw new Error("Không tìm thấy file kết quả! Hãy chạy Playwright test trước.");
-
-                const data = await response.json();
-                currentBotData = data;
-
-                // Render dữ liệu INPUT
-                document.getElementById('input-section').innerHTML = `
-                    <div>
-                        <strong class="text-gray-400 block text-xs uppercase">Tiêu đề sản phẩm gốc (Title):</strong>
-                        <h3 class="text-lg font-semibold text-white mt-1">${data.inputData.title}</h3>
+                <!-- Main panel -->
+                <div class="lg:col-span-3 space-y-5">
+                    <!-- Input: danh sách sản phẩm đã xem -->
+                    <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+                        <h2 class="text-base font-bold text-amber-400 mb-1">
+                            📂 Danh sách sản phẩm người dùng đã xem (A, B, C, D)
+                        </h2>
+                        <p class="text-xs text-gray-500 mb-3">
+                            CF sẽ gợi ý sản phẩm mà các user khác cũng mua cùng nhóm này
+                        </p>
+                        <div id="cf-input" class="text-gray-400 italic text-sm">Chọn Bot bên trái...</div>
                     </div>
-                    <div class="mt-3">
-                        <strong class="text-gray-400 block text-xs uppercase">Mô tả chi tiết (Description):</strong>
-                        <div class="bg-gray-900 p-3 rounded-lg text-xs font-mono text-gray-300 max-h-40 overflow-y-auto whitespace-pre-line mt-1">
-                            ${data.inputData.description}
+
+                    <!-- Outputs grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Amazon -->
+                        <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+                            <h3 class="text-sm font-bold text-blue-400 mb-3">🛒 Amazon "Also Bought"</h3>
+                            <ul id="cf-amazon" class="space-y-1"></ul>
+                        </div>
+
+                        <!-- CF Model -->
+                        <div class="bg-gray-900 p-5 rounded-xl border border-emerald-500/20">
+                            <h3 class="text-sm font-bold text-emerald-300 mb-3 flex items-center justify-between">
+                                <span>🔗 Collaborative Filtering</span>
+                                <span class="text-xs bg-emerald-900/40 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700/30">Item-Item CF</span>
+                            </h3>
+                            <ul id="cf-model" class="space-y-1 mb-4"></ul>
+                            <div class="border-t border-gray-800 pt-3 flex items-center gap-4">
+                                <div class="score-ring" id="cf-ring" style="--pct: 0%">
+                                    <div class="score-ring-inner" id="cf-pct-text">0%</div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Overlap với Amazon</p>
+                                    <p id="cf-score-detail" class="text-sm font-semibold text-gray-300">0 / 0 khớp</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                `;
+                </div>
+            </div>
+        </div>
 
-                // Render gợi ý thực tế từ AMAZON
-                const amazonList = document.getElementById('amazon-outputs');
-                amazonList.innerHTML = '';
-                if (data.expectedOutput.length === 0) {
-                    amazonList.innerHTML = '<li class="text-gray-500 italic">Không có gợi ý từ Amazon.</li>';
-                } else {
-                    data.expectedOutput.forEach(item => {
-                        amazonList.innerHTML += `<li class="hover:text-white transition py-0.5">${item}</li>`;
-                    });
-                }
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- TAB: So sánh tổng hợp                              -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="panel-compare" class="hidden space-y-6">
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                <h2 class="text-lg font-bold text-white mb-5">
+                    📊 Bảng so sánh: Content-Based vs Collaborative Filtering
+                </h2>
 
-                // Render gợi ý tự động lấy từ Model Python (.pkl) của bạn
-                const myModelList = document.getElementById('my-model-outputs');
-                myModelList.innerHTML = '';
-                if (!data.myModelOutput || data.myModelOutput.length === 0) {
-                    myModelList.innerHTML = '<li class="text-gray-500 italic">Không có dữ liệu đầu ra từ Model.</li>';
-                } else {
-                    data.myModelOutput.forEach(item => {
-                        myModelList.innerHTML += `<li class="text-emerald-300 font-medium py-0.5">${item}</li>`;
-                    });
-                }
-
-                // Tự động tính toán điểm số trùng khớp
-                calculateMetrics(data);
-
-            } catch (err) {
-                document.getElementById('input-section').innerHTML = `
-                    <div class="text-red-400 bg-red-900/20 p-4 rounded-lg border border-red-500/30">
-                        ⚠️ Lỗi: ${err.message}<br>
-                        <span class="text-xs text-gray-400">Hãy chắc chắn bạn đã chạy xong kịch bản test bằng lệnh Playwright và đang chạy Dashboard qua một Local Server (như VS Code Live Server).</span>
+                <!-- Summary cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-blue-700/30">
+                        <p class="text-xs text-gray-400 mb-1">CB Avg Match Rate</p>
+                        <p id="cmp-cb-avg" class="text-3xl font-bold text-blue-400">—</p>
                     </div>
-                `;
+                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-emerald-700/30">
+                        <p class="text-xs text-gray-400 mb-1">CF Avg Match Rate</p>
+                        <p id="cmp-cf-avg" class="text-3xl font-bold text-emerald-400">—</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
+                        <p class="text-xs text-gray-400 mb-1">CB Bots chạy xong</p>
+                        <p id="cmp-cb-done" class="text-3xl font-bold text-gray-300">—</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
+                        <p class="text-xs text-gray-400 mb-1">CF Bots chạy xong</p>
+                        <p id="cmp-cf-done" class="text-3xl font-bold text-gray-300">—</p>
+                    </div>
+                </div>
+
+                <!-- Winner banner -->
+                <div id="winner-banner" class="hidden mb-6 p-4 rounded-xl text-center font-bold text-lg border"></div>
+
+                <!-- Detail table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400 text-xs uppercase">
+                                <th class="text-left py-2 pr-4">Tiêu chí</th>
+                                <th class="text-center py-2 px-4 text-blue-400">📄 Content-Based</th>
+                                <th class="text-center py-2 px-4 text-emerald-400">🔗 Collaborative</th>
+                                <th class="text-center py-2 pl-4">Nhận xét</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compare-table" class="divide-y divide-gray-800"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Per-bot breakdown -->
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                <h3 class="text-base font-semibold text-gray-300 mb-4">Chi tiết từng Bot</h3>
+                <div id="compare-detail" class="space-y-3"></div>
+            </div>
+        </div>
+
+    </div><!-- /max-w -->
+
+    <script>
+        // ──────────────────────────────────────────────────
+        // Config bots
+        // ──────────────────────────────────────────────────
+        const CB_BOTS = [
+            { id: 1,  name: 'Bot_Apple_Fan' },
+            { id: 2,  name: 'Bot_Samsung_Loyal' },
+            { id: 3,  name: 'Bot_Gamer' },
+            { id: 4,  name: 'Bot_Audiophile' },
+            { id: 5,  name: 'Bot_Case_Hunter' },
+            { id: 6,  name: 'Bot_Power_User' },
+            { id: 7,  name: 'Bot_Creator' },
+            { id: 8,  name: 'Bot_Minimalist' },
+            { id: 9,  name: 'Bot_Screen' },
+            { id: 10, name: 'Bot_Budget' },
+        ];
+
+        const CF_BOTS = [
+            { id: 1, name: 'ColabBot_Apple_Ecosystem' },
+            { id: 2, name: 'ColabBot_Gaming_Mobile' },
+            { id: 3, name: 'ColabBot_Phone_Protection' },
+            { id: 4, name: 'ColabBot_Audio_Setup' },
+            { id: 5, name: 'ColabBot_Power_Travel' },
+        ];
+
+        // ──────────────────────────────────────────────────
+        // Tab switching
+        // ──────────────────────────────────────────────────
+        function switchTab(tab) {
+            ['cb', 'cf', 'compare'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-${t}`);
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-gray-400', 'hover:bg-gray-800');
+            });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.add('tab-active');
+            activeBtn.classList.remove('text-gray-400', 'hover:bg-gray-800');
+
+            if (tab === 'compare') loadComparison();
+        }
+
+        // ──────────────────────────────────────────────────
+        // Build sidebar buttons
+        // ──────────────────────────────────────────────────
+        function buildSidebar(bots, listId, loadFn, prefix, color) {
+            const ul = document.getElementById(listId);
+            bots.forEach(bot => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <button onclick="${loadFn}(${bot.id})" id="${prefix}-btn-${bot.id}"
+                        class="bot-btn w-full text-left px-3 py-2 rounded-lg text-xs font-medium
+                               text-gray-400 hover:bg-gray-800 border border-transparent
+                               flex items-center justify-between gap-2">
+                        <span class="truncate">🤖 ${bot.name.replace(/_/g,' ')}</span>
+                        <span class="text-gray-600 shrink-0">#${bot.id}</span>
+                    </button>`;
+                ul.appendChild(li);
+            });
+        }
+
+        function setActiveBtn(prefix, bots, activeId, color) {
+            bots.forEach(b => {
+                const btn = document.getElementById(`${prefix}-btn-${b.id}`);
+                if (!btn) return;
+                btn.className = btn.className
+                    .replace(/border-\S+/g, 'border-transparent')
+                    .replace(/bg-\S+/g, '');
+                btn.classList.add('hover:bg-gray-800', 'text-gray-400');
+            });
+            const ab = document.getElementById(`${prefix}-btn-${activeId}`);
+            if (ab) {
+                ab.classList.remove('text-gray-400');
+                ab.classList.add(color === 'blue' ? 'text-blue-300' : 'text-emerald-300',
+                                 color === 'blue' ? 'border-blue-700/50' : 'border-emerald-700/50',
+                                 color === 'blue' ? 'bg-blue-900/20' : 'bg-emerald-900/20');
             }
         }
 
-        function calculateMetrics(data) {
-            const myRecommendations = data.myModelOutput.map(item => item.toLowerCase());
-            const amazonRecommendations = data.expectedOutput.map(item => item.toLowerCase());
+        // ──────────────────────────────────────────────────
+        // Tính overlap metric
+        // ──────────────────────────────────────────────────
+        function calcOverlap(modelRecs, amazonRecs) {
+            if (!modelRecs?.length || !amazonRecs?.length) return { matched: 0, total: 0, pct: 0 };
+            const amzLower = amazonRecs.map(s => s.toLowerCase());
+            let matched = 0;
+            const flags = modelRecs.map(rec => {
+                const rl = rec.toLowerCase();
+                const hit = amzLower.some(a =>
+                    a.includes(rl.slice(0, 30)) || rl.includes(a.slice(0, 30))
+                );
+                if (hit) matched++;
+                return hit;
+            });
+            const pct = Math.round((matched / amazonRecs.length) * 100);
+            return { matched, total: amazonRecs.length, pct, flags };
+        }
 
-            if (amazonRecommendations.length === 0 || myRecommendations.length === 0) {
-                document.getElementById('match-rate').innerText = '0%';
-                document.getElementById('match-count').innerText = `0 / 0`;
+        // ──────────────────────────────────────────────────
+        // Render danh sách items (highlight matched)
+        // ──────────────────────────────────────────────────
+        function renderList(ulId, items, flags = null) {
+            const ul = document.getElementById(ulId);
+            ul.innerHTML = '';
+            if (!items?.length) {
+                ul.innerHTML = '<li class="text-gray-600 italic text-xs">Không có dữ liệu</li>';
+                return;
+            }
+            items.forEach((item, i) => {
+                const isMatch = flags ? flags[i] : false;
+                const li = document.createElement('li');
+                li.className = `rec-item ${flags ? (isMatch ? 'rec-matched text-emerald-200' : 'rec-unmatched text-gray-400') : 'text-gray-300'}`;
+                li.textContent = `${i + 1}. ${item}`;
+                ul.appendChild(li);
+            });
+        }
+
+        // Cập nhật score ring
+        function updateRing(prefix, pct, matched, total) {
+            document.getElementById(`${prefix}-ring`).style.setProperty('--pct', `${pct}%`);
+            document.getElementById(`${prefix}-pct-text`).textContent = `${pct}%`;
+            document.getElementById(`${prefix}-score-detail`).textContent = `${matched} / ${total} khớp`;
+        }
+
+        // ──────────────────────────────────────────────────
+        // Load Content-Based bot data
+        // ──────────────────────────────────────────────────
+        async function loadCBBot(botId) {
+            setActiveBtn('cb', CB_BOTS, botId, 'blue');
+            try {
+                const res = await fetch(`./output/content-based-bot-${botId}.json`);
+                if (!res.ok) throw new Error('Chưa có file. Hãy chạy Playwright test trước.');
+                const data = await res.json();
+
+                // Input
+                document.getElementById('cb-input').innerHTML = `
+                    <strong class="text-xs text-gray-500 uppercase">Tiêu đề sản phẩm:</strong>
+                    <p class="text-white font-medium mt-1">${data.inputData?.title || '—'}</p>
+                    <strong class="text-xs text-gray-500 uppercase mt-3 block">Mô tả:</strong>
+                    <div class="bg-gray-800 p-2 rounded text-xs text-gray-400 max-h-28 overflow-y-auto mt-1 whitespace-pre-wrap">
+                        ${(data.inputData?.description || '').slice(0, 600)}
+                    </div>`;
+
+                // Outputs
+                const model = data.myModelOutput || [];
+                const amazon = data.expectedOutput || [];
+                const { matched, total, pct, flags } = calcOverlap(model, amazon);
+
+                renderList('cb-amazon', amazon);
+                renderList('cb-model', model, flags);
+                updateRing('cb', pct, matched, total);
+            } catch (e) {
+                document.getElementById('cb-input').innerHTML =
+                    `<span class="text-red-400 text-sm">⚠️ ${e.message}</span>`;
+            }
+        }
+
+        // ──────────────────────────────────────────────────
+        // Load Collaboration bot data
+        // ──────────────────────────────────────────────────
+        async function loadCFBot(botId) {
+            setActiveBtn('cf', CF_BOTS, botId, 'green');
+            try {
+                const res = await fetch(`./output/collab-bot-${botId}.json`);
+                if (!res.ok) throw new Error('Chưa có file. Hãy chạy: npx playwright test test/amazon_collab_bot.spec.ts');
+                const data = await res.json();
+
+                // Input: danh sách tiêu đề đã xem
+                const titles = data.inputData?.crawledTitles || data.inputData?.originalKeywords || [];
+                const scenario = data.scenario || '';
+                document.getElementById('cf-input').innerHTML = `
+                    <p class="text-xs text-amber-400 mb-2">💡 ${scenario}</p>
+                    <strong class="text-xs text-gray-500 uppercase">Sản phẩm đã xem:</strong>
+                    <ol class="mt-2 space-y-1">
+                        ${titles.map((t, i) => `
+                            <li class="flex gap-2 text-sm">
+                                <span class="text-emerald-500 font-bold shrink-0">${String.fromCharCode(65+i)}.</span>
+                                <span class="text-white">${t}</span>
+                            </li>`).join('')}
+                    </ol>`;
+
+                // Outputs
+                const model = data.collabModelOutput || [];
+                const amazon = data.amazonGroundTruth || [];
+                const { matched, total, pct, flags } = calcOverlap(model, amazon);
+
+                renderList('cf-amazon', amazon);
+                renderList('cf-model', model, flags);
+                updateRing('cf', pct, matched, total);
+            } catch (e) {
+                document.getElementById('cf-input').innerHTML =
+                    `<span class="text-red-400 text-sm">⚠️ ${e.message}</span>`;
+            }
+        }
+
+        // ──────────────────────────────────────────────────
+        // Load So sánh tổng hợp
+        // ──────────────────────────────────────────────────
+        async function loadComparison() {
+            // Load tất cả CB và CF files
+            const cbResults = [], cfResults = [];
+
+            for (const bot of CB_BOTS) {
+                try {
+                    const r = await fetch(`./output/content-based-bot-${bot.id}.json`);
+                    if (!r.ok) continue;
+                    const d = await r.json();
+                    const { pct } = calcOverlap(d.myModelOutput, d.expectedOutput);
+                    cbResults.push({ ...bot, pct });
+                } catch { }
+            }
+
+            for (const bot of CF_BOTS) {
+                try {
+                    const r = await fetch(`./output/collab-bot-${bot.id}.json`);
+                    if (!r.ok) continue;
+                    const d = await r.json();
+                    const pct = d.evaluation?.precisionPercent ??
+                        calcOverlap(d.collabModelOutput, d.amazonGroundTruth).pct;
+                    cfResults.push({ ...bot, pct });
+                } catch { }
+            }
+
+            // Averages
+            const cbAvg = cbResults.length
+                ? Math.round(cbResults.reduce((s, r) => s + r.pct, 0) / cbResults.length) : null;
+            const cfAvg = cfResults.length
+                ? Math.round(cfResults.reduce((s, r) => s + r.pct, 0) / cfResults.length) : null;
+
+            document.getElementById('cmp-cb-avg').textContent = cbAvg !== null ? `${cbAvg}%` : '—';
+            document.getElementById('cmp-cf-avg').textContent = cfAvg !== null ? `${cfAvg}%` : '—';
+            document.getElementById('cmp-cb-done').textContent = `${cbResults.length}/10`;
+            document.getElementById('cmp-cf-done').textContent = `${cfResults.length}/5`;
+
+            // Winner banner
+            const banner = document.getElementById('winner-banner');
+            if (cbAvg !== null && cfAvg !== null) {
+                banner.classList.remove('hidden');
+                if (cbAvg > cfAvg) {
+                    banner.className = banner.className.replace(/border-\S+/g, 'border-blue-600/50');
+                    banner.classList.add('bg-blue-900/20', 'text-blue-300', 'border-blue-600/50');
+                    banner.textContent = `🏆 Content-Based thắng! (${cbAvg}% vs ${cfAvg}%)`;
+                } else if (cfAvg > cbAvg) {
+                    banner.className = banner.className.replace(/border-\S+/g, 'border-emerald-600/50');
+                    banner.classList.add('bg-emerald-900/20', 'text-emerald-300', 'border-emerald-600/50');
+                    banner.textContent = `🏆 Collaborative Filtering thắng! (${cfAvg}% vs ${cbAvg}%)`;
+                } else {
+                    banner.classList.add('bg-gray-800', 'text-gray-300', 'border-gray-600');
+                    banner.textContent = `🤝 Hòa nhau! (${cbAvg}% = ${cfAvg}%)`;
+                }
+            }
+
+            // Comparison table
+            const tableRows = [
+                ['Thuật toán',       'TF-IDF + Cosine Similarity',      'Item-Item CF (cosine S matrix)',  ''],
+                ['Đầu vào',          'Tiêu đề + Mô tả sản phẩm',        'Danh sách sản phẩm đã xem',      ''],
+                ['Dữ liệu cần',      'Chỉ cần metadata sản phẩm',       'Cần lịch sử đánh giá user',      'CF cần nhiều dữ liệu hơn'],
+                ['Cold Start',       '✅ Không bị ảnh hưởng',            '⚠️ Gặp vấn đề cold start',        'CB có lợi thế'],
+                ['Bots đã chạy',     `${cbResults.length}/10`,           `${cfResults.length}/5`,           ''],
+                ['Avg Match Rate',   cbAvg !== null ? `${cbAvg}%` : '—', cfAvg !== null ? `${cfAvg}%` : '—', cbAvg > cfAvg ? '📄 CB tốt hơn' : cfAvg > cbAvg ? '🔗 CF tốt hơn' : '—'],
+            ];
+
+            const tbody = document.getElementById('compare-table');
+            tbody.innerHTML = tableRows.map(([label, cb, cf, note]) => `
+                <tr class="text-sm">
+                    <td class="py-2 pr-4 text-gray-400 font-medium">${label}</td>
+                    <td class="py-2 px-4 text-blue-300 text-center">${cb}</td>
+                    <td class="py-2 px-4 text-emerald-300 text-center">${cf}</td>
+                    <td class="py-2 pl-4 text-gray-500 text-center text-xs">${note}</td>
+                </tr>`).join('');
+
+            // Per-bot breakdown
+            const detail = document.getElementById('compare-detail');
+            detail.innerHTML = '';
+
+            const maxBots = Math.max(cbResults.length, cfResults.length);
+            if (!maxBots) {
+                detail.innerHTML = '<p class="text-gray-600 text-sm">Chưa có dữ liệu. Chạy Playwright test trước.</p>';
                 return;
             }
 
-            let matchCount = 0;
-
-            myRecommendations.forEach(myRec => {
-                const isMatched = amazonRecommendations.some(amzRec => {
-                    const cleanAmz = amzRec.substring(0, 35);
-                    const cleanMy = myRec.substring(0, 35);
-                    return cleanAmz.includes(cleanMy) || cleanMy.includes(cleanAmz);
-                });
-                if (isMatched) {
-                    matchCount++;
-                }
+            cbResults.forEach(r => {
+                const bar = `<div class="h-2 rounded bg-blue-500" style="width:${r.pct}%"></div>`;
+                detail.innerHTML += `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-gray-500 w-36 shrink-0 truncate">📄 ${r.name}</span>
+                        <div class="flex-1 bg-gray-800 rounded h-2">${bar}</div>
+                        <span class="text-xs text-blue-400 w-10 text-right">${r.pct}%</span>
+                    </div>`;
             });
 
-            const matchRate = Math.round((matchCount / amazonRecommendations.length) * 100);
-
-            document.getElementById('match-rate').innerText = `${matchRate}%`;
-            document.getElementById('match-count').innerText = `${matchCount} / ${amazonRecommendations.length}`;
+            cfResults.forEach(r => {
+                const bar = `<div class="h-2 rounded bg-emerald-500" style="width:${r.pct}%"></div>`;
+                detail.innerHTML += `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-gray-500 w-36 shrink-0 truncate">🔗 ${r.name}</span>
+                        <div class="flex-1 bg-gray-800 rounded h-2">${bar}</div>
+                        <span class="text-xs text-emerald-400 w-10 text-right">${r.pct}%</span>
+                    </div>`;
+            });
         }
+
+        // ──────────────────────────────────────────────────
+        // Khởi tạo
+        // ──────────────────────────────────────────────────
+        buildSidebar(CB_BOTS, 'cb-bot-list', 'loadCBBot', 'cb', 'blue');
+        buildSidebar(CF_BOTS, 'cf-bot-list', 'loadCFBot', 'cf', 'green');
     </script>
 </body>
-
 </html>

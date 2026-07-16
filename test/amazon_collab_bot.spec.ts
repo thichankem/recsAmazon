@@ -1,0 +1,396 @@
+/**
+ * amazon_collab_bot.spec.ts
+ * ═══════════════════════════════════════════════════════════════
+ * Kịch bản ĐÚNG của Collaborative Filtering:
+ *
+ *   Bot vào Amazon, xem sản phẩm A → B → C → D
+ *   Trên mỗi trang sản phẩm, Amazon đã hiển thị:
+ *     "Customers who bought this also bought..."  (ground truth)
+ *
+ *   Bot thu thập tất cả gợi ý đó lại (A_recs ∪ B_recs ∪ ...)
+ *   → Đây là tập sản phẩm mà "người dùng thực" hay mua cùng
+ *
+ *   Mô hình CF của ta cũng nhận [title_A, title_B, title_C, title_D]
+ *   → Trả về top-10 gợi ý
+ *
+ *   So sánh: CF có gợi ý trùng với Amazon không?
+ *   Kết quả lưu vào output/collab-bot-{id}.json
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+import { test } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
+import { execSync } from 'child_process';
+
+// ─────────────────────────────────────────────────────────
+// Gọi Item-Item CF model Python
+// ─────────────────────────────────────────────────────────
+function runCFModel(viewedTitles: string[], topK = 10): string[] {
+    try {
+        const script = path.join(__dirname, '../predict_collaboration.py');
+        const input  = JSON.stringify({ viewed_titles: viewedTitles, top_k: topK, method: 'item_cf' });
+        const stdout = execSync(`python "${script}"`, {
+            input,
+            encoding: 'utf-8',
+            timeout: 180_000,
+            cwd: path.join(__dirname, '..'),
+        });
+        return JSON.parse(stdout.trim()) as string[];
+    } catch (err: any) {
+        console.error('❌ CF model lỗi:', String(err.message).slice(0, 100));
+        return [`Lỗi: ${String(err.message).slice(0, 80)}`];
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+// Đóng popup Vietnam shipping
+// ─────────────────────────────────────────────────────────
+async function dismissPopup(page: any) {
+    try {
+        await page.evaluate(() => {
+            document.querySelectorAll<HTMLElement>('button, input[type="submit"], span').forEach(el => {
+                if (el.textContent?.trim() === 'Dismiss') el.click();
+            });
+        });
+        await page.waitForTimeout(500);
+    } catch { }
+}
+
+// ─────────────────────────────────────────────────────────
+// Vẽ hiệu ứng nhấp nháy
+// ─────────────────────────────────────────────────────────
+async function flash(page: any, ms = 700) {
+    try {
+        const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 };
+        await page.evaluate(({ cx, cy }: { cx: number; cy: number }) => {
+            const el = Object.assign(document.createElement('div'), {});
+            Object.assign(el.style, {
+                position: 'fixed', left: `${cx}px`, top: `${cy}px`,
+                width: '40px', height: '40px', borderRadius: '50%',
+                background: 'rgba(255,120,0,0.85)', border: '3px solid #fff',
+                zIndex: '2147483647', transform: 'translate(-50%,-50%)',
+                pointerEvents: 'none',
+            });
+            document.body.appendChild(el);
+            let s = 1, g = true;
+            const iv = setInterval(() => {
+                s += g ? 0.09 : -0.09;
+                if (s >= 1.8) g = false; else if (s <= 0.9) g = true;
+                el.style.transform = `translate(-50%,-50%) scale(${s})`;
+                el.style.background = g ? 'rgba(255,120,0,.9)' : 'rgba(0,200,120,.9)';
+            }, 55);
+            (window as any).__fi = iv; (window as any).__fe = el;
+        }, { cx: Math.floor(width / 2), cy: Math.floor(height / 2) });
+        await page.waitForTimeout(ms);
+        await page.evaluate(() => { clearInterval((window as any).__fi); (window as any).__fe?.remove(); });
+    } catch { }
+}
+
+// ─────────────────────────────────────────────────────────
+// Crawl 1 sản phẩm: trả về title thực + Amazon "also bought"
+// ─────────────────────────────────────────────────────────
+async function crawlProduct(page: any, keyword: string): Promise<{
+    realTitle: string;
+    amazonAlsoBought: string[];   // gợi ý "cũng mua" của Amazon trên trang này
+}> {
+    console.log(`\n    🔍 Crawl: "${keyword}"`);
+
+    // Vào Amazon tìm kiếm
+    await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 40_000 });
+    await page.waitForTimeout(1200);
+
+    const searchBox = page.locator('#twotabsearchtextbox');
+    if (!(await searchBox.isVisible({ timeout: 5_000 }).catch(() => false))) {
+        console.log('    ⚠️  Captcha! Giải trong 60s...');
+        await page.waitForSelector('#twotabsearchtextbox', { timeout: 60_000 });
+    }
+
+    await searchBox.fill(keyword);
+    await searchBox.press('Enter');
+    await page.waitForSelector('[data-component-type="s-search-result"]', { timeout: 22_000 });
+    await page.waitForTimeout(700);
+    await dismissPopup(page);
+
+    // Lấy tất cả link /dp/ từ kết quả tìm kiếm bằng evaluate
+    const products: { title: string; href: string }[] = await page.evaluate(() => {
+        const out: { title: string; href: string }[] = [];
+        document.querySelectorAll('[data-component-type="s-search-result"]').forEach(card => {
+            const link = card.querySelector<HTMLAnchorElement>('a[href*="/dp/"]');
+            if (!link) return;
+            const title = (card.querySelector('h2')?.textContent || link.textContent || '').trim();
+            const href  = link.getAttribute('href') || '';
+            if (href.includes('/dp/')) out.push({ title, href });
+        });
+        return out;
+    });
+
+    // Tìm kết quả khớp keyword nhất
+    const words = keyword.toLowerCase().split(' ').filter(w => w.length > 3);
+    let best = products[0];
+    let bestScore = 0;
+    for (const p of products) {
+        const score = words.filter(w => p.title.toLowerCase().includes(w)).length;
+        if (score > bestScore) { bestScore = score; best = p; }
+    }
+
+    // Parse URL sạch /dp/ASIN
+    const dpMatch = (best?.href || '').match(/(\/[^?]+\/dp\/[A-Z0-9]{10})/);
+    const productUrl = dpMatch
+        ? 'https://www.amazon.com' + dpMatch[1]
+        : 'https://www.amazon.com' + (best?.href || '').split('?')[0];
+
+    console.log(`    🔗 → ${productUrl.slice(0, 70)}`);
+    await flash(page, 600);
+
+    // Navigate thẳng tới product page (bỏ qua tracking redirect)
+    await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 35_000 });
+    await page.waitForSelector('#productTitle', { timeout: 25_000 });
+    await page.waitForTimeout(800);
+
+    // Lấy tiêu đề thực
+    const realTitle = (await page.locator('#productTitle').innerText().catch(() => keyword)).trim();
+    console.log(`    ✅ Title: "${realTitle.slice(0, 65)}"`);
+
+    // ── QUAN TRỌNG: Scrape "Customers also bought" từ trang này ──
+    // Scroll xuống để load carousel
+    await page.mouse.wheel(0, 1800);
+    await page.waitForTimeout(2500);
+    await page.mouse.wheel(0, 1500);
+    await page.waitForTimeout(1500);
+
+    const amazonAlsoBought: string[] = await page.evaluate(() => {
+        const recs: string[] = [];
+
+        // Selector cho "Customers who bought this also bought"
+        const selectors = [
+            // Carousel tiles trong "also bought" section
+            '[data-client-recs-id] .a-truncate-full',
+            '[data-client-recs-id] span[class*="a-truncate"]',
+            '[data-client-recs-id] .a-text-normal',
+            // Generic carousel cards
+            '.a-carousel-card .a-truncate-full',
+            '.a-carousel-card [class*="a-text-normal"]',
+            // Frequently bought together
+            '#sims-fbt-content .a-truncate-full',
+            // Sponsored/related
+            '[data-reftag="pd_sbs_simh"] .a-text-normal',
+        ];
+
+        for (const sel of selectors) {
+            document.querySelectorAll(sel).forEach(el => {
+                const t = (el as HTMLElement).innerText?.trim() || '';
+                if (t.length > 10 && !recs.includes(t)) recs.push(t);
+            });
+        }
+
+        // Fallback: lấy title của tất cả link trong các section recommendations
+        if (recs.length < 3) {
+            const sections = document.querySelectorAll(
+                '[data-client-recs-id], #similarities_feature_div, #p13n-asin-carousel-wr'
+            );
+            sections.forEach(sec => {
+                sec.querySelectorAll('[aria-label]').forEach(el => {
+                    const label = el.getAttribute('aria-label')?.trim() || '';
+                    if (label.length > 10 && !recs.includes(label)) recs.push(label);
+                });
+            });
+        }
+
+        return recs.slice(0, 15);
+    });
+
+    console.log(`    📦 Amazon "also bought": ${amazonAlsoBought.length} sản phẩm`);
+    if (amazonAlsoBought.length > 0) {
+        console.log(`       → ${amazonAlsoBought[0]?.slice(0, 55)}`);
+    }
+
+    return { realTitle, amazonAlsoBought };
+}
+
+// ─────────────────────────────────────────────────────────
+// 5 kịch bản ColabBot
+// Mỗi bot xem 4 sản phẩm → lấy Amazon recs từ mỗi trang
+// → Gộp làm ground truth → so với CF model
+// ─────────────────────────────────────────────────────────
+const COLAB_BOTS = [
+    {
+        id: 1,
+        name: 'ColabBot_Apple_Ecosystem',
+        scenario: 'User xem phụ kiện Apple → Amazon & CF gợi ý thêm đồ Apple',
+        viewedKeywords: [
+            'Apple AirPods Pro 2nd generation',
+            'Apple MagSafe charger iPhone 15',
+            'Apple Lightning USB-C cable',
+            'Apple iPhone 15 silicone case MagSafe',
+        ],
+    },
+    {
+        id: 2,
+        name: 'ColabBot_Gaming_Mobile',
+        scenario: 'User xem controller gaming → Amazon & CF gợi ý gear gaming',
+        viewedKeywords: [
+            'Razer Kishi V2 mobile game controller iPhone',
+            'GameSir G8 Galileo USB-C controller Android',
+            'Backbone One PlayStation edition controller',
+            'SteelSeries Nimbus wireless controller iOS',
+        ],
+    },
+    {
+        id: 3,
+        name: 'ColabBot_Phone_Protection',
+        scenario: 'User xem ốp + film bảo vệ → Amazon & CF gợi ý thêm đồ bảo vệ',
+        viewedKeywords: [
+            'OtterBox Commuter Series iPhone 16 case',
+            'Spigen Glas tR tempered glass iPhone',
+            'Mous limitless shockproof phone case',
+            'ESR HaloLock MagSafe case iPhone 15',
+        ],
+    },
+    {
+        id: 4,
+        name: 'ColabBot_Audio_Gear',
+        scenario: 'User xem tai nghe cao cấp → Amazon & CF gợi ý thêm audio accessories',
+        viewedKeywords: [
+            'Sony WH-1000XM5 noise cancelling headphones',
+            'Bose QuietComfort 45 wireless headphones',
+            'JBL Clip 4 portable Bluetooth speaker',
+            'Anker Soundcore Liberty 4 NC earbuds',
+        ],
+    },
+    {
+        id: 5,
+        name: 'ColabBot_Power_Charging',
+        scenario: 'User xem sạc & pin dự phòng → Amazon & CF gợi ý thêm charging accessories',
+        viewedKeywords: [
+            'Anker 737 power bank 24000mAh USB-C',
+            'Baseus 65W GaN charger USB-C iPhone',
+            'Belkin 15W wireless charging pad MagSafe',
+            'Ugreen USB-C cable 100W fast charging',
+        ],
+    },
+];
+
+test.describe.configure({ mode: 'serial' });
+
+for (const bot of COLAB_BOTS) {
+    test(`[CF] ColabBot #${bot.id} – ${bot.name}`, async ({ page, context }) => {
+        test.setTimeout(720_000);   // 12 phút (crawl 4 trang × ~2 phút)
+
+        await context.setExtraHTTPHeaders({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+                'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        });
+
+        console.log(`\n${'═'.repeat(60)}`);
+        console.log(`🤖 ${bot.name}`);
+        console.log(`📌 ${bot.scenario}`);
+        console.log(`${'═'.repeat(60)}`);
+
+        // ── BƯỚC 1: Crawl từng sản phẩm, lấy title + Amazon "also bought" ──
+        const crawledTitles:    string[]   = [];
+        const amazonGroundTruth: string[]  = [];  // tổng hợp từ TẤT CẢ trang
+        const perProductData: {
+            keyword: string;
+            realTitle: string;
+            amazonRecs: string[];
+        }[] = [];
+
+        for (let i = 0; i < bot.viewedKeywords.length; i++) {
+            const kw = bot.viewedKeywords[i];
+            console.log(`\n  [${i + 1}/${bot.viewedKeywords.length}] Sản phẩm ${String.fromCharCode(65 + i)}:`);
+
+            const { realTitle, amazonAlsoBought } = await crawlProduct(page, kw);
+            crawledTitles.push(realTitle);
+
+            // Gộp vào ground truth (tránh duplicate)
+            for (const r of amazonAlsoBought) {
+                if (!amazonGroundTruth.includes(r)) {
+                    amazonGroundTruth.push(r);
+                }
+            }
+
+            perProductData.push({ keyword: kw, realTitle, amazonRecs: amazonAlsoBought });
+
+            // Delay giữa các request để tránh bị block
+            if (i < bot.viewedKeywords.length - 1) {
+                await page.waitForTimeout(2500);
+            }
+        }
+
+        console.log(`\n  📋 Đã crawl ${crawledTitles.length} tiêu đề thực`);
+        console.log(`  📦 Tổng Amazon ground truth: ${amazonGroundTruth.length} sản phẩm`);
+
+        // ── BƯỚC 2: Chạy CF model ─────────────────────────────────────
+        console.log('\n  🧠 Chạy Item-Item CF model...');
+        const cfRecs = runCFModel(crawledTitles, 10);
+
+        console.log(`  🎯 CF gợi ý ${cfRecs.length} sản phẩm:`);
+        cfRecs.slice(0, 3).forEach((r, i) =>
+            console.log(`     ${i + 1}. ${r.slice(0, 65)}`));
+
+        // ── BƯỚC 3: So sánh CF vs Amazon ground truth ─────────────────
+        const gtLower = amazonGroundTruth.map(t => t.toLowerCase());
+        let matched = 0;
+        const matchFlags: boolean[] = cfRecs.map(rec => {
+            const rl = rec.toLowerCase();
+            const hit = gtLower.some(a =>
+                a.includes(rl.slice(0, 30)) || rl.includes(a.slice(0, 30))
+            );
+            if (hit) matched++;
+            return hit;
+        });
+
+        const precision = amazonGroundTruth.length > 0
+            ? Math.round((matched / Math.min(cfRecs.length, amazonGroundTruth.length)) * 100)
+            : 0;
+
+        console.log(`\n  📊 Kết quả so sánh:`);
+        console.log(`     CF recommendations: ${cfRecs.length}`);
+        console.log(`     Amazon ground truth: ${amazonGroundTruth.length}`);
+        console.log(`     Khớp: ${matched}  |  Precision: ${precision}%`);
+
+        // ── BƯỚC 4: Lưu JSON ─────────────────────────────────────────
+        const outDir = path.join(__dirname, '../output');
+        if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+
+        fs.writeFileSync(
+            path.join(outDir, `collab-bot-${bot.id}.json`),
+            JSON.stringify({
+                botId: bot.id,
+                botName: bot.name,
+                scenario: bot.scenario,
+                algorithm: 'Item-Item Collaborative Filtering',
+                timestamp: new Date().toISOString(),
+
+                // Dữ liệu đầu vào
+                inputData: {
+                    originalKeywords: bot.viewedKeywords,  // keyword tìm kiếm
+                    crawledTitles,                          // tiêu đề thực từ Amazon
+                },
+
+                // Gợi ý từ mô hình CF
+                collabModelOutput: cfRecs,
+
+                // Ground truth từ Amazon (tổng hợp từ TẤT CẢ trang sản phẩm đã crawl)
+                amazonGroundTruth,
+
+                // Chi tiết từng sản phẩm đã crawl
+                perProductData,
+
+                // Đánh giá
+                evaluation: {
+                    cfRecsCount: cfRecs.length,
+                    amazonGroundTruthCount: amazonGroundTruth.length,
+                    matched,
+                    precisionPercent: precision,
+                    matchFlags,
+                },
+            }, null, 2),
+            'utf-8'
+        );
+
+        console.log(`\n  ✅ Xong → output/collab-bot-${bot.id}.json`);
+        console.log(`${'═'.repeat(60)}`);
+    });
+}

@@ -1,194 +1,250 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
 // ─────────────────────────────────────────────────────────
-// Gọi model Content-Based Python (.pkl) từ predict.py
+// Gọi model Content-Based Python (.pkl)
 // ─────────────────────────────────────────────────────────
 function runContentBasedModel(title: string, description: string): string[] {
     try {
         const scriptPath = path.join(__dirname, '../predict.py');
-        const input = JSON.stringify({ title, description });
         const stdout = execSync(`python "${scriptPath}"`, {
-            input,
+            input: JSON.stringify({ title, description }),
             encoding: 'utf-8',
-            timeout: 120_000,   // 2 phút – cần time để load pkl lần đầu
-            cwd: path.join(__dirname, '..'), // chạy từ thư mục gốc để tìm đúng model/
+            timeout: 120_000,
+            cwd: path.join(__dirname, '..'),
         });
         return JSON.parse(stdout.trim()) as string[];
     } catch (err: any) {
-        console.error('❌ Lỗi model Python:', err.message);
-        return [`Lỗi: ${err.message.slice(0, 80)}`];
+        return [`Lỗi: ${String(err.message).slice(0, 80)}`];
     }
 }
 
 // ─────────────────────────────────────────────────────────
-// Hiệu ứng nhấp nháy trực quan trước khi click
+// Vẽ hiệu ứng nhấp nháy (không block flow)
 // ─────────────────────────────────────────────────────────
-async function flashAndClick(page: any, locator: any, label = '') {
+async function showFlash(page: any, x: number, y: number, ms = 800) {
     try {
-        await locator.scrollIntoViewIfNeeded();
-        const box = await locator.boundingBox();
-        if (box) {
-            const cx = box.x + box.width / 2;
-            const cy = box.y + box.height / 2;
-
-            await page.evaluate(({ x, y }: { x: number; y: number }) => {
-                const el = document.createElement('div');
-                Object.assign(el.style, {
-                    position: 'fixed', left: `${x}px`, top: `${y}px`,
-                    width: '36px', height: '36px', borderRadius: '50%',
-                    background: 'rgba(255,0,0,0.65)', border: '3px solid #fff',
-                    zIndex: '2147483647', transform: 'translate(-50%,-50%)',
-                    pointerEvents: 'none', transition: 'transform .12s',
-                });
-                document.body.appendChild(el);
-                let s = 1; let g = true;
-                const iv = setInterval(() => {
-                    s += g ? 0.08 : -0.08;
-                    if (s >= 1.8) g = false; else if (s <= 0.9) g = true;
-                    el.style.transform = `translate(-50%,-50%) scale(${s})`;
-                    el.style.background = g ? 'rgba(255,30,30,0.75)' : 'rgba(30,200,80,0.75)';
-                }, 60);
-                (window as any).__botIv = iv; (window as any).__botEl = el;
-            }, { x: cx, y: cy });
-
-            await page.waitForTimeout(1500);   // nhấp nháy 1.5s cho đẹp mắt
-
-            await page.evaluate(() => {
-                clearInterval((window as any).__botIv);
-                (window as any).__botEl?.remove();
+        await page.evaluate(({ cx, cy }: { cx: number; cy: number }) => {
+            const el = document.createElement('div');
+            Object.assign(el.style, {
+                position: 'fixed', left: `${cx}px`, top: `${cy}px`,
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: 'rgba(255,60,0,0.8)', border: '3px solid #fff',
+                zIndex: '2147483647', transform: 'translate(-50%,-50%)',
+                pointerEvents: 'none',
             });
+            document.body.appendChild(el);
+            let s = 1; let g = true;
+            const iv = setInterval(() => {
+                s += g ? 0.09 : -0.09;
+                if (s >= 1.8) g = false; else if (s <= 0.9) g = true;
+                el.style.transform = `translate(-50%,-50%) scale(${s})`;
+                el.style.background = g ? 'rgba(255,60,0,0.85)' : 'rgba(0,190,255,0.85)';
+            }, 60);
+            (window as any).__bIv = iv; (window as any).__bEl = el;
+        }, { cx: x, cy: y });
+        await page.waitForTimeout(ms);
+        await page.evaluate(() => {
+            clearInterval((window as any).__bIv);
+            (window as any).__bEl?.remove();
+        });
+    } catch { /* page navigated */ }
+}
+
+// ─────────────────────────────────────────────────────────
+// Đóng popup Vietnam – click trực tiếp vào nút Dismiss
+// ─────────────────────────────────────────────────────────
+async function dismissVietnamPopup(page: any) {
+    try {
+        // Tìm và click nút Dismiss trong popup Vietnam shipping
+        const closed = await page.evaluate(() => {
+            // Tìm tất cả button/input/span có chữ "Dismiss"
+            const elements = document.querySelectorAll('button, input[type="submit"], span[class*="a-button"]');
+            for (const el of elements) {
+                if (el.textContent?.trim() === 'Dismiss') {
+                    (el as HTMLElement).click();
+                    return true;
+                }
+            }
+            // Fallback: tìm trong input submit value="Dismiss"
+            const inputs = document.querySelectorAll('input[value="Dismiss"]');
+            for (const inp of inputs) {
+                (inp as HTMLElement).click();
+                return true;
+            }
+            return false;
+        });
+        if (closed) {
+            console.log('  ℹ️  Đã đóng popup Vietnam');
+            await page.waitForTimeout(600);
         }
     } catch { /* ignore */ }
+}
 
-    if (label) console.log(`👉 Click: "${label.slice(0, 60)}"`);
-    await locator.click({ force: true, timeout: 15_000 });
+// ─────────────────────────────────────────────────────────
+// Dùng page.evaluate để lấy toàn bộ product {title, href}
+// từ DOM – đáng tin hơn Playwright locator cho lazy content
+// ─────────────────────────────────────────────────────────
+async function getSearchResults(page: any): Promise<{ title: string; href: string }[]> {
+    return page.evaluate(() => {
+        const cards = document.querySelectorAll('[data-component-type="s-search-result"]');
+        const results: { title: string; href: string }[] = [];
+        for (const card of cards) {
+            // Thử h2 a trước
+            const h2link = card.querySelector('h2 a') as HTMLAnchorElement | null;
+            if (h2link) {
+                const title = h2link.textContent?.trim() || '';
+                const href = h2link.getAttribute('href') || '';
+                if (href.includes('/dp/') || href.startsWith('/')) {
+                    results.push({ title, href });
+                    continue;
+                }
+            }
+            // Fallback: tìm bất kỳ link nào dẫn tới /dp/
+            const dpLink = card.querySelector('a[href*="/dp/"]') as HTMLAnchorElement | null;
+            if (dpLink) {
+                const title = (card.querySelector('h2')?.textContent || dpLink.textContent || '').trim();
+                results.push({ title, href: dpLink.getAttribute('href') || '' });
+            }
+        }
+        return results;
+    });
+}
+
+// Trích ASIN path từ href, trả về URL sạch
+function cleanAmazonUrl(href: string): string {
+    if (!href) return '';
+    if (href.startsWith('http') && href.includes('/dp/')) {
+        const m = href.match(/(https?:\/\/[^/]+\/[^?]+\/dp\/[A-Z0-9]{10})/);
+        return m ? m[1] : href.split('?')[0];
+    }
+    const m = href.match(/(\/[^?]+\/dp\/[A-Z0-9]{10})/);
+    if (m) return 'https://www.amazon.com' + m[1];
+    if (href.startsWith('/')) return 'https://www.amazon.com' + href.split('?')[0];
+    return '';
 }
 
 // ─────────────────────────────────────────────────────────
 // 10 Bot AI – Content-Based test
 // ─────────────────────────────────────────────────────────
 const AI_BOTS = [
-    { id: 1,  name: 'Bot_Apple_Fan',       search: 'iPhone 16 pro max case',           target: 'iphone',   onlyPhone: false },
-    { id: 2,  name: 'Bot_Samsung_Loyal',   search: 'Samsung Galaxy S25 case cover',    target: 'samsung',  onlyPhone: false },
-    { id: 3,  name: 'Bot_Gamer',           search: 'ROG Phone gaming accessories',      target: 'rog',      onlyPhone: false },
-    { id: 4,  name: 'Bot_Audiophile',      search: 'Wireless Earbuds Bluetooth 2024',  target: 'earbuds',  onlyPhone: false },
-    { id: 5,  name: 'Bot_Case_Hunter',     search: 'Heavy Duty Phone Case drop proof',  target: 'case',     onlyPhone: false },
-    { id: 6,  name: 'Bot_Power_User',      search: 'Anker Power Bank 20000mAh fast',   target: 'power',    onlyPhone: false },
-    { id: 7,  name: 'Bot_Creator',         search: 'Phone Camera Lens Clip-on kit',    target: 'lens',     onlyPhone: false },
-    { id: 8,  name: 'Bot_Minimalist',      search: 'MagSafe Wallet Card Holder slim',  target: 'magsafe',  onlyPhone: false },
-    { id: 9,  name: 'Bot_Screen',          search: 'Tempered Glass Screen Protector',  target: 'protector',onlyPhone: false },
-    { id: 10, name: 'Bot_Budget',          search: 'Unlocked Android Phone under 200', target: 'phone',    onlyPhone: false },
+    { id: 1,  name: 'Bot_Apple_Fan',       search: 'Apple iPhone 16 Pro Max phone',           target: 'iphone 16' },
+    { id: 2,  name: 'Bot_Samsung_Loyal',   search: 'Samsung Galaxy S25 Ultra smartphone',     target: 'galaxy s25' },
+    { id: 3,  name: 'Bot_Gamer',           search: 'ASUS ROG Phone 9 gaming smartphone',      target: 'rog phone' },
+    { id: 4,  name: 'Bot_Audiophile',      search: 'Sony WH-1000XM5 wireless headphones',     target: 'wh-1000xm5' },
+    { id: 5,  name: 'Bot_Case_Hunter',     search: 'OtterBox Defender Series iPhone 16 case', target: 'otterbox' },
+    { id: 6,  name: 'Bot_Power_User',      search: 'Anker 737 Power Bank 24000mAh',           target: 'anker' },
+    { id: 7,  name: 'Bot_Creator',         search: 'Moment wide angle lens iPhone',           target: 'moment' },
+    { id: 8,  name: 'Bot_Minimalist',      search: 'Apple MagSafe Wallet iPhone',             target: 'magsafe' },
+    { id: 9,  name: 'Bot_Screen',          search: 'Belkin screen protector iPhone 16',       target: 'belkin' },
+    { id: 10, name: 'Bot_Budget',          search: 'Motorola Moto G 5G unlocked phone',       target: 'motorola' },
 ];
 
 test.describe.configure({ mode: 'serial' });
 
 for (const bot of AI_BOTS) {
     test(`[CB] Bot #${bot.id} ${bot.name}`, async ({ page, context }) => {
-        test.setTimeout(120_000);   // 2 phút mỗi bot
+        test.setTimeout(180_000);
 
-        // Đặt UA thực tế để tránh bot-detection đơn giản
         await context.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
                 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         });
 
-        // ── BƯỚC 1: Tới Amazon & tìm kiếm ──────────────────────
         console.log(`\n🤖 ${bot.name} → "${bot.search}"`);
+
+        // ── BƯỚC 1: Tìm kiếm ─────────────────────────────────────
         await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 40_000 });
         await page.waitForTimeout(1500);
 
-        // Xử lý Captcha nếu có
+        // Captcha guard
         const searchBox = page.locator('#twotabsearchtextbox');
         if (!(await searchBox.isVisible({ timeout: 5_000 }).catch(() => false))) {
-            console.log('⚠️  Captcha? Vui lòng giải nhanh trong 45s...');
-            await page.waitForSelector('#twotabsearchtextbox', { timeout: 45_000 });
+            console.log('  ⚠️  Captcha! Giải trong 60s...');
+            await page.waitForSelector('#twotabsearchtextbox', { timeout: 60_000 });
         }
         await searchBox.fill(bot.search);
         await searchBox.press('Enter');
-
-        // Đợi kết quả xuất hiện
         await page.waitForSelector('[data-component-type="s-search-result"]', { timeout: 25_000 });
         await page.waitForTimeout(800);
 
-        // Đóng popup nếu có
-        const dismissBtn = page.locator('button:has-text("Dismiss"), [data-action-type="DISMISS"]').first();
-        if (await dismissBtn.isVisible({ timeout: 2_000 }).catch(() => false)) {
-            await dismissBtn.click({ force: true }).catch(() => {});
+        // Đóng popup Vietnam
+        await dismissVietnamPopup(page);
+        await page.waitForTimeout(400);
+
+        // ── BƯỚC 2: Lấy product list từ DOM, chọn best match ──────
+        const results = await getSearchResults(page);
+        console.log(`  🔍 Tìm thấy ${results.length} kết quả có link /dp/`);
+
+        // Tìm sản phẩm khớp target keyword
+        const matched = results.find(r => r.title.toLowerCase().includes(bot.target));
+        const chosen = matched || results.find(r => r.href.includes('/dp/')) || results[0];
+
+        if (!chosen || !chosen.href) {
+            throw new Error(`Không tìm được sản phẩm nào có link hợp lệ cho "${bot.search}"`);
         }
 
-        // ── BƯỚC 2: Click sản phẩm phù hợp nhất ───────────────
-        const cards = page.locator('[data-component-type="s-search-result"]');
-        const total = await cards.count();
-        console.log(`🔍 Tìm thấy ${total} kết quả`);
-
-        let clicked = false;
-        for (let i = 0; i < Math.min(total, 12); i++) {
-            const card = cards.nth(i);
-            const link = card.locator('h2 a').first();
-            const title = (await link.textContent().catch(() => '')).trim().toLowerCase();
-
-            if (title.includes(bot.target)) {
-                await flashAndClick(page, link, title);
-                clicked = true;
-                break;
-            }
+        const productUrl = cleanAmazonUrl(chosen.href);
+        if (!productUrl) {
+            throw new Error(`Không parse được URL từ href: ${chosen.href.slice(0, 80)}`);
         }
 
-        if (!clicked && total > 0) {
-            console.log('⚠️  Không khớp target, click sản phẩm đầu tiên');
-            const firstLink = cards.first().locator('h2 a').first();
-            await flashAndClick(page, firstLink, 'first result');
-        }
+        console.log(`  ✅ Chọn: "${(chosen.title || '(no title)').slice(0, 60)}"`);
+        console.log(`  🔗 URL: ${productUrl}`);
 
-        // Chờ trang chi tiết load xong
+        // Vẽ flash tại vị trí giữa màn hình để biểu thị đang navigate
+        await showFlash(page, 640, 360, 700);
+
+        // ── BƯỚC 3: Navigate thẳng tới product page ───────────────
+        await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 40_000 });
         await page.waitForSelector('#productTitle', { timeout: 30_000 });
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(800);
 
-        // ── BƯỚC 3: Lấy nội dung sản phẩm nguồn ───────────────
+        // ── BƯỚC 4: Lấy nội dung sản phẩm ───────────────────────
         const sourceTitle = (await page.locator('#productTitle').innerText().catch(() => '')).trim();
         const bullets = await page.locator('#feature-bullets li span.a-list-item').allInnerTexts().catch(() => []);
         const descText = await page.locator('#productDescription').innerText().catch(() => '');
-        const sourceDescription = [...bullets.map(b => b.trim()), descText.trim()]
+        const sourceDescription = [...bullets.map((b: string) => b.trim()), descText.trim()]
             .filter(Boolean).join('\n');
+        console.log(`  📝 "${sourceTitle.slice(0, 65)}"`);
 
-        console.log(`📝 Sản phẩm: "${sourceTitle.slice(0, 60)}..."`);
-
-        // ── BƯỚC 4: Gợi ý Amazon (ground truth) ────────────────
-        await page.mouse.wheel(0, 1400);
-        await page.waitForTimeout(2500);
-
-        const recItems = page.locator('[data-client-recs-id], .a-carousel-card, .recs-card');
-        const recCount = await recItems.count();
+        // ── BƯỚC 5: Gợi ý Amazon (ground truth) ─────────────────
         const amazonRecs: string[] = [];
-        for (let i = 0; i < Math.min(recCount, 5); i++) {
-            const t = await recItems.nth(i).locator('span, h2').first().innerText().catch(() => '');
-            if (t.trim().length > 5) amazonRecs.push(t.trim());
-        }
+        try {
+            await page.mouse.wheel(0, 1500);
+            await page.waitForTimeout(2500);
+            const recItems = page.locator('[data-client-recs-id], .a-carousel-card');
+            const recCount = await recItems.count();
+            for (let i = 0; i < Math.min(recCount, 5); i++) {
+                const t = await recItems.nth(i).locator('span, h2').first().innerText().catch(() => '');
+                if (t.trim().length > 5) amazonRecs.push(t.trim());
+            }
+        } catch { /* Amazon có thể đóng session sau khi scroll */ }
+        console.log(`  📊 Amazon gợi ý ${amazonRecs.length} sản phẩm`);
 
-        // ── BƯỚC 5: Model Content-Based ─────────────────────────
-        console.log('🧠 Đang gọi model pkl...');
+        // ── BƯỚC 6: Model .pkl ────────────────────────────────────
+        console.log('  🧠 Gọi model pkl...');
         const modelRecs = runContentBasedModel(sourceTitle, sourceDescription);
-        console.log('🎯 Model gợi ý:', modelRecs);
+        console.log('  🎯 Model:', modelRecs.slice(0, 3));
 
-        // ── BƯỚC 6: Ghi file kết quả ────────────────────────────
+        // ── BƯỚC 7: Lưu JSON ─────────────────────────────────────
         const outDir = path.join(__dirname, '../output');
         if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-
         fs.writeFileSync(
             path.join(outDir, `content-based-bot-${bot.id}.json`),
             JSON.stringify({
                 botId: bot.id, botName: bot.name,
                 testCase: `Content-Based: ${bot.search}`,
                 timestamp: new Date().toISOString(),
+                productUrl,
                 inputData: { title: sourceTitle, description: sourceDescription },
                 expectedOutput: amazonRecs,
                 myModelOutput: modelRecs,
             }, null, 2),
             'utf-8'
         );
-        console.log(`✅ Bot #${bot.id} xong!`);
+        console.log(`  ✅ Bot #${bot.id} xong!`);
     });
 }
