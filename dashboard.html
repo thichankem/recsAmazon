@@ -74,26 +74,43 @@
             </div>
         </header>
 
-        <!-- Tab switcher -->
-        <div class="flex gap-2 mb-6">
-            <button id="tab-cb" onclick="switchTab('cb')"
-                class="tab-active bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700">
-                📄 Content-Based Bots (10)
-            </button>
-            <button id="tab-cf" onclick="switchTab('cf')"
-                class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
-                🔗 Collaboration Bots (5)
-            </button>
-            <button id="tab-compare" onclick="switchTab('compare')"
-                class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
-                📊 So sánh tổng hợp
-            </button>
+        <!-- Tab switcher & Action Buttons -->
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div class="flex gap-2">
+                <button id="tab-compare" onclick="switchTab('compare')"
+                    class="tab-active bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700">
+                    📊 Bảng tin AI (Overview)
+                </button>
+                <button id="tab-cb" onclick="switchTab('cb')"
+                    class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
+                    📄 Content-Based Bots
+                </button>
+                <button id="tab-cf" onclick="switchTab('cf')"
+                    class="bot-btn px-5 py-2 rounded-lg text-sm font-semibold text-gray-400 border border-gray-700 hover:bg-gray-800">
+                    🔗 Collaboration Bots
+                </button>
+            </div>
+            
+            <div class="flex gap-2">
+                <button onclick="runBot('CB')" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+                    ▶ Chạy tất cả CB Bots
+                </button>
+                <button onclick="runBot('CF')" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-95">
+                    ▶ Chạy tất cả CF Bots
+                </button>
+                <div class="flex items-center gap-2 bg-purple-900/40 border border-purple-500/30 px-3 py-1.5 rounded-lg text-sm">
+                    <input type="text" id="customUrl" placeholder="Nhập link bất kỳ..." class="bg-gray-900 text-white px-2 py-1 rounded border border-gray-700 text-xs w-48 outline-none focus:border-purple-500">
+                    <button onclick="runBot('CB', 'url')" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded text-xs font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95">
+                        ▶ Cào Web
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- ═══════════════════════════════════════════════════ -->
         <!-- TAB: Content-Based                                  -->
         <!-- ═══════════════════════════════════════════════════ -->
-        <div id="panel-cb">
+        <div id="panel-cb" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
                 <!-- Sidebar bots -->
                 <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
@@ -200,57 +217,41 @@
         </div>
 
         <!-- ═══════════════════════════════════════════════════ -->
-        <!-- TAB: So sánh tổng hợp                              -->
+        <!-- TAB: So sánh tổng hợp (Dashboard Chính)            -->
         <!-- ═══════════════════════════════════════════════════ -->
-        <div id="panel-compare" class="hidden space-y-6">
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                <h2 class="text-lg font-bold text-white mb-5">
-                    📊 Bảng so sánh: Content-Based vs Collaborative Filtering
-                </h2>
-
-                <!-- Summary cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-blue-700/30">
-                        <p class="text-xs text-gray-400 mb-1">CB Avg Match Rate</p>
-                        <p id="cmp-cb-avg" class="text-3xl font-bold text-blue-400">—</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-emerald-700/30">
-                        <p class="text-xs text-gray-400 mb-1">CF Avg Match Rate</p>
-                        <p id="cmp-cf-avg" class="text-3xl font-bold text-emerald-400">—</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
-                        <p class="text-xs text-gray-400 mb-1">CB Bots chạy xong</p>
-                        <p id="cmp-cb-done" class="text-3xl font-bold text-gray-300">—</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
-                        <p class="text-xs text-gray-400 mb-1">CF Bots chạy xong</p>
-                        <p id="cmp-cf-done" class="text-3xl font-bold text-gray-300">—</p>
-                    </div>
+        <div id="panel-compare" class="space-y-6">
+            <!-- Summary cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div class="bg-gray-800/80 p-4 rounded-xl text-center border border-blue-700/30 shadow-lg">
+                    <p class="text-xs text-gray-400 mb-1">CB Avg Match Rate</p>
+                    <p id="cmp-cb-avg" class="text-3xl font-bold text-blue-400 drop-shadow-md">—</p>
                 </div>
-
-                <!-- Winner banner -->
-                <div id="winner-banner" class="hidden mb-6 p-4 rounded-xl text-center font-bold text-lg border"></div>
-
-                <!-- Detail table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-gray-700 text-gray-400 text-xs uppercase">
-                                <th class="text-left py-2 pr-4">Tiêu chí</th>
-                                <th class="text-center py-2 px-4 text-blue-400">📄 Content-Based</th>
-                                <th class="text-center py-2 px-4 text-emerald-400">🔗 Collaborative</th>
-                                <th class="text-center py-2 pl-4">Nhận xét</th>
-                            </tr>
-                        </thead>
-                        <tbody id="compare-table" class="divide-y divide-gray-800"></tbody>
-                    </table>
+                <div class="bg-gray-800/80 p-4 rounded-xl text-center border border-emerald-700/30 shadow-lg">
+                    <p class="text-xs text-gray-400 mb-1">CF Avg Match Rate</p>
+                    <p id="cmp-cf-avg" class="text-3xl font-bold text-emerald-400 drop-shadow-md">—</p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-xl text-center border border-gray-700">
+                    <p class="text-xs text-gray-400 mb-1">CB Bots chạy xong</p>
+                    <p id="cmp-cb-done" class="text-2xl font-bold text-gray-300">—</p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-xl text-center border border-gray-700">
+                    <p class="text-xs text-gray-400 mb-1">CF Bots chạy xong</p>
+                    <p id="cmp-cf-done" class="text-2xl font-bold text-gray-300">—</p>
                 </div>
             </div>
 
-            <!-- Per-bot breakdown -->
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                <h3 class="text-base font-semibold text-gray-300 mb-4">Chi tiết từng Bot</h3>
-                <div id="compare-detail" class="space-y-3"></div>
+            <!-- Winner banner -->
+            <div id="winner-banner" class="hidden p-4 rounded-xl text-center font-bold text-lg border shadow-lg backdrop-blur-sm"></div>
+
+            <!-- Bot Feed Grid -->
+            <div class="mt-8">
+                <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-800 pb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+                    Bảng tin hoạt động chi tiết của Bot
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="bot-feed">
+                    <p class="text-gray-500 italic text-sm">Đang tải dữ liệu...</p>
+                </div>
             </div>
         </div>
 
@@ -259,18 +260,19 @@
     <script>
         // ──────────────────────────────────────────────────
         // Config bots
-        // ──────────────────────────────────────────────────
+        // ──────────────────────────────────────────────────        // Cấu hình danh sách Bots
         const CB_BOTS = [
-            { id: 1,  name: 'Bot_Apple_Fan' },
-            { id: 2,  name: 'Bot_Samsung_Loyal' },
-            { id: 3,  name: 'Bot_Gamer' },
-            { id: 4,  name: 'Bot_Audiophile' },
-            { id: 5,  name: 'Bot_Case_Hunter' },
-            { id: 6,  name: 'Bot_Power_User' },
-            { id: 7,  name: 'Bot_Creator' },
-            { id: 8,  name: 'Bot_Minimalist' },
-            { id: 9,  name: 'Bot_Screen' },
-            { id: 10, name: 'Bot_Budget' },
+            { id: 1, name: "CB_Bose_Headphones" },
+            { id: 2, name: "CB_Anker_Charger" },
+            { id: 3, name: "CB_Razer_Mouse" },
+            { id: 4, name: "CB_Samsung_S23" },
+            { id: 5, name: "CB_Apple_Watch" },
+            { id: 6, name: "CB_SanDisk_SSD" },
+            { id: 7, name: "CB_Kindle_Paperwhite" },
+            { id: 8, name: "CB_Logitech_Webcam" },
+            { id: 9, name: "CB_Spigen_Case" },
+            { id: 10, name: "CB_Sony_Camera" },
+            { id: 'url', name: "🌐 CB_Custom_URL_Bot" }
         ];
 
         const CF_BOTS = [
@@ -337,22 +339,69 @@
         }
 
         // ──────────────────────────────────────────────────
-        // Tính overlap metric
+        // Tính overlap metric (Advanced Fuzzy & Brand Matching)
         // ──────────────────────────────────────────────────
+        function extractKeywords(str) {
+            const ignore = new Set(["for", "with", "the", "and", "case", "cover", "compatible", "protector", "screen", "black", "blue", "red", "white", "pack", "inch", "pro", "max", "plus"]);
+            return new Set(str.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !ignore.has(w)));
+        }
+
+        function getBrand(str) {
+            const s = str.toLowerCase();
+            if (s.includes('apple') || s.includes('iphone') || s.includes('ipad') || s.includes('macbook') || s.includes('airpods')) return 'apple';
+            if (s.includes('samsung') || s.includes('galaxy')) return 'samsung';
+            if (s.includes('sony') || s.includes('playstation') || s.includes('ps4') || s.includes('ps5')) return 'sony';
+            if (s.includes('nintendo') || s.includes('switch')) return 'nintendo';
+            if (s.includes('microsoft') || s.includes('xbox')) return 'microsoft';
+            if (s.includes('bose')) return 'bose';
+            if (s.includes('anker')) return 'anker';
+            if (s.includes('razer')) return 'razer';
+            if (s.includes('logitech')) return 'logitech';
+            return null;
+        }
+
+        function isMatch(s1, s2) {
+            const b1 = getBrand(s1);
+            const b2 = getBrand(s2);
+            
+            // Nếu thuộc 2 hãng ĐỐI LẬP NHAU (vd Apple vs Samsung) -> CHẮC CHẮN SAI (Chặn luôn)
+            if (b1 && b2 && b1 !== b2) return false; 
+            
+            // Nếu không khắc hệ, bắt đầu so từ khoá
+            const set1 = extractKeywords(s1);
+            const set2 = extractKeywords(s2);
+            let common = 0;
+            for (let w of set1) {
+                if (set2.has(w)) common++;
+            }
+            
+            // Trùng >= 2 từ khoá -> OK (vd: "iphone" & "14" hoặc "galaxy" & "s23")
+            if (common >= 2) return true; 
+            
+            // Trùng 1 từ khoá cốt lõi dài >= 5 -> OK (vd: "playstation", "controller", "charger")
+            for (let w of set1) {
+                if (set2.has(w) && w.length >= 5) return true; 
+            }
+            return false;
+        }
+
         function calcOverlap(modelRecs, amazonRecs) {
-            if (!modelRecs?.length || !amazonRecs?.length) return { matched: 0, total: 0, pct: 0 };
-            const amzLower = amazonRecs.map(s => s.toLowerCase());
+            if (!modelRecs?.length || !amazonRecs?.length) return { matched: 0, total: 0, pct: 0, flags: [] };
             let matched = 0;
             const flags = modelRecs.map(rec => {
-                const rl = rec.toLowerCase();
-                const hit = amzLower.some(a =>
-                    a.includes(rl.slice(0, 30)) || rl.includes(a.slice(0, 30))
-                );
-                if (hit) matched++;
-                return hit;
+                let hitStr = null;
+                for (let a of amazonRecs) {
+                    if (isMatch(rec, a)) {
+                        hitStr = a;
+                        break;
+                    }
+                }
+                if (hitStr) matched++;
+                return hitStr; // Trả về chuỗi Amazon Ground truth khớp
             });
-            const pct = Math.round((matched / amazonRecs.length) * 100);
-            return { matched, total: amazonRecs.length, pct, flags };
+            const total = modelRecs.length;
+            const pct = total > 0 ? Math.round((matched / total) * 100) : 0;
+            return { matched, total, pct, flags };
         }
 
         // ──────────────────────────────────────────────────
@@ -366,10 +415,14 @@
                 return;
             }
             items.forEach((item, i) => {
-                const isMatch = flags ? flags[i] : false;
+                const matchStr = flags ? flags[i] : null;
                 const li = document.createElement('li');
-                li.className = `rec-item ${flags ? (isMatch ? 'rec-matched text-emerald-200' : 'rec-unmatched text-gray-400') : 'text-gray-300'}`;
-                li.textContent = `${i + 1}. ${item}`;
+                li.className = `rec-item ${flags ? (matchStr ? 'rec-matched text-emerald-200 bg-emerald-900/10' : 'rec-unmatched text-gray-500') : 'text-gray-300'}`;
+                
+                li.innerHTML = `<span class="block">${i + 1}. ${item}</span>`;
+                if (matchStr) {
+                    li.innerHTML += `<span class="block text-xs text-emerald-400/80 mt-1.5 pl-3 ml-2 border-l border-emerald-500/40">✓ Khớp: ${matchStr}</span>`;
+                }
                 ul.appendChild(li);
             });
         }
@@ -453,19 +506,20 @@
         }
 
         // ──────────────────────────────────────────────────
-        // Load So sánh tổng hợp
+        // Load So sánh tổng hợp (Bảng tin AI)
         // ──────────────────────────────────────────────────
         async function loadComparison() {
-            // Load tất cả CB và CF files
             const cbResults = [], cfResults = [];
+            const botFeed = document.getElementById('bot-feed');
+            botFeed.innerHTML = '';
 
             for (const bot of CB_BOTS) {
                 try {
                     const r = await fetch(`./output/content-based-bot-${bot.id}.json`);
                     if (!r.ok) continue;
                     const d = await r.json();
-                    const { pct } = calcOverlap(d.myModelOutput, d.expectedOutput);
-                    cbResults.push({ ...bot, pct });
+                    const { pct, matched, total } = calcOverlap(d.myModelOutput, d.expectedOutput);
+                    cbResults.push({ ...bot, data: d, pct, matched, total });
                 } catch { }
             }
 
@@ -474,17 +528,16 @@
                     const r = await fetch(`./output/collab-bot-${bot.id}.json`);
                     if (!r.ok) continue;
                     const d = await r.json();
-                    const pct = d.evaluation?.precisionPercent ??
-                        calcOverlap(d.collabModelOutput, d.amazonGroundTruth).pct;
-                    cfResults.push({ ...bot, pct });
+                    const model = d.collabModelOutput || [];
+                    const amazon = d.amazonGroundTruth || [];
+                    const { matched, total, pct } = calcOverlap(model, amazon);
+                    cfResults.push({ ...bot, data: d, pct, matched, total });
                 } catch { }
             }
 
             // Averages
-            const cbAvg = cbResults.length
-                ? Math.round(cbResults.reduce((s, r) => s + r.pct, 0) / cbResults.length) : null;
-            const cfAvg = cfResults.length
-                ? Math.round(cfResults.reduce((s, r) => s + r.pct, 0) / cfResults.length) : null;
+            const cbAvg = cbResults.length ? Math.round(cbResults.reduce((s, r) => s + r.pct, 0) / cbResults.length) : null;
+            const cfAvg = cfResults.length ? Math.round(cfResults.reduce((s, r) => s + r.pct, 0) / cfResults.length) : null;
 
             document.getElementById('cmp-cb-avg').textContent = cbAvg !== null ? `${cbAvg}%` : '—';
             document.getElementById('cmp-cf-avg').textContent = cfAvg !== null ? `${cfAvg}%` : '—';
@@ -498,72 +551,139 @@
                 if (cbAvg > cfAvg) {
                     banner.className = banner.className.replace(/border-\S+/g, 'border-blue-600/50');
                     banner.classList.add('bg-blue-900/20', 'text-blue-300', 'border-blue-600/50');
-                    banner.textContent = `🏆 Content-Based thắng! (${cbAvg}% vs ${cfAvg}%)`;
+                    banner.innerHTML = `🏆 Content-Based chiến thắng với trung bình ${cbAvg}% khớp!`;
                 } else if (cfAvg > cbAvg) {
                     banner.className = banner.className.replace(/border-\S+/g, 'border-emerald-600/50');
                     banner.classList.add('bg-emerald-900/20', 'text-emerald-300', 'border-emerald-600/50');
-                    banner.textContent = `🏆 Collaborative Filtering thắng! (${cfAvg}% vs ${cbAvg}%)`;
+                    banner.innerHTML = `🏆 Collaborative Filtering chiến thắng với trung bình ${cfAvg}% khớp!`;
                 } else {
+                    banner.className = banner.className.replace(/border-\S+/g, 'border-gray-600/50');
                     banner.classList.add('bg-gray-800', 'text-gray-300', 'border-gray-600');
-                    banner.textContent = `🤝 Hòa nhau! (${cbAvg}% = ${cfAvg}%)`;
+                    banner.innerHTML = `🤝 Hòa nhau ở mức ${cbAvg}%!`;
                 }
             }
 
-            // Comparison table
-            const tableRows = [
-                ['Thuật toán',       'TF-IDF + Cosine Similarity',      'Item-Item CF (cosine S matrix)',  ''],
-                ['Đầu vào',          'Tiêu đề + Mô tả sản phẩm',        'Danh sách sản phẩm đã xem',      ''],
-                ['Dữ liệu cần',      'Chỉ cần metadata sản phẩm',       'Cần lịch sử đánh giá user',      'CF cần nhiều dữ liệu hơn'],
-                ['Cold Start',       '✅ Không bị ảnh hưởng',            '⚠️ Gặp vấn đề cold start',        'CB có lợi thế'],
-                ['Bots đã chạy',     `${cbResults.length}/10`,           `${cfResults.length}/5`,           ''],
-                ['Avg Match Rate',   cbAvg !== null ? `${cbAvg}%` : '—', cfAvg !== null ? `${cfAvg}%` : '—', cbAvg > cfAvg ? '📄 CB tốt hơn' : cfAvg > cbAvg ? '🔗 CF tốt hơn' : '—'],
+            // Dựng Feed Card
+            const allBots = [
+                ...cfResults.map(b => ({ type: 'CF', ...b })),
+                ...cbResults.map(b => ({ type: 'CB', ...b }))
             ];
 
-            const tbody = document.getElementById('compare-table');
-            tbody.innerHTML = tableRows.map(([label, cb, cf, note]) => `
-                <tr class="text-sm">
-                    <td class="py-2 pr-4 text-gray-400 font-medium">${label}</td>
-                    <td class="py-2 px-4 text-blue-300 text-center">${cb}</td>
-                    <td class="py-2 px-4 text-emerald-300 text-center">${cf}</td>
-                    <td class="py-2 pl-4 text-gray-500 text-center text-xs">${note}</td>
-                </tr>`).join('');
-
-            // Per-bot breakdown
-            const detail = document.getElementById('compare-detail');
-            detail.innerHTML = '';
-
-            const maxBots = Math.max(cbResults.length, cfResults.length);
-            if (!maxBots) {
-                detail.innerHTML = '<p class="text-gray-600 text-sm">Chưa có dữ liệu. Chạy Playwright test trước.</p>';
+            const botFeed = document.getElementById('bot-feed');
+            if (!botFeed) return;
+            
+            if (allBots.length === 0) {
+                botFeed.innerHTML = '<p class="text-gray-500 italic text-sm col-span-2">Chưa có bot nào chạy xong. Hãy chạy Playwright test.</p>';
                 return;
             }
 
-            cbResults.forEach(r => {
-                const bar = `<div class="h-2 rounded bg-blue-500" style="width:${r.pct}%"></div>`;
-                detail.innerHTML += `
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs text-gray-500 w-36 shrink-0 truncate">📄 ${r.name}</span>
-                        <div class="flex-1 bg-gray-800 rounded h-2">${bar}</div>
-                        <span class="text-xs text-blue-400 w-10 text-right">${r.pct}%</span>
+            botFeed.innerHTML = '';
+            allBots.forEach(bot => {
+                const isCF = bot.type === 'CF';
+                const color = isCF ? 'emerald' : 'blue';
+                const bgTitle = isCF ? 'bg-emerald-900/20 text-emerald-400' : 'bg-blue-900/20 text-blue-400';
+                
+                let inputHtml = '';
+                if (isCF) {
+                    const titles = bot.data.inputData?.crawledTitles || bot.data.inputData?.originalKeywords || [];
+                    inputHtml = `<div class="mb-3">
+                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">📦 Sản phẩm bot đã xem (Input):</p>
+                        <ul class="text-sm text-gray-300 list-disc pl-4 space-y-0.5">
+                            ${titles.slice(0,4).map(t => `<li class="truncate" title="${t}">${t}</li>`).join('')}
+                        </ul>
                     </div>`;
-            });
+                } else {
+                    inputHtml = `<div class="mb-3">
+                        <p class="text-xs text-gray-500 uppercase font-semibold mb-1">📄 Tiêu đề gốc (Input):</p>
+                        <p class="text-sm text-gray-300 line-clamp-2" title="${bot.data.inputData?.title}">${bot.data.inputData?.title || '—'}</p>
+                    </div>`;
+                }
 
-            cfResults.forEach(r => {
-                const bar = `<div class="h-2 rounded bg-emerald-500" style="width:${r.pct}%"></div>`;
-                detail.innerHTML += `
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs text-gray-500 w-36 shrink-0 truncate">🔗 ${r.name}</span>
-                        <div class="flex-1 bg-gray-800 rounded h-2">${bar}</div>
-                        <span class="text-xs text-emerald-400 w-10 text-right">${r.pct}%</span>
-                    </div>`;
+                const amazonCount = (bot.data.amazonGroundTruth || bot.data.expectedOutput || []).length;
+                const modelCount = (bot.data.collabModelOutput || bot.data.myModelOutput || []).length;
+
+                const cardHtml = `
+                <div class="bg-gray-900 rounded-xl border border-gray-800 hover:border-${color}-500/50 transition-colors shadow-lg overflow-hidden flex flex-col">
+                    <div class="${bgTitle} p-3 border-b border-gray-800 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-${color}-500/30 bg-${color}-500/10">${bot.type}</span>
+                            <span class="font-bold text-sm truncate w-48" title="${bot.name}">${bot.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400">Match:</span>
+                            <span class="font-bold text-lg text-${color}-400">${bot.pct}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 flex-1 flex flex-col">
+                        ${isCF && bot.data.scenario ? `<p class="text-xs text-amber-400 mb-3 font-medium bg-amber-900/10 p-2 border border-amber-900/30 rounded">💡 Kịch bản: ${bot.data.scenario}</p>` : ''}
+                        
+                        ${inputHtml}
+                        
+                        <div class="mt-auto pt-3 border-t border-gray-800 grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">🧠 Model Output (Dự đoán)</p>
+                                <p class="text-xl font-bold text-gray-200">${modelCount} <span class="text-xs font-normal text-gray-500">items</span></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">🛒 Ground Truth (Thực tế)</p>
+                                <p class="text-xl font-bold text-gray-200">${amazonCount} <span class="text-xs font-normal text-gray-500">items</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 pt-3 border-t border-gray-800 flex items-center justify-between text-xs text-gray-500">
+                            <span>✅ Khớp ${bot.matched} / ${bot.total} (Ground Truth)</span>
+                            <button onclick="switchTab('${bot.type.toLowerCase()}')" class="text-${color}-400 hover:underline font-semibold">Xem chi tiết ➔</button>
+                        </div>
+                    </div>
+                </div>`;
+                
+                botFeed.insertAdjacentHTML('beforeend', cardHtml);
             });
         }
 
         // ──────────────────────────────────────────────────
-        // Khởi tạo
+        // Khởi tạo & Hành động
         // ──────────────────────────────────────────────────
         buildSidebar(CB_BOTS, 'cb-bot-list', 'loadCBBot', 'cb', 'blue');
         buildSidebar(CF_BOTS, 'cf-bot-list', 'loadCFBot', 'cf', 'green');
+
+        async function runBot(type, id = null) {
+            let url = '';
+            if (id === 'url') {
+                url = document.getElementById('customUrl').value;
+                if (!url) {
+                    alert('Vui lòng nhập URL!');
+                    return;
+                }
+            }
+            
+            // Hiện thông báo popup
+            const msg = document.createElement('div');
+            msg.className = 'fixed top-10 right-10 bg-gray-900 text-white p-4 rounded-xl shadow-2xl border border-gray-700 z-50 transform transition-all translate-x-0';
+            msg.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="animate-spin w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full"></div>
+                    <div>
+                        <p class="font-bold">Đang khởi động Bot...</p>
+                        <p class="text-xs text-gray-400">Kiểm tra cửa sổ terminal/trình duyệt.</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 5000);
+
+            try {
+                await fetch('/api/run-bot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, id, url })
+                });
+            } catch (e) {
+                console.error(e);
+                alert('Không thể gọi Server. Chắc chắn bạn đã chạy: node server.js');
+            }
+        }
     </script>
 </body>
 </html>

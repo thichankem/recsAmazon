@@ -164,22 +164,21 @@ async function crawlProduct(page: any, keyword: string): Promise<{
 
         // Selector cho "Customers who bought this also bought"
         const selectors = [
-            // Carousel tiles trong "also bought" section
             '[data-client-recs-id] .a-truncate-full',
-            '[data-client-recs-id] span[class*="a-truncate"]',
+            '[data-client-recs-id] .a-truncate-cut',
             '[data-client-recs-id] .a-text-normal',
-            // Generic carousel cards
             '.a-carousel-card .a-truncate-full',
-            '.a-carousel-card [class*="a-text-normal"]',
-            // Frequently bought together
+            '.a-carousel-card .a-truncate-cut',
+            '.a-carousel-card .a-text-normal',
             '#sims-fbt-content .a-truncate-full',
-            // Sponsored/related
             '[data-reftag="pd_sbs_simh"] .a-text-normal',
         ];
 
         for (const sel of selectors) {
             document.querySelectorAll(sel).forEach(el => {
-                const t = (el as HTMLElement).innerText?.trim() || '';
+                let t = (el as HTMLElement).innerText?.trim() || '';
+                // Lấy dòng đầu tiên nếu bị dính giá/rating
+                t = t.split('\n')[0].trim();
                 if (t.length > 10 && !recs.includes(t)) recs.push(t);
             });
         }

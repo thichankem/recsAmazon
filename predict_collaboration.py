@@ -102,16 +102,21 @@ def recommend_item_cf(viewed_titles: list[str],
                       model: dict,
                       top_k: int = 10) -> list[str]:
     item_titles: list[str] = model['item_titles']
+    item_categories: list[list[str]] = model.get('item_categories', [])
     S: np.ndarray           = model['cf_S']   # (n_items, n_items)
     k                       = model['cf_k']
 
     # Map titles → indices
     viewed_indices = []
+    viewed_cats = set()
     for title in viewed_titles:
         idx = match_title_to_idx(title, item_titles)
         viewed_indices.append(idx)
         print(f"[MAP-CF] '{title[:50]}' → #{idx} '{item_titles[idx][:50]}'",
               file=sys.stderr)
+        if item_categories:
+            for c in item_categories[idx]:
+                viewed_cats.add(c)
 
     # Tổng hợp similarity score
     agg = np.zeros(S.shape[0], dtype=np.float32)
@@ -122,6 +127,13 @@ def recommend_item_cf(viewed_titles: list[str],
         mask = np.zeros_like(row)
         mask[top_k_idx] = row[top_k_idx]
         agg += mask
+
+    # Áp dụng Category Boost (1.5x)
+    if viewed_cats and item_categories:
+        for i in range(len(agg)):
+            if agg[i] > 0:
+                if any(c in viewed_cats for c in item_categories[i]):
+                    agg[i] *= 1.5
 
     # Loại trừ items đã xem
     for i in viewed_indices:
