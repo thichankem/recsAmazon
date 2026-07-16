@@ -1,0 +1,3161 @@
+{
+    "experiment_name": "exp_production_002",
+    "total_execution_time_ms": 7189.592599999969,
+    "scores": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "hit_rate": 0.0,
+        "diversity": 0.4511627906976744
+    },
+    "latency_stats": {
+        "count": 43,
+        "mean_ms": 167.09466279069622,
+        "p50_ms": 142.98469999999952,
+        "p95_ms": 374.9959899999907,
+        "p99_ms": 721.9702039999646,
+        "errors_count": 0,
+        "timeouts_count": 0
+    },
+    "raw_records": [
+        {
+            "user_id": "AFZUK3MTBIBEDQOPAK3OATUOUKLA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01I5XFOJU",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01LY34TOS",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01M0DCYEM",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01NBXW8RJ",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B078KBK1T3",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B07GZBN2BY",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01MQDV1TC",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01EY1DXDQ",
+                    "score": 0.3125
+                },
+                {
+                    "item_id": "B01KZB082I",
+                    "score": 0.3125
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B01I5XFOJU",
+                "B01LY34TOS",
+                "B01M0DCYEM",
+                "B01NBXW8RJ",
+                "B078KBK1T3",
+                "B07GZBN2BY",
+                "B01MQDV1TC",
+                "B01EY1DXDQ",
+                "B01KZB082I"
+            ],
+            "scores": [
+                0.5,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125,
+                0.3125
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AHATA6X6MYTC3VNBFJ3WIYVK257A",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07DKZSF8J",
+                    "score": 0.9663359788359788
+                },
+                {
+                    "item_id": "B01M5FO3BI",
+                    "score": 0.8773328523328523
+                },
+                {
+                    "item_id": "B00GPGKGP2",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B00B3VO6IW",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B00C8B52UM",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B0897GXFDL",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B01CARTUIS",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B079ZJTQH2",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B08CFXGDZT",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B01BM013LG",
+                    "score": 0.8573260073260073
+                }
+            ],
+            "item_ids": [
+                "B07DKZSF8J",
+                "B01M5FO3BI",
+                "B00GPGKGP2",
+                "B00B3VO6IW",
+                "B00C8B52UM",
+                "B0897GXFDL",
+                "B01CARTUIS",
+                "B079ZJTQH2",
+                "B08CFXGDZT",
+                "B01BM013LG"
+            ],
+            "scores": [
+                0.9663359788359788,
+                0.8773328523328523,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AHV6QCNBJNSGLATP56JAWJ3C4G2A",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B00Z7SSHSM",
+                    "score": 0.5491917502787069
+                },
+                {
+                    "item_id": "B07NX4Y743",
+                    "score": 0.5478075721979897
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B07ZHLZ9MX",
+                    "score": 0.49603174603174605
+                },
+                {
+                    "item_id": "B06Y5YTQGV",
+                    "score": 0.4956709956709956
+                },
+                {
+                    "item_id": "B07255V2F5",
+                    "score": 0.44800217188324604
+                },
+                {
+                    "item_id": "B0722KX9XQ",
+                    "score": 0.44753068568858034
+                },
+                {
+                    "item_id": "B0859W13T7",
+                    "score": 0.445758359574149
+                },
+                {
+                    "item_id": "B07L9XZB23",
+                    "score": 0.43578996983408747
+                },
+                {
+                    "item_id": "B00Z7RQB7M",
+                    "score": 0.429635823114084
+                }
+            ],
+            "item_ids": [
+                "B00Z7SSHSM",
+                "B07NX4Y743",
+                "B0C5W4TCMM",
+                "B07ZHLZ9MX",
+                "B06Y5YTQGV",
+                "B07255V2F5",
+                "B0722KX9XQ",
+                "B0859W13T7",
+                "B07L9XZB23",
+                "B00Z7RQB7M"
+            ],
+            "scores": [
+                0.5491917502787069,
+                0.5478075721979897,
+                0.5,
+                0.49603174603174605,
+                0.4956709956709956,
+                0.44800217188324604,
+                0.44753068568858034,
+                0.445758359574149,
+                0.43578996983408747,
+                0.429635823114084
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AFJBKPK5W56XWSNPQU2WW66ISWYQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07H5K2Q15",
+                    "score": 0.6414700495582848
+                },
+                {
+                    "item_id": "B07HJSFWTR",
+                    "score": 0.6037878787878788
+                },
+                {
+                    "item_id": "B07GTMN6G8",
+                    "score": 0.5883699633699634
+                },
+                {
+                    "item_id": "B07H8BSTJ5",
+                    "score": 0.5479166666666666
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B07XJNPZMN",
+                    "score": 0.4958333333333333
+                },
+                {
+                    "item_id": "B076ZTBXNZ",
+                    "score": 0.4533260233918128
+                },
+                {
+                    "item_id": "B07H9S1LVN",
+                    "score": 0.4511904761904762
+                },
+                {
+                    "item_id": "B07GR61X41",
+                    "score": 0.4457417582417582
+                },
+                {
+                    "item_id": "B07HJW8C6L",
+                    "score": 0.4416828269769446
+                }
+            ],
+            "item_ids": [
+                "B07H5K2Q15",
+                "B07HJSFWTR",
+                "B07GTMN6G8",
+                "B07H8BSTJ5",
+                "B0C5W4TCMM",
+                "B07XJNPZMN",
+                "B076ZTBXNZ",
+                "B07H9S1LVN",
+                "B07GR61X41",
+                "B07HJW8C6L"
+            ],
+            "scores": [
+                0.6414700495582848,
+                0.6037878787878788,
+                0.5883699633699634,
+                0.5479166666666666,
+                0.5,
+                0.4958333333333333,
+                0.4533260233918128,
+                0.4511904761904762,
+                0.4457417582417582,
+                0.4416828269769446
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AEYGPUCRKH7G4VM22FM3VAKSQ23Q",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07DFGTH5N",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B00Z7THVL0",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B015R2Y74A",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B00Z7SD3V8",
+                    "score": 0.9789893535583191
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.948892773892774
+                },
+                {
+                    "item_id": "B018KPCHXY",
+                    "score": 0.9092563686313686
+                },
+                {
+                    "item_id": "B07D8X14KH",
+                    "score": 0.8956200049950049
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 0.8775463521153177
+                },
+                {
+                    "item_id": "B00X53TMGW",
+                    "score": 0.8694655440345095
+                },
+                {
+                    "item_id": "B00Z7SHD96",
+                    "score": 0.8680891426581082
+                }
+            ],
+            "item_ids": [
+                "B07DFGTH5N",
+                "B00Z7THVL0",
+                "B015R2Y74A",
+                "B00Z7SD3V8",
+                "B01M59IR1F",
+                "B018KPCHXY",
+                "B07D8X14KH",
+                "B075JM8WRV",
+                "B00X53TMGW",
+                "B00Z7SHD96"
+            ],
+            "scores": [
+                0.9945311856602178,
+                0.9945311856602178,
+                0.9945311856602178,
+                0.9789893535583191,
+                0.948892773892774,
+                0.9092563686313686,
+                0.8956200049950049,
+                0.8775463521153177,
+                0.8694655440345095,
+                0.8680891426581082
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AEIPJBAN7A55Q5DFFPZSR2UV3OKA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09GV9DTLW",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B099FM576C",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B09F8QNTH8",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B098T38FJT",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B09J815WFY",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B0B9SB652J",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B09QKNZG15",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B09Z1ZZ29R",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B09CCTGNW2",
+                    "score": 0.41666666666666663
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B09GV9DTLW",
+                "B099FM576C",
+                "B09F8QNTH8",
+                "B098T38FJT",
+                "B09J815WFY",
+                "B0B9SB652J",
+                "B09QKNZG15",
+                "B09Z1ZZ29R",
+                "B09CCTGNW2"
+            ],
+            "scores": [
+                0.5,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AFLX66DKF6R3H6OEOC3TIVAYXZIQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B00NHYLWA8",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00WH7CMX2",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00R8CDC44",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00XZGRFLS",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00JV1L864",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00USGKASI",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00U9GJNSA",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00979IUUW",
+                    "score": 0.41666666666666663
+                },
+                {
+                    "item_id": "B00PMED4PW",
+                    "score": 0.41666666666666663
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B00NHYLWA8",
+                "B00WH7CMX2",
+                "B00R8CDC44",
+                "B00XZGRFLS",
+                "B00JV1L864",
+                "B00USGKASI",
+                "B00U9GJNSA",
+                "B00979IUUW",
+                "B00PMED4PW"
+            ],
+            "scores": [
+                0.5,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663,
+                0.41666666666666663
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AEUAL3EJKUSTNB4YY6STLYGTJALA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07N8P7NMF",
+                    "score": 0.5641828170164002
+                },
+                {
+                    "item_id": "B07WHG15MH",
+                    "score": 0.5602443609022557
+                },
+                {
+                    "item_id": "B07T5YWR86",
+                    "score": 0.5459003858460381
+                },
+                {
+                    "item_id": "B07DD7HTZR",
+                    "score": 0.5203795716953612
+                },
+                {
+                    "item_id": "B00Z7SSHSM",
+                    "score": 0.5201892239616024
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B06Y5YTQGV",
+                    "score": 0.4928571428571428
+                },
+                {
+                    "item_id": "B07F337141",
+                    "score": 0.4813727938727939
+                },
+                {
+                    "item_id": "B091GY24VQ",
+                    "score": 0.48095238095238096
+                },
+                {
+                    "item_id": "B002VPE1NY",
+                    "score": 0.47691102756892234
+                }
+            ],
+            "item_ids": [
+                "B07N8P7NMF",
+                "B07WHG15MH",
+                "B07T5YWR86",
+                "B07DD7HTZR",
+                "B00Z7SSHSM",
+                "B0C5W4TCMM",
+                "B06Y5YTQGV",
+                "B07F337141",
+                "B091GY24VQ",
+                "B002VPE1NY"
+            ],
+            "scores": [
+                0.5641828170164002,
+                0.5602443609022557,
+                0.5459003858460381,
+                0.5203795716953612,
+                0.5201892239616024,
+                0.5,
+                0.4928571428571428,
+                0.4813727938727939,
+                0.48095238095238096,
+                0.47691102756892234
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AESGMCRKQKHIAIJUL72FWQYVS6MA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B00JGAEH3Q",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B07RWMNW6D",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B01N3PVAEO",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00YPUKXLC",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B07X4QSR23",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00DIHOXB4",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00TRQVRK0",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B077TFQ3W2",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00J8QIHFC",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00MP3OZOC",
+                    "score": 0.5166666666666666
+                }
+            ],
+            "item_ids": [
+                "B00JGAEH3Q",
+                "B07RWMNW6D",
+                "B01N3PVAEO",
+                "B00YPUKXLC",
+                "B07X4QSR23",
+                "B00DIHOXB4",
+                "B00TRQVRK0",
+                "B077TFQ3W2",
+                "B00J8QIHFC",
+                "B00MP3OZOC"
+            ],
+            "scores": [
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AF6N3BBR32UMXX276IR7CTZTVTQA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01BEJKIEI",
+                    "score": 0.35
+                },
+                {
+                    "item_id": "B01E48ZGE8",
+                    "score": 0.35
+                },
+                {
+                    "item_id": "B01BEJB7FW",
+                    "score": 0.35
+                },
+                {
+                    "item_id": "B00QP4ADRK",
+                    "score": 0.35
+                },
+                {
+                    "item_id": "B01D9BQUZK",
+                    "score": 0.35
+                },
+                {
+                    "item_id": "B01E5Y4TNK",
+                    "score": 0.3214285714285714
+                },
+                {
+                    "item_id": "B00UH3LHRK",
+                    "score": 0.3005952380952381
+                },
+                {
+                    "item_id": "B01BUS8AZW",
+                    "score": 0.2833333333333333
+                },
+                {
+                    "item_id": "B00WZT6ZVW",
+                    "score": 0.2833333333333333
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B01BEJKIEI",
+                "B01E48ZGE8",
+                "B01BEJB7FW",
+                "B00QP4ADRK",
+                "B01D9BQUZK",
+                "B01E5Y4TNK",
+                "B00UH3LHRK",
+                "B01BUS8AZW",
+                "B00WZT6ZVW"
+            ],
+            "scores": [
+                0.5,
+                0.35,
+                0.35,
+                0.35,
+                0.35,
+                0.35,
+                0.3214285714285714,
+                0.3005952380952381,
+                0.2833333333333333,
+                0.2833333333333333
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AG3S4FROO422V5KP7DJCBXVUQLJQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B00DY9WN6I",
+                    "score": 1.2380952380952381
+                },
+                {
+                    "item_id": "B00BB0VD4K",
+                    "score": 1.1477564102564102
+                },
+                {
+                    "item_id": "B00N46DMSE",
+                    "score": 1.0769230769230769
+                },
+                {
+                    "item_id": "B00QCIOCVM",
+                    "score": 1.0214285714285714
+                },
+                {
+                    "item_id": "B00GOHRCYU",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00SI5MOYY",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00309SVCW",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00GVGBABK",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00GP38P30",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B003AILVEI",
+                    "score": 0.9166666666666666
+                }
+            ],
+            "item_ids": [
+                "B00DY9WN6I",
+                "B00BB0VD4K",
+                "B00N46DMSE",
+                "B00QCIOCVM",
+                "B00GOHRCYU",
+                "B00SI5MOYY",
+                "B00309SVCW",
+                "B00GVGBABK",
+                "B00GP38P30",
+                "B003AILVEI"
+            ],
+            "scores": [
+                1.2380952380952381,
+                1.1477564102564102,
+                1.0769230769230769,
+                1.0214285714285714,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AHPOHKN4PU4W3V5PGFL7AGTAD2AA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B07W4XRYKY",
+                    "score": 0.4482142857142857
+                },
+                {
+                    "item_id": "B07JD2Z58N",
+                    "score": 0.43740079365079365
+                },
+                {
+                    "item_id": "B07T5YWR86",
+                    "score": 0.4121212121212121
+                },
+                {
+                    "item_id": "B071Z8Q7BT",
+                    "score": 0.4107142857142857
+                },
+                {
+                    "item_id": "B00Z7SEOHA",
+                    "score": 0.4083333333333333
+                },
+                {
+                    "item_id": "B07H4P3RZG",
+                    "score": 0.406517094017094
+                },
+                {
+                    "item_id": "B07BQGWW18",
+                    "score": 0.3948412698412698
+                },
+                {
+                    "item_id": "B07K9FJPD5",
+                    "score": 0.38958333333333334
+                },
+                {
+                    "item_id": "B07JVCFR7J",
+                    "score": 0.3763888888888889
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B07W4XRYKY",
+                "B07JD2Z58N",
+                "B07T5YWR86",
+                "B071Z8Q7BT",
+                "B00Z7SEOHA",
+                "B07H4P3RZG",
+                "B07BQGWW18",
+                "B07K9FJPD5",
+                "B07JVCFR7J"
+            ],
+            "scores": [
+                0.5,
+                0.4482142857142857,
+                0.43740079365079365,
+                0.4121212121212121,
+                0.4107142857142857,
+                0.4083333333333333,
+                0.406517094017094,
+                0.3948412698412698,
+                0.38958333333333334,
+                0.3763888888888889
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AHR6RGZTLOMBD7EBF3OK43JWMGNQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B09K3T3G3G",
+                    "score": 0.5833333333333334
+                },
+                {
+                    "item_id": "B09H2DFGBS",
+                    "score": 0.5833333333333334
+                },
+                {
+                    "item_id": "B0BQVYSX8G",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B01994D162",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B07H7Y9V6B",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B08DTM5GLG",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B014EURV9Y",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B09B542CV8",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B08M3BRSYT",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B01EUXL2Z4",
+                    "score": 0.5625
+                }
+            ],
+            "item_ids": [
+                "B09K3T3G3G",
+                "B09H2DFGBS",
+                "B0BQVYSX8G",
+                "B01994D162",
+                "B07H7Y9V6B",
+                "B08DTM5GLG",
+                "B014EURV9Y",
+                "B09B542CV8",
+                "B08M3BRSYT",
+                "B01EUXL2Z4"
+            ],
+            "scores": [
+                0.5833333333333334,
+                0.5833333333333334,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AGVXN42IKSKKBNVFGKCMKIZEBNSQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07W4XRYKY",
+                    "score": 0.6178571428571429
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.593181818181818
+                },
+                {
+                    "item_id": "B01ECNU7OO",
+                    "score": 0.55
+                },
+                {
+                    "item_id": "B0716F82JX",
+                    "score": 0.5445998445998446
+                },
+                {
+                    "item_id": "B01CARVYFA",
+                    "score": 0.5312629399585922
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 0.5272005772005772
+                },
+                {
+                    "item_id": "B06WGMNDRM",
+                    "score": 0.5255050505050505
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B085KXS3XZ",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08CZFT8R4",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07W4XRYKY",
+                "B01M59IR1F",
+                "B01ECNU7OO",
+                "B0716F82JX",
+                "B01CARVYFA",
+                "B075JM8WRV",
+                "B06WGMNDRM",
+                "B0C5W4TCMM",
+                "B085KXS3XZ",
+                "B08CZFT8R4"
+            ],
+            "scores": [
+                0.6178571428571429,
+                0.593181818181818,
+                0.55,
+                0.5445998445998446,
+                0.5312629399585922,
+                0.5272005772005772,
+                0.5255050505050505,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AGZZXSMMS4WRHHJRBUJZI4FZDHKQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B00Z7SS1NS",
+                    "score": 0.8095238095238094
+                },
+                {
+                    "item_id": "B00Z7S2JEU",
+                    "score": 0.7865079365079365
+                },
+                {
+                    "item_id": "B07JDVVDT2",
+                    "score": 0.7662878787878789
+                },
+                {
+                    "item_id": "B00Z7THVL0",
+                    "score": 0.7541666666666667
+                },
+                {
+                    "item_id": "B07D8BP58Y",
+                    "score": 0.7317640692640691
+                },
+                {
+                    "item_id": "B07JYBRD4X",
+                    "score": 0.7311692177791249
+                },
+                {
+                    "item_id": "B00Z7T5L12",
+                    "score": 0.7041666666666666
+                },
+                {
+                    "item_id": "B014MBVM9U",
+                    "score": 0.7035714285714286
+                },
+                {
+                    "item_id": "B00Z7SHD96",
+                    "score": 0.7035714285714286
+                },
+                {
+                    "item_id": "B074FRQHSR",
+                    "score": 0.6967925048807402
+                }
+            ],
+            "item_ids": [
+                "B00Z7SS1NS",
+                "B00Z7S2JEU",
+                "B07JDVVDT2",
+                "B00Z7THVL0",
+                "B07D8BP58Y",
+                "B07JYBRD4X",
+                "B00Z7T5L12",
+                "B014MBVM9U",
+                "B00Z7SHD96",
+                "B074FRQHSR"
+            ],
+            "scores": [
+                0.8095238095238094,
+                0.7865079365079365,
+                0.7662878787878789,
+                0.7541666666666667,
+                0.7317640692640691,
+                0.7311692177791249,
+                0.7041666666666666,
+                0.7035714285714286,
+                0.7035714285714286,
+                0.6967925048807402
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AEP4CUO23WOOOEYSJBXWYLLHD5IQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07L9XZB23",
+                    "score": 0.7103174603174602
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B07PN5QL4X",
+                    "score": 0.4666666666666667
+                },
+                {
+                    "item_id": "B07KMJLQ5Y",
+                    "score": 0.4657212885154062
+                },
+                {
+                    "item_id": "B07RTCQR2V",
+                    "score": 0.4626606272386323
+                },
+                {
+                    "item_id": "B07NXSGCGN",
+                    "score": 0.4596486846486847
+                },
+                {
+                    "item_id": "B07VYZV3KL",
+                    "score": 0.4466879521787362
+                },
+                {
+                    "item_id": "B07ZR54L72",
+                    "score": 0.44166666666666665
+                },
+                {
+                    "item_id": "B081126Y6B",
+                    "score": 0.4121212121212121
+                },
+                {
+                    "item_id": "B07TQN1VNF",
+                    "score": 0.4067679431490173
+                }
+            ],
+            "item_ids": [
+                "B07L9XZB23",
+                "B0C5W4TCMM",
+                "B07PN5QL4X",
+                "B07KMJLQ5Y",
+                "B07RTCQR2V",
+                "B07NXSGCGN",
+                "B07VYZV3KL",
+                "B07ZR54L72",
+                "B081126Y6B",
+                "B07TQN1VNF"
+            ],
+            "scores": [
+                0.7103174603174602,
+                0.5,
+                0.4666666666666667,
+                0.4657212885154062,
+                0.4626606272386323,
+                0.4596486846486847,
+                0.4466879521787362,
+                0.44166666666666665,
+                0.4121212121212121,
+                0.4067679431490173
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AGDSEYGSA5K664EUHWKV3ARDXO2Q",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B078KRRSYL",
+                    "score": 0.3333333333333333
+                },
+                {
+                    "item_id": "B0C72JBB58",
+                    "score": 0.29642857142857143
+                },
+                {
+                    "item_id": "B0BB79PFPH",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B09TDH487J",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B0B4VCYS1P",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B09K652WSL",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B09S3MKLQG",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B0B8HXLCHT",
+                    "score": 0.29166666666666663
+                },
+                {
+                    "item_id": "B07VBV1PY5",
+                    "score": 0.29166666666666663
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B078KRRSYL",
+                "B0C72JBB58",
+                "B0BB79PFPH",
+                "B09TDH487J",
+                "B0B4VCYS1P",
+                "B09K652WSL",
+                "B09S3MKLQG",
+                "B0B8HXLCHT",
+                "B07VBV1PY5"
+            ],
+            "scores": [
+                0.5,
+                0.3333333333333333,
+                0.29642857142857143,
+                0.29166666666666663,
+                0.29166666666666663,
+                0.29166666666666663,
+                0.29166666666666663,
+                0.29166666666666663,
+                0.29166666666666663,
+                0.29166666666666663
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AG5FGCIM6PBJX3JNDRKQMITZTIMA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B01CARW1NY",
+                    "score": 0.8835497835497834
+                },
+                {
+                    "item_id": "B00Z7SD3V8",
+                    "score": 0.8738275613275612
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.8115259740259739
+                },
+                {
+                    "item_id": "B075KZLG1J",
+                    "score": 0.8045671648612825
+                },
+                {
+                    "item_id": "B07PDHY7G4",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B004U4VUWY",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B077NVVV8B",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B079SP977K",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B08KT5LSP3",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B07CPQFPM8",
+                    "score": 0.7916666666666666
+                }
+            ],
+            "item_ids": [
+                "B01CARW1NY",
+                "B00Z7SD3V8",
+                "B01M59IR1F",
+                "B075KZLG1J",
+                "B07PDHY7G4",
+                "B004U4VUWY",
+                "B077NVVV8B",
+                "B079SP977K",
+                "B08KT5LSP3",
+                "B07CPQFPM8"
+            ],
+            "scores": [
+                0.8835497835497834,
+                0.8738275613275612,
+                0.8115259740259739,
+                0.8045671648612825,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AGTW6ZGPUAORQ7X6CNBP6PJW7OTA",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 1.0860340330167917
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 1.0395663053421675
+                },
+                {
+                    "item_id": "B07QVL1HB1",
+                    "score": 1.0027346355682187
+                },
+                {
+                    "item_id": "B01KCBFPI8",
+                    "score": 0.9807636169705135
+                },
+                {
+                    "item_id": "B0CG6RTJXN",
+                    "score": 0.9035693372649893
+                },
+                {
+                    "item_id": "B075KZLG1J",
+                    "score": 0.8933361466120087
+                },
+                {
+                    "item_id": "B01DCOJ268",
+                    "score": 0.892139278346175
+                },
+                {
+                    "item_id": "B075Q3ZGQ2",
+                    "score": 0.8788284491620322
+                },
+                {
+                    "item_id": "B01KW12CTI",
+                    "score": 0.8737484737484739
+                },
+                {
+                    "item_id": "B01ECNU7KI",
+                    "score": 0.8424564420254075
+                }
+            ],
+            "item_ids": [
+                "B01M59IR1F",
+                "B075JM8WRV",
+                "B07QVL1HB1",
+                "B01KCBFPI8",
+                "B0CG6RTJXN",
+                "B075KZLG1J",
+                "B01DCOJ268",
+                "B075Q3ZGQ2",
+                "B01KW12CTI",
+                "B01ECNU7KI"
+            ],
+            "scores": [
+                1.0860340330167917,
+                1.0395663053421675,
+                1.0027346355682187,
+                0.9807636169705135,
+                0.9035693372649893,
+                0.8933361466120087,
+                0.892139278346175,
+                0.8788284491620322,
+                0.8737484737484739,
+                0.8424564420254075
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AECNJEZHUGFLNU7Z6VNYLVUQQQDQ",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B07VCBB9PB",
+                    "score": 0.5075558428499605
+                },
+                {
+                    "item_id": "B07XHG1CCJ",
+                    "score": 0.5074134199134199
+                },
+                {
+                    "item_id": "B07ZK33F58",
+                    "score": 0.5070346320346321
+                },
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B07XQS2XQ4",
+                    "score": 0.48116883116883113
+                },
+                {
+                    "item_id": "B07Z9B9DDQ",
+                    "score": 0.4728174603174603
+                },
+                {
+                    "item_id": "B082KRXX2N",
+                    "score": 0.4653679653679653
+                },
+                {
+                    "item_id": "B01N51SW1C",
+                    "score": 0.461038961038961
+                },
+                {
+                    "item_id": "B09X7RRC7C",
+                    "score": 0.4597402597402598
+                },
+                {
+                    "item_id": "B083SFZ6BV",
+                    "score": 0.4521103896103895
+                }
+            ],
+            "item_ids": [
+                "B07VCBB9PB",
+                "B07XHG1CCJ",
+                "B07ZK33F58",
+                "B0C5W4TCMM",
+                "B07XQS2XQ4",
+                "B07Z9B9DDQ",
+                "B082KRXX2N",
+                "B01N51SW1C",
+                "B09X7RRC7C",
+                "B083SFZ6BV"
+            ],
+            "scores": [
+                0.5075558428499605,
+                0.5074134199134199,
+                0.5070346320346321,
+                0.5,
+                0.48116883116883113,
+                0.4728174603174603,
+                0.4653679653679653,
+                0.461038961038961,
+                0.4597402597402598,
+                0.4521103896103895
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "homepage_scenario"
+        },
+        {
+            "user_id": "AFZUK3MTBIBEDQOPAK3OATUOUKLA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AHATA6X6MYTC3VNBFJ3WIYVK257A",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07DKZSF8J",
+                    "score": 0.9663359788359788
+                },
+                {
+                    "item_id": "B01M5FO3BI",
+                    "score": 0.8773328523328523
+                },
+                {
+                    "item_id": "B00GPGKGP2",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B00B3VO6IW",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B00C8B52UM",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B0897GXFDL",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B01CARTUIS",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B079ZJTQH2",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B08CFXGDZT",
+                    "score": 0.8573260073260073
+                },
+                {
+                    "item_id": "B01BM013LG",
+                    "score": 0.8573260073260073
+                }
+            ],
+            "item_ids": [
+                "B07DKZSF8J",
+                "B01M5FO3BI",
+                "B00GPGKGP2",
+                "B00B3VO6IW",
+                "B00C8B52UM",
+                "B0897GXFDL",
+                "B01CARTUIS",
+                "B079ZJTQH2",
+                "B08CFXGDZT",
+                "B01BM013LG"
+            ],
+            "scores": [
+                0.9663359788359788,
+                0.8773328523328523,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073,
+                0.8573260073260073
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AHV6QCNBJNSGLATP56JAWJ3C4G2A",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B00Z7SSHSM",
+                    "score": 0.5491917502787069
+                },
+                {
+                    "item_id": "B07NX4Y743",
+                    "score": 0.5478075721979897
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B00Z7SSHSM",
+                "B07NX4Y743",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X"
+            ],
+            "scores": [
+                0.5491917502787069,
+                0.5478075721979897,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AFJBKPK5W56XWSNPQU2WW66ISWYQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07H5K2Q15",
+                    "score": 0.6414700495582848
+                },
+                {
+                    "item_id": "B07HJSFWTR",
+                    "score": 0.6037878787878788
+                },
+                {
+                    "item_id": "B07GTMN6G8",
+                    "score": 0.5883699633699634
+                },
+                {
+                    "item_id": "B07H8BSTJ5",
+                    "score": 0.5479166666666666
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07H5K2Q15",
+                "B07HJSFWTR",
+                "B07GTMN6G8",
+                "B07H8BSTJ5",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0"
+            ],
+            "scores": [
+                0.6414700495582848,
+                0.6037878787878788,
+                0.5883699633699634,
+                0.5479166666666666,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AEYGPUCRKH7G4VM22FM3VAKSQ23Q",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07DFGTH5N",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B00Z7THVL0",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B015R2Y74A",
+                    "score": 0.9945311856602178
+                },
+                {
+                    "item_id": "B00Z7SD3V8",
+                    "score": 0.9789893535583191
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.948892773892774
+                },
+                {
+                    "item_id": "B018KPCHXY",
+                    "score": 0.9092563686313686
+                },
+                {
+                    "item_id": "B07D8X14KH",
+                    "score": 0.8956200049950049
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 0.8775463521153177
+                },
+                {
+                    "item_id": "B00X53TMGW",
+                    "score": 0.8694655440345095
+                },
+                {
+                    "item_id": "B00Z7SHD96",
+                    "score": 0.8680891426581082
+                }
+            ],
+            "item_ids": [
+                "B07DFGTH5N",
+                "B00Z7THVL0",
+                "B015R2Y74A",
+                "B00Z7SD3V8",
+                "B01M59IR1F",
+                "B018KPCHXY",
+                "B07D8X14KH",
+                "B075JM8WRV",
+                "B00X53TMGW",
+                "B00Z7SHD96"
+            ],
+            "scores": [
+                0.9945311856602178,
+                0.9945311856602178,
+                0.9945311856602178,
+                0.9789893535583191,
+                0.948892773892774,
+                0.9092563686313686,
+                0.8956200049950049,
+                0.8775463521153177,
+                0.8694655440345095,
+                0.8680891426581082
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AEIPJBAN7A55Q5DFFPZSR2UV3OKA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AFLX66DKF6R3H6OEOC3TIVAYXZIQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AEUAL3EJKUSTNB4YY6STLYGTJALA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07N8P7NMF",
+                    "score": 0.5641828170164002
+                },
+                {
+                    "item_id": "B07WHG15MH",
+                    "score": 0.5602443609022557
+                },
+                {
+                    "item_id": "B07T5YWR86",
+                    "score": 0.5459003858460381
+                },
+                {
+                    "item_id": "B07DD7HTZR",
+                    "score": 0.5203795716953612
+                },
+                {
+                    "item_id": "B00Z7SSHSM",
+                    "score": 0.5201892239616024
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07N8P7NMF",
+                "B07WHG15MH",
+                "B07T5YWR86",
+                "B07DD7HTZR",
+                "B00Z7SSHSM",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17"
+            ],
+            "scores": [
+                0.5641828170164002,
+                0.5602443609022557,
+                0.5459003858460381,
+                0.5203795716953612,
+                0.5201892239616024,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AESGMCRKQKHIAIJUL72FWQYVS6MA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B00JGAEH3Q",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B07RWMNW6D",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B01N3PVAEO",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00YPUKXLC",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B07X4QSR23",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00DIHOXB4",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00TRQVRK0",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B077TFQ3W2",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00J8QIHFC",
+                    "score": 0.5166666666666666
+                },
+                {
+                    "item_id": "B00MP3OZOC",
+                    "score": 0.5166666666666666
+                }
+            ],
+            "item_ids": [
+                "B00JGAEH3Q",
+                "B07RWMNW6D",
+                "B01N3PVAEO",
+                "B00YPUKXLC",
+                "B07X4QSR23",
+                "B00DIHOXB4",
+                "B00TRQVRK0",
+                "B077TFQ3W2",
+                "B00J8QIHFC",
+                "B00MP3OZOC"
+            ],
+            "scores": [
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666,
+                0.5166666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AF6N3BBR32UMXX276IR7CTZTVTQA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AG3S4FROO422V5KP7DJCBXVUQLJQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B00DY9WN6I",
+                    "score": 1.2380952380952381
+                },
+                {
+                    "item_id": "B00BB0VD4K",
+                    "score": 1.1477564102564102
+                },
+                {
+                    "item_id": "B00N46DMSE",
+                    "score": 1.0769230769230769
+                },
+                {
+                    "item_id": "B00QCIOCVM",
+                    "score": 1.0214285714285714
+                },
+                {
+                    "item_id": "B00GOHRCYU",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00SI5MOYY",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00309SVCW",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00GVGBABK",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B00GP38P30",
+                    "score": 0.9166666666666666
+                },
+                {
+                    "item_id": "B003AILVEI",
+                    "score": 0.9166666666666666
+                }
+            ],
+            "item_ids": [
+                "B00DY9WN6I",
+                "B00BB0VD4K",
+                "B00N46DMSE",
+                "B00QCIOCVM",
+                "B00GOHRCYU",
+                "B00SI5MOYY",
+                "B00309SVCW",
+                "B00GVGBABK",
+                "B00GP38P30",
+                "B003AILVEI"
+            ],
+            "scores": [
+                1.2380952380952381,
+                1.1477564102564102,
+                1.0769230769230769,
+                1.0214285714285714,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666,
+                0.9166666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AHPOHKN4PU4W3V5PGFL7AGTAD2AA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AHR6RGZTLOMBD7EBF3OK43JWMGNQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B09K3T3G3G",
+                    "score": 0.5833333333333334
+                },
+                {
+                    "item_id": "B09H2DFGBS",
+                    "score": 0.5833333333333334
+                },
+                {
+                    "item_id": "B0BQVYSX8G",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B01994D162",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B07H7Y9V6B",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B08DTM5GLG",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B014EURV9Y",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B09B542CV8",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B08M3BRSYT",
+                    "score": 0.5625
+                },
+                {
+                    "item_id": "B01EUXL2Z4",
+                    "score": 0.5625
+                }
+            ],
+            "item_ids": [
+                "B09K3T3G3G",
+                "B09H2DFGBS",
+                "B0BQVYSX8G",
+                "B01994D162",
+                "B07H7Y9V6B",
+                "B08DTM5GLG",
+                "B014EURV9Y",
+                "B09B542CV8",
+                "B08M3BRSYT",
+                "B01EUXL2Z4"
+            ],
+            "scores": [
+                0.5833333333333334,
+                0.5833333333333334,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625,
+                0.5625
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AGVXN42IKSKKBNVFGKCMKIZEBNSQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07W4XRYKY",
+                    "score": 0.6178571428571429
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.593181818181818
+                },
+                {
+                    "item_id": "B01ECNU7OO",
+                    "score": 0.55
+                },
+                {
+                    "item_id": "B0716F82JX",
+                    "score": 0.5445998445998446
+                },
+                {
+                    "item_id": "B01CARVYFA",
+                    "score": 0.5312629399585922
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 0.5272005772005772
+                },
+                {
+                    "item_id": "B06WGMNDRM",
+                    "score": 0.5255050505050505
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07W4XRYKY",
+                "B01M59IR1F",
+                "B01ECNU7OO",
+                "B0716F82JX",
+                "B01CARVYFA",
+                "B075JM8WRV",
+                "B06WGMNDRM",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH"
+            ],
+            "scores": [
+                0.6178571428571429,
+                0.593181818181818,
+                0.55,
+                0.5445998445998446,
+                0.5312629399585922,
+                0.5272005772005772,
+                0.5255050505050505,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AGZZXSMMS4WRHHJRBUJZI4FZDHKQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B00Z7SS1NS",
+                    "score": 0.8095238095238094
+                },
+                {
+                    "item_id": "B00Z7S2JEU",
+                    "score": 0.7865079365079365
+                },
+                {
+                    "item_id": "B07JDVVDT2",
+                    "score": 0.7662878787878789
+                },
+                {
+                    "item_id": "B00Z7THVL0",
+                    "score": 0.7541666666666667
+                },
+                {
+                    "item_id": "B07D8BP58Y",
+                    "score": 0.7317640692640691
+                },
+                {
+                    "item_id": "B07JYBRD4X",
+                    "score": 0.7311692177791249
+                },
+                {
+                    "item_id": "B00Z7T5L12",
+                    "score": 0.7041666666666666
+                },
+                {
+                    "item_id": "B014MBVM9U",
+                    "score": 0.7035714285714286
+                },
+                {
+                    "item_id": "B00Z7SHD96",
+                    "score": 0.7035714285714286
+                },
+                {
+                    "item_id": "B074FRQHSR",
+                    "score": 0.6967925048807402
+                }
+            ],
+            "item_ids": [
+                "B00Z7SS1NS",
+                "B00Z7S2JEU",
+                "B07JDVVDT2",
+                "B00Z7THVL0",
+                "B07D8BP58Y",
+                "B07JYBRD4X",
+                "B00Z7T5L12",
+                "B014MBVM9U",
+                "B00Z7SHD96",
+                "B074FRQHSR"
+            ],
+            "scores": [
+                0.8095238095238094,
+                0.7865079365079365,
+                0.7662878787878789,
+                0.7541666666666667,
+                0.7317640692640691,
+                0.7311692177791249,
+                0.7041666666666666,
+                0.7035714285714286,
+                0.7035714285714286,
+                0.6967925048807402
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AEP4CUO23WOOOEYSJBXWYLLHD5IQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07L9XZB23",
+                    "score": 0.7103174603174602
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07L9XZB23",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2"
+            ],
+            "scores": [
+                0.7103174603174602,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AGDSEYGSA5K664EUHWKV3ARDXO2Q",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08JG7XD8X",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09W3732Y2",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097QKPMVF",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S",
+                "B08JG7XD8X",
+                "B09W3732Y2",
+                "B097QKPMVF"
+            ],
+            "scores": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AG5FGCIM6PBJX3JNDRKQMITZTIMA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B01CARW1NY",
+                    "score": 0.8835497835497834
+                },
+                {
+                    "item_id": "B00Z7SD3V8",
+                    "score": 0.8738275613275612
+                },
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 0.8115259740259739
+                },
+                {
+                    "item_id": "B075KZLG1J",
+                    "score": 0.8045671648612825
+                },
+                {
+                    "item_id": "B07PDHY7G4",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B004U4VUWY",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B077NVVV8B",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B079SP977K",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B08KT5LSP3",
+                    "score": 0.7916666666666666
+                },
+                {
+                    "item_id": "B07CPQFPM8",
+                    "score": 0.7916666666666666
+                }
+            ],
+            "item_ids": [
+                "B01CARW1NY",
+                "B00Z7SD3V8",
+                "B01M59IR1F",
+                "B075KZLG1J",
+                "B07PDHY7G4",
+                "B004U4VUWY",
+                "B077NVVV8B",
+                "B079SP977K",
+                "B08KT5LSP3",
+                "B07CPQFPM8"
+            ],
+            "scores": [
+                0.8835497835497834,
+                0.8738275613275612,
+                0.8115259740259739,
+                0.8045671648612825,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666,
+                0.7916666666666666
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AGTW6ZGPUAORQ7X6CNBP6PJW7OTA",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B01M59IR1F",
+                    "score": 1.0860340330167917
+                },
+                {
+                    "item_id": "B075JM8WRV",
+                    "score": 1.0395663053421675
+                },
+                {
+                    "item_id": "B07QVL1HB1",
+                    "score": 1.0027346355682187
+                },
+                {
+                    "item_id": "B01KCBFPI8",
+                    "score": 0.9807636169705135
+                },
+                {
+                    "item_id": "B0CG6RTJXN",
+                    "score": 0.9035693372649893
+                },
+                {
+                    "item_id": "B075KZLG1J",
+                    "score": 0.8933361466120087
+                },
+                {
+                    "item_id": "B01DCOJ268",
+                    "score": 0.892139278346175
+                },
+                {
+                    "item_id": "B075Q3ZGQ2",
+                    "score": 0.8788284491620322
+                },
+                {
+                    "item_id": "B01KW12CTI",
+                    "score": 0.8737484737484739
+                },
+                {
+                    "item_id": "B01ECNU7KI",
+                    "score": 0.8424564420254075
+                }
+            ],
+            "item_ids": [
+                "B01M59IR1F",
+                "B075JM8WRV",
+                "B07QVL1HB1",
+                "B01KCBFPI8",
+                "B0CG6RTJXN",
+                "B075KZLG1J",
+                "B01DCOJ268",
+                "B075Q3ZGQ2",
+                "B01KW12CTI",
+                "B01ECNU7KI"
+            ],
+            "scores": [
+                1.0860340330167917,
+                1.0395663053421675,
+                1.0027346355682187,
+                0.9807636169705135,
+                0.9035693372649893,
+                0.8933361466120087,
+                0.892139278346175,
+                0.8788284491620322,
+                0.8737484737484739,
+                0.8424564420254075
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "AECNJEZHUGFLNU7Z6VNYLVUQQQDQ",
+            "context_item_id": "B0BSBZXWL5",
+            "recommendations": [
+                {
+                    "item_id": "B07VCBB9PB",
+                    "score": 0.5075558428499605
+                },
+                {
+                    "item_id": "B07XHG1CCJ",
+                    "score": 0.5074134199134199
+                },
+                {
+                    "item_id": "B07ZK33F58",
+                    "score": 0.5070346320346321
+                },
+                {
+                    "item_id": "B06XQS8JNP",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B0BGJJL2LB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097GF7FTH",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B097H3LTCB",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B08ZSK6N17",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B01IBJJZM0",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09ZK8FK4S",
+                    "score": 0.5
+                }
+            ],
+            "item_ids": [
+                "B07VCBB9PB",
+                "B07XHG1CCJ",
+                "B07ZK33F58",
+                "B06XQS8JNP",
+                "B0BGJJL2LB",
+                "B097GF7FTH",
+                "B097H3LTCB",
+                "B08ZSK6N17",
+                "B01IBJJZM0",
+                "B09ZK8FK4S"
+            ],
+            "scores": [
+                0.5075558428499605,
+                0.5074134199134199,
+                0.5070346320346321,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "product_page_scenario"
+        },
+        {
+            "user_id": "new_user_cold_1",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 1.0
+                },
+                {
+                    "item_id": "B01415QHYW",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09RZH2NDQ",
+                    "score": 0.3333333333333333
+                },
+                {
+                    "item_id": "B01LXZDPDR",
+                    "score": 0.25
+                },
+                {
+                    "item_id": "B09YLZXLWN",
+                    "score": 0.2
+                },
+                {
+                    "item_id": "B07RG81VVM",
+                    "score": 0.16666666666666666
+                },
+                {
+                    "item_id": "B005X1Y7I2",
+                    "score": 0.14285714285714285
+                },
+                {
+                    "item_id": "B00JRGOKQ8",
+                    "score": 0.125
+                },
+                {
+                    "item_id": "B06XQV5DDP",
+                    "score": 0.1111111111111111
+                },
+                {
+                    "item_id": "B0BTYJL9P9",
+                    "score": 0.1
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B01415QHYW",
+                "B09RZH2NDQ",
+                "B01LXZDPDR",
+                "B09YLZXLWN",
+                "B07RG81VVM",
+                "B005X1Y7I2",
+                "B00JRGOKQ8",
+                "B06XQV5DDP",
+                "B0BTYJL9P9"
+            ],
+            "scores": [
+                1.0,
+                0.5,
+                0.3333333333333333,
+                0.25,
+                0.2,
+                0.16666666666666666,
+                0.14285714285714285,
+                0.125,
+                0.1111111111111111,
+                0.1
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "cold_start_scenario"
+        },
+        {
+            "user_id": "new_user_cold_2",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 1.0
+                },
+                {
+                    "item_id": "B01415QHYW",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09RZH2NDQ",
+                    "score": 0.3333333333333333
+                },
+                {
+                    "item_id": "B01LXZDPDR",
+                    "score": 0.25
+                },
+                {
+                    "item_id": "B09YLZXLWN",
+                    "score": 0.2
+                },
+                {
+                    "item_id": "B07RG81VVM",
+                    "score": 0.16666666666666666
+                },
+                {
+                    "item_id": "B005X1Y7I2",
+                    "score": 0.14285714285714285
+                },
+                {
+                    "item_id": "B00JRGOKQ8",
+                    "score": 0.125
+                },
+                {
+                    "item_id": "B06XQV5DDP",
+                    "score": 0.1111111111111111
+                },
+                {
+                    "item_id": "B0BTYJL9P9",
+                    "score": 0.1
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B01415QHYW",
+                "B09RZH2NDQ",
+                "B01LXZDPDR",
+                "B09YLZXLWN",
+                "B07RG81VVM",
+                "B005X1Y7I2",
+                "B00JRGOKQ8",
+                "B06XQV5DDP",
+                "B0BTYJL9P9"
+            ],
+            "scores": [
+                1.0,
+                0.5,
+                0.3333333333333333,
+                0.25,
+                0.2,
+                0.16666666666666666,
+                0.14285714285714285,
+                0.125,
+                0.1111111111111111,
+                0.1
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "cold_start_scenario"
+        },
+        {
+            "user_id": "new_user_cold_3",
+            "context_item_id": null,
+            "recommendations": [
+                {
+                    "item_id": "B0C5W4TCMM",
+                    "score": 1.0
+                },
+                {
+                    "item_id": "B01415QHYW",
+                    "score": 0.5
+                },
+                {
+                    "item_id": "B09RZH2NDQ",
+                    "score": 0.3333333333333333
+                },
+                {
+                    "item_id": "B01LXZDPDR",
+                    "score": 0.25
+                },
+                {
+                    "item_id": "B09YLZXLWN",
+                    "score": 0.2
+                },
+                {
+                    "item_id": "B07RG81VVM",
+                    "score": 0.16666666666666666
+                },
+                {
+                    "item_id": "B005X1Y7I2",
+                    "score": 0.14285714285714285
+                },
+                {
+                    "item_id": "B00JRGOKQ8",
+                    "score": 0.125
+                },
+                {
+                    "item_id": "B06XQV5DDP",
+                    "score": 0.1111111111111111
+                },
+                {
+                    "item_id": "B0BTYJL9P9",
+                    "score": 0.1
+                }
+            ],
+            "item_ids": [
+                "B0C5W4TCMM",
+                "B01415QHYW",
+                "B09RZH2NDQ",
+                "B01LXZDPDR",
+                "B09YLZXLWN",
+                "B07RG81VVM",
+                "B005X1Y7I2",
+                "B00JRGOKQ8",
+                "B06XQV5DDP",
+                "B0BTYJL9P9"
+            ],
+            "scores": [
+                1.0,
+                0.5,
+                0.3333333333333333,
+                0.25,
+                0.2,
+                0.16666666666666666,
+                0.14285714285714285,
+                0.125,
+                0.1111111111111111,
+                0.1
+            ],
+            "timestamp": null,
+            "experiment_name": "exp_production_002",
+            "scenario": "cold_start_scenario"
+        }
+    ]
+}

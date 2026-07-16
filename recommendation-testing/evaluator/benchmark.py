@@ -35,12 +35,17 @@ class Benchmark:
             if sc.name == "homepage_scenario":
                 results = sc.execute(self.adapter, mock_users)
             elif sc.name == "product_page_scenario":
-                # Create mock product context cases
-                cases = [{"user_id": u["user_id"], "context_item_id": "item_123"} for u in mock_users]
+                # Find a real item ID from ground truth to use as product context
+                real_item = "item_123"
+                for items in ground_truth.values():
+                    if items:
+                        real_item = items[0]
+                        break
+                cases = [{"user_id": u["user_id"], "context_item_id": real_item} for u in mock_users]
                 results = sc.execute(self.adapter, cases)
             elif sc.name == "cold_start_scenario":
                 # Create a list of new users
-                new_users = ["new_usr_1", "new_usr_2", "new_usr_3"]
+                new_users = ["new_user_cold_1", "new_user_cold_2", "new_user_cold_3"]
                 results = sc.execute(self.adapter, new_users)
             else:
                 results = []

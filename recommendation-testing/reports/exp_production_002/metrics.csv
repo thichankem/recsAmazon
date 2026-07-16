@@ -1,0 +1,15 @@
+Metric,Value
+Experiment Name,exp_production_002
+Total Time (ms),7189.59
+Score - precision,0.0000
+Score - recall,0.0000
+Score - ndcg,0.0000
+Score - hit_rate,0.0000
+Score - diversity,0.4512
+Latency - count,43
+Latency - mean_ms,167.09466279069622
+Latency - p50_ms,142.98469999999952
+Latency - p95_ms,374.9959899999907
+Latency - p99_ms,721.9702039999646
+Latency - errors_count,0
+Latency - timeouts_count,0

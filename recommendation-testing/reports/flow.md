@@ -1,0 +1,1 @@
+truy cập một url của amazon bất kì, đọc bối cảnh content nội dung url đó và làm đầu vào input cho playwright để clickrandom kiểm thử đầu ra có cả ab testing nhé, hiển thị lên dashboard ví dụ bot 1 ấn iphone 17 ấn iphone 16 ấn iphone 15 đầu ra mong muốn 10 sản phẩm có khả năng cao nhất như ốp lưng để tôi show cho khách hàng

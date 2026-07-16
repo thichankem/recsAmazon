@@ -4,6 +4,7 @@ from pathlib import Path
 from charts import render_latency_chart, render_metric_comparison
 from comparison import render_model_comparison
 from explorer import render_recommendation_explorer
+from simulator_tab import render_simulator_tab
 
 # Apply custom premium styling via markdown
 st.set_page_config(
@@ -170,7 +171,7 @@ all_results = load_latest_results()
 
 # Sidebar Setup
 st.sidebar.markdown("<h2 style='color:#38bdf8; font-weight:800;'>Benchmarking Control</h2>", unsafe_allow_html=True)
-selected_tab = st.sidebar.radio("Navigation", ["Overview Metrics", "Model Comparison", "Recommendation Explorer"])
+selected_tab = st.sidebar.radio("Navigation", ["Overview Metrics", "Model Comparison", "Recommendation Explorer", "Real URL & Bot Simulator"])
 
 if selected_tab == "Overview Metrics":
     st.markdown("### Active Experiment Summary")
@@ -214,3 +215,6 @@ elif selected_tab == "Recommendation Explorer":
     selected_exp = st.sidebar.selectbox("Experiment Explorer", exp_names)
     
     render_recommendation_explorer(all_results[selected_exp])
+
+elif selected_tab == "Real URL & Bot Simulator":
+    render_simulator_tab()

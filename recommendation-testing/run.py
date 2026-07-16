@@ -44,18 +44,16 @@ def main():
     if not gt_path.parent.exists():
         gt_path = Path(dataset_config.get("ground_truth_path", "datasets/ground_truth/ground_truth.json"))
 
-    mock_users_list = ["usr_alpha", "usr_beta", "usr_gamma", "usr_delta", "usr_epsilon"]
-    mock_items_list = [f"item_{i}" for i in range(1, 20)]
-
-    # Generate mock interactions/ground truth if files don't exist
+    # Check if processed dataset exists
     if not raw_path.exists():
-        logger.info(f"Dataset path {raw_path} not found. Generating mock raw reviews...")
-        mock_raw = generate_random_user_interactions(mock_users_list, mock_items_list, 100)
-        save_json(str(raw_path), mock_raw)
-        
+        logger.error(f"Processed dataset path {raw_path} not found.")
+        logger.error("Please run: python recommendation-testing/preprocess.py first to generate the dataset.")
+        return
+
+    # Load ground truth and set test users
     if not gt_path.exists():
-        logger.info(f"Ground truth path {gt_path} not found. Generating mock ground truth...")
-        # Map user to 3 actual items they will 'buy'
+        logger.warning(f"Ground truth path {gt_path} not found. Using fallback mock users.")
+        mock_users_list = ["usr_alpha", "usr_beta", "usr_gamma", "usr_delta", "usr_epsilon"]
         mock_gt = {
             "usr_alpha": ["item_1", "item_3", "item_5"],
             "usr_beta": ["item_2", "item_4", "item_6"],
@@ -63,13 +61,17 @@ def main():
             "usr_delta": ["item_8", "item_12", "item_15"],
             "usr_epsilon": ["item_3", "item_7", "item_11"]
         }
-        save_json(str(gt_path), mock_gt)
     else:
         try:
             import json
             with open(gt_path, "r", encoding="utf-8") as f:
                 mock_gt = json.load(f)
-        except Exception:
+            # Use keys of ground truth (limit to 20 users for fast benchmark execution)
+            mock_users_list = list(mock_gt.keys())[:20]
+            logger.info(f"Loaded ground truth with {len(mock_gt)} users. Selected {len(mock_users_list)} users for benchmarking.")
+        except Exception as e:
+            logger.error(f"Error loading ground truth: {e}")
+            mock_users_list = ["usr_alpha"]
             mock_gt = {}
 
     # 3. Model setup

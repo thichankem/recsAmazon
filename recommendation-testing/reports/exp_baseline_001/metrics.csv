@@ -1,15 +1,15 @@
 Metric,Value
 Experiment Name,exp_baseline_001
-Total Time (ms),0.81
-Score - precision,0.1200
-Score - recall,0.4000
-Score - ndcg,0.3105
-Score - hit_rate,0.8000
-Score - diversity,0.2154
-Latency - count,13
-Latency - mean_ms,0.05189999998177742
-Latency - p50_ms,0.05619999956252286
-Latency - p95_ms,0.07193999972514573
-Latency - p99_ms,0.08254800017311933
+Total Time (ms),7118.84
+Score - precision,0.0000
+Score - recall,0.0000
+Score - ndcg,0.0000
+Score - hit_rate,0.0000
+Score - diversity,0.4512
+Latency - count,43
+Latency - mean_ms,165.5325767442264
+Latency - p50_ms,132.36659999984113
+Latency - p95_ms,443.21442999971623
+Latency - p99_ms,618.5678800001185
 Latency - errors_count,0
 Latency - timeouts_count,0
