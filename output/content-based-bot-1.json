@@ -1,0 +1,28 @@
+{
+  "botId": 1,
+  "botName": "Bot_Apple_Fan",
+  "testCase": "Content-Based: Apple iPhone 16 Pro Max phone",
+  "timestamp": "2026-07-17T03:48:12.227Z",
+  "productUrl": "https://www.amazon.com/Apple-iPhone-Version-512GB-Titanium/dp/B0DHJ2MKQB",
+  "inputData": {
+    "title": "",
+    "description": "STUNNING TITANIUM DESIGN—iPhone 16 Pro Max has a strong and light titanium design with a larger 6.9-inch Super Retina XDR display. It’s remarkably durable with the latest-generation Ceramic Shield material that’s 2x tougher than any smartphone glass.\nBUILT FOR APPLE INTELLIGENCE—Apple Intelligence is the personal intelligence system that helps you write, express yourself, and get things done effortlessly. With groundbreaking privacy protections, it gives you peace of mind that no one else can access your data.\nTAKE TOTAL CAMERA CONTROL—Camera Control gives you an easier way to quickly access camera tools, like zoom or depth of field, so you can take the perfect shot in record time.\nApple iPhone 16 Pro Max, US Version, 512GB, Black Titanium - Unlocked (Renewed)"
+  },
+  "expectedOutput": [
+    "Show details for Frequently bought together,After enabling, redirect focus to product information to get details,",
+    "Hide details for Frequently bought together,",
+    "SUPFINE Magnetic for iPhone 16 Pro Max Case with Screen Protector (Compatible with MagSafe)(Military Grade Drop Protection) T",
+    "Ailun 3 Pack Screen Protector for iPhone 16 Pro Max [6.9 inch] + 3 Pack Camera Lens Protector with Installation Frame,Case Fr",
+    "4.0 out of 5 stars, 6,331 ratings",
+    "4.0 out of 5 stars, 6,032 ratings",
+    "4.1 out of 5 stars, 2,707 ratings",
+    "4.2 out of 5 stars, 18,081 ratings",
+    "4.1 out of 5 stars, 3,109 ratings",
+    "3.5 out of 5 stars, 9 ratings"
+  ],
+  "myModelOutput": [
+    "MaKTech Titanium Wristband,Metal Strap with Tortoise Buckle,Compatible with Apple Watch Series 8/7/6/SE/Ultra/2022 (45mm/44mm/49mm,Black)",
+    "LULULOOK Titanium Band Compatible with Apple Watch, Metal Band 49/45/44/42mm for iWatch Ultra SE Series 8/7/6/5/4/3/2/1",
+    "iiteeology Compatible with Apple Watch Band 49mm 45mm 44mm 42mm 41mm 40mm 38mm, Titanium Strap for Men with Double Button Clasp for iWatch Ultra SE Series 8 7 6 5 4 3 2 1"
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "botId": 1,
+  "botName": "ColabBot_Apple_Ecosystem",
+  "scenario": "User xem phụ kiện Apple → Amazon & CF gợi ý thêm đồ Apple",
+  "algorithm": "Item-Item Collaborative Filtering",
+  "timestamp": "2026-07-17T03:42:55.513Z",
+  "inputData": {
+    "originalKeywords": [
+      "Apple AirPods Pro 2nd generation",
+      "Apple MagSafe charger iPhone 15",
+      "Apple Lightning USB-C cable",
+      "Apple iPhone 15 silicone case MagSafe"
+    ],
+    "crawledTitles": [
+      "Apple AirPods Pro 2nd generation",
+      "Apple MagSafe charger iPhone 15",
+      "Apple Lightning USB-C cable",
+      "Apple iPhone 15 Silicone Case with MagSafe - Winter Blue"
+    ]
+  },
+  "collabModelOutput": [
+    "ESR Case Compatible for iPhone 6/6s, Pattern Design Slim Clear Case with Soft TPU Bumper+Hard PC Back Cover for 4.7\" iPhone 6 / iPhone 6s_Mint Mandala",
+    "Everydaysource 6 Pieces Animal Home Button Sticker Compatible With Apple iPod Touch 6th Gen Apple iPhone 6 (4.7), iPhone 6 Plus (5.5) new Apple.. iPhone.. 4S, Zebra Patterns",
+    "MOLLYCOOCLE iPhone SE Case, iPhone 5 5S Case, 3D Liquid Bling Sparkle Glitter Clear TPU Shell Quicksand Cute Star Fashion Creative for Girls Flowing Protective Cover for iPhone SE/5/5S - Blue",
+    "UIYTRAESTING Deluxe Hot Pink Chrome Bling Crystal Rhinestone Hard Case Skin Cover for Aple Phone 4 4S 4G With Front and Back Screen protector and Pink Stylus",
+    "5 Pack Bands Compatible with Apple Watch Band 38mm 40mm 41mm 42mm 44mm 45mm Women Men, Soft Silicone Sport Replacement Strap Compatible with iWatch SE Series 8 7 6 5 4 3 2 1",
+    "Magnetic Wireless Charger - Magnet Charging Pad Compatible with iPhone 14/14 pro/14 plus/14 pro max/ 13/13 pro/13 pro max/12 pro max - Mag-Safe Charger for AirPods 3/2/Pro with USB-C 20W PD Adapter",
+    "gofanco 65W 7-Port USB Charging Station Organizer (Black) simultaneously Charges Phones, Tablets and Wearable Devices - iPhone, iPad, Samsung Galaxy, LG, Nexus, HTC and Others",
+    "UPPEL Travel Adapter with Dual USB All-in-one Worldwide Travel Chargers Adapters for US EU UK AU About 152 Countries Wall Universal Power Plug Adapter Charger with Dual USB and Safety Fuse (Blue)",
+    "Basesailor USB to USB C Adapter 3 Pack,Zinc Alloy Type C Female to A Male Charger Block-Converter for iPhone 12 13 14 Pro Max SE,Airpods,iPad 8 Air 4 4th Mini 6,Samsung Galaxy S23 Z Fold Flip Note 20",
+    "Nereides Compatible with Apple Watch Band Series 8/7/6/5/4/3/2/1/SE/Ultra, Nylon Sports Strap with Woven Design for 49mm 42mm/44mm/45mm 38mm/40mm/41mm"
+  ],
+  "amazonGroundTruth": [
+    "4.3 out of 5 stars, 895 ratings",
+    "4.6 out of 5 stars, 1,603 ratings",
+    "3.6 out of 5 stars, 89 ratings",
+    "4.5 out of 5 stars, 824 ratings",
+    "4.4 out of 5 stars, 1,010 ratings",
+    "4.3 out of 5 stars, 583 ratings",
+    "elago Cassette Tape Case Compatible with AirPods Pro 3 Case - Carabiner Included, Supports Wireless Charging, Shock Resistant",
+    "Inesore Retro Game Case for AirPods Pro 3 (Black) for Men Boy | Gamepad Design; Foldable Stand; Lock Buckle Anti-Drop Design;",
+    "[5 Pairs] for AirPods Pro 3 Ear Tips Cover [Fit in Case], Soft Silicone AirPod Pro 3 Ear Cover Anti Slip Air Pod pro 3 Access",
+    "AirPods Pro 3 Case Cover, KOREDA Funny Cassette Tape Design Case for Airpods Pro 3rd Generation 2025, Cute Cartoon Fashion Si",
+    "Ekoonpft for Airpods Pro 3 Case with Secure Lock, Compatible with MagSafe | Phone Stand & Auto-Open Hard Shell Cover Qute for",
+    "VRS Design Modern Lock for Apple AirPods Pro 3rd Generation Case (2025) – Sleek Protective Style with Locking Security Compat",
+    "4.1 out of 5 stars 2,708 ratings",
+    "4.3 out of 5 stars 10,497 ratings",
+    "4.5 out of 5 stars 4,217 ratings",
+    "Show details for Frequently bought together,After enabling, redirect focus to product information to get details,",
+    "Hide details for Frequently bought together,",
+    "Magnetic Wireless Magsafe Charger iPhone: Charging Pad for iPhone 17/16/15/14/13/12 Series & AirPods Pro 4-2, Strong Magnet,",
+    "MagSafe Charger 2 Pack 15W Magnetic Wireless Charger Fast Charging Pad Compatible with iPhone 17/16/15/14/13/12 Series & AirP",
+    "4.6 out of 5 stars 152 ratings",
+    "4.5 out of 5 stars 6,230 ratings",
+    "4.5 out of 5 stars 94 ratings",
+    "4.6 out of 5 stars 387 ratings",
+    "4.6 out of 5 stars 398 ratings",
+    "4.3 out of 5 stars 2,145 ratings",
+    "4.6 out of 5 stars 246 ratings",
+    "25W Magnetic Wireless Charger Apple Mag Safe Charger [Apple MFi Certified] | 40W USB C Charger Block & 25W Mag-Safe Wireless Fast Charging Pad, for iPhone 17 16 15 14 13 12 Pro Max/AirPods 4/3/2/Pro",
+    "ANDERY Only for iPhone Magsafe Car Mount Charger [15W Fast Wireless Charge, 78+LBS Strong Suction & 2400gf Magnetic] 360° Adjustable Car Phone Holder, Phone Holders for Your Car Dash Accents Accessory",
+    "Meifigno 3 in 1 Magnetic Charging Station for Apple Devices, 15W Fast Wireless Charger Compatible with MagSafe Charging Stand for iPhone 17-12 Series, Watch Charger Stand for Apple Watch & Earbuds",
+    "New for 15W MagSafe Charger: Magnetic Wireless Charging Pad for iPhone 17 16 15 14 13 12 Series AirPods 4-2 Pro, Strong Magnet, with PD20W Charging Block, Ultra-Thin Portable(2Pack 5FT)",
+    "4.3 out of 5 stars 26,690 ratings",
+    "4.5 out of 5 stars 1,313 ratings",
+    "4.4 out of 5 stars 3,904 ratings",
+    "4.3 out of 5 stars 3,291 ratings",
+    "4.5 out of 5 stars 9,262 ratings",
+    "4.5 out of 5 stars 12,213 ratings",
+    "RCTech USB C to Lightning Cable 3Pack 6FT MFi Certified iPhone Fast Charger Cable USB-C Power Delivery Charging Cord for iPhone 14/13/12/11/XS/XR/X/8/iPad, White",
+    "iPhone Fast Charger 10FT 2Pack, USB C to Lightning Cable for iPhone, 10Foot Long USBC iPhone Charger, Type C iPhone Charging Cord Compatible with iPhone 14 13 12 11 Pro Max XR XS X 8 Plus SE iPad",
+    "USB C to Lightning Cable 6FT 2Pack, iPhone Charger Fast Charging, USBC iPhone Charger, Type C iPhone Charging Cord [Apple MFi Certified] for iPhone 14 13 12 11 Pro Max Xs 8 Plus and More",
+    "Acecene 2Pack MFi Certified 3ft USB-C to Lightning Cable - Fast Charging for iPhone 14-8, iPad",
+    "iPhone Charging Cable 6FT, 3Pack [Apple MFi Certified] USB to Lightning Cables Fast Charging, iPhone Charger Cord iPhone USB Cable Compatible with iPhone 14 13 12 11 Pro Max Plus 8 7 6 iPad and More",
+    "UYOUNG iPhone Charger Cable 3Pack 6FT [Apple MFi Certified] USB to Lightning Cable Nylon Braided Heavy Duty Fast Charging Cord Compatible with iPhone 14/13/12/11/SE/X/XS/XR/8/7/6/6S/iPad - Red",
+    "4.4 out of 5 stars 1,874 ratings",
+    "4.5 out of 5 stars 258 ratings",
+    "4.5 out of 5 stars 1,537 ratings"
+  ],
+  "perProductData": [
+    {
+      "keyword": "Apple AirPods Pro 2nd generation",
+      "realTitle": "Apple AirPods Pro 2nd generation",
+      "amazonRecs": [
+        "4.3 out of 5 stars, 895 ratings",
+        "4.6 out of 5 stars, 1,603 ratings",
+        "3.6 out of 5 stars, 89 ratings",
+        "4.5 out of 5 stars, 824 ratings",
+        "4.4 out of 5 stars, 1,010 ratings",
+        "4.3 out of 5 stars, 583 ratings",
+        "elago Cassette Tape Case Compatible with AirPods Pro 3 Case - Carabiner Included, Supports Wireless Charging, Shock Resistant",
+        "Inesore Retro Game Case for AirPods Pro 3 (Black) for Men Boy | Gamepad Design; Foldable Stand; Lock Buckle Anti-Drop Design;",
+        "[5 Pairs] for AirPods Pro 3 Ear Tips Cover [Fit in Case], Soft Silicone AirPod Pro 3 Ear Cover Anti Slip Air Pod pro 3 Access",
+        "AirPods Pro 3 Case Cover, KOREDA Funny Cassette Tape Design Case for Airpods Pro 3rd Generation 2025, Cute Cartoon Fashion Si",
+        "Ekoonpft for Airpods Pro 3 Case with Secure Lock, Compatible with MagSafe | Phone Stand & Auto-Open Hard Shell Cover Qute for",
+        "VRS Design Modern Lock for Apple AirPods Pro 3rd Generation Case (2025) – Sleek Protective Style with Locking Security Compat",
+        "4.1 out of 5 stars 2,708 ratings",
+        "4.3 out of 5 stars 10,497 ratings",
+        "4.5 out of 5 stars 4,217 ratings"
+      ]
+    },
+    {
+      "keyword": "Apple MagSafe charger iPhone 15",
+      "realTitle": "Apple MagSafe charger iPhone 15",
+      "amazonRecs": [
+        "Show details for Frequently bought together,After enabling, redirect focus to product information to get details,",
+        "Hide details for Frequently bought together,",
+        "Magnetic Wireless Magsafe Charger iPhone: Charging Pad for iPhone 17/16/15/14/13/12 Series & AirPods Pro 4-2, Strong Magnet,",
+        "MagSafe Charger 2 Pack 15W Magnetic Wireless Charger Fast Charging Pad Compatible with iPhone 17/16/15/14/13/12 Series & AirP",
+        "4.6 out of 5 stars 152 ratings",
+        "4.5 out of 5 stars 6,230 ratings",
+        "4.5 out of 5 stars 94 ratings",
+        "4.6 out of 5 stars 387 ratings",
+        "4.6 out of 5 stars 398 ratings",
+        "4.3 out of 5 stars 2,145 ratings",
+        "4.6 out of 5 stars 246 ratings",
+        "25W Magnetic Wireless Charger Apple Mag Safe Charger [Apple MFi Certified] | 40W USB C Charger Block & 25W Mag-Safe Wireless Fast Charging Pad, for iPhone 17 16 15 14 13 12 Pro Max/AirPods 4/3/2/Pro",
+        "ANDERY Only for iPhone Magsafe Car Mount Charger [15W Fast Wireless Charge, 78+LBS Strong Suction & 2400gf Magnetic] 360° Adjustable Car Phone Holder, Phone Holders for Your Car Dash Accents Accessory",
+        "Meifigno 3 in 1 Magnetic Charging Station for Apple Devices, 15W Fast Wireless Charger Compatible with MagSafe Charging Stand for iPhone 17-12 Series, Watch Charger Stand for Apple Watch & Earbuds",
+        "New for 15W MagSafe Charger: Magnetic Wireless Charging Pad for iPhone 17 16 15 14 13 12 Series AirPods 4-2 Pro, Strong Magnet, with PD20W Charging Block, Ultra-Thin Portable(2Pack 5FT)"
+      ]
+    },
+    {
+      "keyword": "Apple Lightning USB-C cable",
+      "realTitle": "Apple Lightning USB-C cable",
+      "amazonRecs": [
+        "4.3 out of 5 stars 26,690 ratings",
+        "4.5 out of 5 stars 1,313 ratings",
+        "4.4 out of 5 stars 3,904 ratings",
+        "4.3 out of 5 stars 3,291 ratings",
+        "4.5 out of 5 stars 9,262 ratings",
+        "4.5 out of 5 stars 12,213 ratings",
+        "RCTech USB C to Lightning Cable 3Pack 6FT MFi Certified iPhone Fast Charger Cable USB-C Power Delivery Charging Cord for iPhone 14/13/12/11/XS/XR/X/8/iPad, White",
+        "iPhone Fast Charger 10FT 2Pack, USB C to Lightning Cable for iPhone, 10Foot Long USBC iPhone Charger, Type C iPhone Charging Cord Compatible with iPhone 14 13 12 11 Pro Max XR XS X 8 Plus SE iPad",
+        "USB C to Lightning Cable 6FT 2Pack, iPhone Charger Fast Charging, USBC iPhone Charger, Type C iPhone Charging Cord [Apple MFi Certified] for iPhone 14 13 12 11 Pro Max Xs 8 Plus and More",
+        "Acecene 2Pack MFi Certified 3ft USB-C to Lightning Cable - Fast Charging for iPhone 14-8, iPad",
+        "iPhone Charging Cable 6FT, 3Pack [Apple MFi Certified] USB to Lightning Cables Fast Charging, iPhone Charger Cord iPhone USB Cable Compatible with iPhone 14 13 12 11 Pro Max Plus 8 7 6 iPad and More",
+        "UYOUNG iPhone Charger Cable 3Pack 6FT [Apple MFi Certified] USB to Lightning Cable Nylon Braided Heavy Duty Fast Charging Cord Compatible with iPhone 14/13/12/11/SE/X/XS/XR/8/7/6/6S/iPad - Red",
+        "4.4 out of 5 stars 1,874 ratings",
+        "4.5 out of 5 stars 258 ratings",
+        "4.5 out of 5 stars 1,537 ratings"
+      ]
+    },
+    {
+      "keyword": "Apple iPhone 15 silicone case MagSafe",
+      "realTitle": "Apple iPhone 15 Silicone Case with MagSafe - Winter Blue",
+      "amazonRecs": []
+    }
+  ],
+  "evaluation": {
+    "cfRecsCount": 10,
+    "amazonGroundTruthCount": 45,
+    "matched": 0,
+    "precisionPercent": 0,
+    "matchFlags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  }
+}
