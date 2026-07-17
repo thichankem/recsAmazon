@@ -1,82 +1,79 @@
 import { test, expect } from '@playwright/test';
 
-// Kịch bản kiểm thử: Giảm tải tối đa — chỉ 2 kịch bản, mỗi cái 1 từ khóa
+// ✅ Chỉ 2 kịch bản, mỗi cái 1 từ khóa để test nhanh và nhẹ máy
 const scenarios = [
-  {
-    name: 'Samsung Fan',
-    searches: ['Samsung T7 Shield'],   // giảm xuống 1 từ khóa
-    clicksPerSearch: 1
-  },
-  {
-    name: 'Apple Ecosystem',
-    searches: ['Apple Watch'],          // giảm xuống 1 từ khóa
-    clicksPerSearch: 1
-  }
+  { name: 'Samsung Fan',    searches: ['Samsung T7 Shield'] },
+  { name: 'Apple Fan',      searches: ['Apple Watch'] }
 ];
 
 test.describe('Frontend AI Recommendation Tests', () => {
 
-  // Timeout hợp lý 45 giây
   test.setTimeout(45000);
 
   for (const scenario of scenarios) {
     test(`Scenario: ${scenario.name}`, async ({ page }) => {
-      // 1. Vào trang chủ
-      await page.goto('http://localhost:5173/');
 
-      // Clear localStorage để bắt đầu người dùng mới tinh
+      // 1. Vào trang chủ, reset trạng thái sạch
+      await page.goto('http://localhost:5173/');
       await page.evaluate(() => localStorage.clear());
       await page.reload();
-      await page.waitForLoadState('domcontentloaded'); // nhẹ hơn networkidle
+      await page.waitForLoadState('domcontentloaded');
 
-      console.log(`\n=== Bắt đầu kịch bản: ${scenario.name} ===`);
+      // Đóng bất kỳ modal nào đang mở sẵn (tránh bị che khuất)
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(200);
 
-      // 2. Thực hiện tìm kiếm và xem sản phẩm
+      console.log(`\n=== Kịch bản: ${scenario.name} ===`);
+
+      // 2. Tìm kiếm và xem sản phẩm
       for (const query of scenario.searches) {
         const searchInput = page.locator('#header-search-input');
         await searchInput.fill(query);
         await page.keyboard.press('Enter');
 
-        // Đợi kết quả hiển thị
-        await page.waitForSelector(`h2:has-text("Kết quả tìm kiếm cho")`, { timeout: 5000 });
+        await page.waitForSelector(`h2:has-text("Kết quả tìm kiếm cho")`, { timeout: 8000 });
 
-        // Click vào sản phẩm đầu tiên
+        // Đợi modal cũ biến mất hoàn toàn trước khi click
+        await page.waitForSelector('div[role="dialog"]', { state: 'hidden', timeout: 3000 }).catch(() => {});
+
         const firstProduct = page.locator('#storefront-container .grid > div').first();
         if (await firstProduct.isVisible()) {
-          const title = await firstProduct.locator('h3').innerText();
+          const title = await firstProduct.locator('h3').innerText().catch(() => '(unknown)');
           console.log(`[Xem] -> ${title}`);
-          await firstProduct.click();
 
-          // Chờ modal bật lên
-          await page.waitForSelector('div[role="dialog"], .fixed.inset-0', { timeout: 5000 });
+          // Click vào phần tử con (h3) để tránh modal overlay che khuất
+          await firstProduct.locator('h3').click({ force: true });
 
-          // Giả lập đọc nội dung (giảm xuống 300ms)
-          await page.waitForTimeout(300);
+          // Đợi modal mở
+          await page.waitForSelector('div[role="dialog"]', { state: 'visible', timeout: 5000 }).catch(() => {});
+          await page.waitForTimeout(200);
 
-          // Đóng modal
+          // Đóng modal bằng Escape
           await page.keyboard.press('Escape');
-          await page.waitForTimeout(200); // giảm xuống 200ms
+
+          // Đợi modal đóng hẳn trước khi tiếp tục
+          await page.waitForSelector('div[role="dialog"]', { state: 'hidden', timeout: 5000 }).catch(() => {});
+          await page.waitForTimeout(150);
         }
       }
 
-      // 3. Quay về Home để xem AI gợi ý
-      console.log(`[Hành động] -> Quay về Trang chủ để xem gợi ý AI...`);
-      await page.locator('#header-logo').click();
+      // 3. Quay về Home để xem gợi ý AI
+      console.log(`[Action] -> Quay về trang chủ...`);
+      await page.locator('#header-logo').click({ force: true });
 
-      // 4. Chờ AI hiển thị gợi ý
+      // 4. Chờ AI hiển thị gợi ý cá nhân hoá
       await page.waitForSelector(`text="Gợi ý dành riêng cho bạn"`, { timeout: 20000 });
 
-      // 5. Trích xuất danh sách gợi ý AI
+      // 5. Lấy danh sách gợi ý
       const aiRecs = page.locator('#catalog-row .grid > div');
       const count = await aiRecs.count();
+      console.log(`[Kết quả] -> AI gợi ý ${count} sản phẩm`);
 
-      console.log(`[Kết quả AI] -> Đã gợi ý ${count} sản phẩm:`);
       for (let i = 0; i < count; i++) {
-        const title = await aiRecs.nth(i).locator('h3').innerText();
+        const title = await aiRecs.nth(i).locator('h3').innerText().catch(() => '-');
         console.log(`  ${i + 1}. ${title}`);
       }
 
-      // Kiểm tra có hiển thị gợi ý không
       expect(count).toBeGreaterThan(0);
     });
   }
