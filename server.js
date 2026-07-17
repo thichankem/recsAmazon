@@ -43,7 +43,7 @@ const server = http.createServer((req, res) => {
             let targetUrlEnv = '';
             
             if (config.type === 'CF') {
-                command = `npx playwright test test/amazon_collab_bot.spec.ts --headed --project=chromium`;
+                command = `npx playwright test test/amazon_collab_bot.spec.ts --headed --project=firefox`;
             } else if (config.type === 'CB' && config.id === 'url') {
                 const testUrl = config.url || 'https://www.apple.com/iphone-15-pro/';
                 // Dùng cross-env cách cơ bản nhất: SET TEST_URL=... && npx...
@@ -76,6 +76,66 @@ const server = http.createServer((req, res) => {
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ status: 'started', message: 'Bot đang chạy ngầm, hãy kiểm tra terminal / cửa sổ Playwright!' }));
+        });
+        return;
+    }
+
+    if (req.method === 'GET' && req.url === '/api/data/products') {
+        const dataPath = path.join(__dirname, 'data', 'meta_Cell_Phones_and_Accessories.jsonl');
+        const limit = 120;
+        const products = [];
+        const stream = fs.createReadStream(dataPath, { encoding: 'utf8' });
+        let buffer = '';
+
+        stream.on('data', (chunk) => {
+            buffer += chunk;
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                try {
+                    const item = JSON.parse(line);
+                    const features = Array.isArray(item.features) ? item.features : [];
+                    const description = Array.isArray(item.description) ? item.description : [];
+                    products.push({
+                        parent_asin: item.parent_asin || item.asin || '',
+                        title: item.title || 'Unnamed product',
+                        main_category: item.main_category || 'Unknown',
+                        average_rating: Number(item.average_rating) || 0,
+                        rating_number: Number(item.rating_number) || 0,
+                        price: Number(item.price) || 0,
+                        store: item.store || item.main_category || 'Unknown store',
+                        categories: [item.main_category, ...(Array.isArray(item.categories) ? item.categories : [])].filter(Boolean),
+                        features,
+                        description,
+                        details: {
+                            Category: item.main_category || 'Unknown',
+                            Price: item.price != null ? String(item.price) : 'N/A',
+                            Source: 'data/meta_Cell_Phones_and_Accessories.jsonl'
+                        },
+                        bought_together: []
+                    });
+                    if (products.length >= limit) {
+                        stream.destroy();
+                        break;
+                    }
+                } catch (error) {
+                    continue;
+                }
+            }
+            if (products.length >= limit) {
+                stream.destroy();
+            }
+        });
+
+        stream.on('error', (error) => {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: 'Không đọc được data/products', details: error.message }));
+        });
+
+        stream.on('close', () => {
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(products));
         });
         return;
     }
@@ -171,6 +231,8 @@ const server = http.createServer((req, res) => {
                 res.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
             }
         } else {
+            // Ngăn trình duyệt cache file tĩnh để luôn load code mới nhất
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
             res.writeHead(200, { 'Content-Type': contentType });
             res.end(content, 'utf-8');
         }

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, chromium } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
@@ -116,12 +116,11 @@ async function getSearchResults(page: any): Promise<{ title: string; href: strin
 // Trích ASIN path từ href, trả về URL sạch
 function cleanAmazonUrl(href: string): string {
     if (!href) return '';
-    if (href.startsWith('http') && href.includes('/dp/')) {
-        const m = href.match(/(https?:\/\/[^/]+\/[^?]+\/dp\/[A-Z0-9]{10})/);
-        return m ? m[1] : href.split('?')[0];
+    const asinMatch = href.match(/\/dp\/([A-Z0-9]{10})/);
+    if (asinMatch) {
+        return 'https://www.amazon.com/dp/' + asinMatch[1];
     }
-    const m = href.match(/(\/[^?]+\/dp\/[A-Z0-9]{10})/);
-    if (m) return 'https://www.amazon.com' + m[1];
+    if (href.startsWith('http')) return href.split('?')[0];
     if (href.startsWith('/')) return 'https://www.amazon.com' + href.split('?')[0];
     return '';
 }
@@ -138,10 +137,20 @@ const AI_BOTS = [
 test.describe.configure({ mode: 'serial' });
 
 for (const bot of AI_BOTS) {
-    test(`[CB] Bot #${bot.id} ${bot.name}`, async ({ page, context }) => {
+    test(`[CB] Bot #${bot.id} ${bot.name}`, async () => {
         test.setTimeout(180_000);
 
-        await context.setExtraHTTPHeaders({
+        let browser;
+        try {
+            browser = await chromium.connectOverCDP('http://localhost:9222', { timeout: 10000 });
+        } catch (e) {
+            console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
+            throw e;
+        }
+        const context = browser.contexts()[0];
+        const page = await context.newPage();
+
+        await page.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
                 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         });
@@ -149,7 +158,7 @@ for (const bot of AI_BOTS) {
         console.log(`\n🤖 ${bot.name} → "${bot.search}"`);
 
         // ── BƯỚC 1: Tìm kiếm ─────────────────────────────────────
-        await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 40_000 });
+        await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 90_000 });
         await page.waitForTimeout(1500);
 
         // Captcha guard
@@ -191,7 +200,7 @@ for (const bot of AI_BOTS) {
         await showFlash(page, 640, 360, 700);
 
         // ── BƯỚC 3: Navigate thẳng tới product page ───────────────
-        await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 40_000 });
+        await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 90_000 });
         await page.waitForSelector('#productTitle', { timeout: 30_000 });
         await page.waitForTimeout(800);
 
@@ -298,5 +307,6 @@ for (const bot of AI_BOTS) {
             'utf-8'
         );
         console.log(`  ✅ Bot #${bot.id} xong!`);
+        await browser.close();
     });
 }

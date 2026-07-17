@@ -18,7 +18,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { test } from '@playwright/test';
+import { test, chromium } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
@@ -97,7 +97,7 @@ async function crawlProduct(page: any, keyword: string): Promise<{
     console.log(`\n    🔍 Crawl: "${keyword}"`);
 
     // Vào Amazon tìm kiếm
-    await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 40_000 });
+    await page.goto('https://www.amazon.com/', { waitUntil: 'domcontentloaded', timeout: 90_000 });
     await page.waitForTimeout(1200);
 
     const searchBox = page.locator('#twotabsearchtextbox');
@@ -144,7 +144,7 @@ async function crawlProduct(page: any, keyword: string): Promise<{
     await flash(page, 600);
 
     // Navigate thẳng tới product page (bỏ qua tracking redirect)
-    await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 35_000 });
+    await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 90_000 });
     await page.waitForSelector('#productTitle', { timeout: 25_000 });
     await page.waitForTimeout(800);
 
@@ -270,10 +270,20 @@ const COLAB_BOTS = [
 test.describe.configure({ mode: 'serial' });
 
 for (const bot of COLAB_BOTS) {
-    test(`[CF] ColabBot #${bot.id} – ${bot.name}`, async ({ page, context }) => {
+    test(`[CF] ColabBot #${bot.id} – ${bot.name}`, async () => {
         test.setTimeout(720_000);   // 12 phút (crawl 4 trang × ~2 phút)
 
-        await context.setExtraHTTPHeaders({
+        let browser;
+        try {
+            browser = await chromium.connectOverCDP('http://localhost:9222', { timeout: 10000 });
+        } catch (e) {
+            console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
+            throw e;
+        }
+        const context = browser.contexts()[0];
+        const page = await context.newPage();
+
+        await page.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
                 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         });
@@ -388,5 +398,7 @@ for (const bot of COLAB_BOTS) {
 
         console.log(`\n  ✅ Xong → output/collab-bot-${bot.id}.json`);
         console.log(`${'═'.repeat(60)}`);
+        
+        await browser.close();
     });
 }
