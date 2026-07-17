@@ -140,19 +140,15 @@ for (const bot of AI_BOTS) {
     test(`[CB] Bot #${bot.id} ${bot.name}`, async () => {
         test.setTimeout(180_000);
 
+        let browser;
         try {
-            const { execSync } = require('child_process');
-            execSync('taskkill /F /IM chrome.exe /T', { stdio: 'ignore' });
-        } catch (e) {}
-        await new Promise(r => setTimeout(r, 2000));
-
-        const userDataDir = 'C:\\Users\\ADMIN\\AppData\\Local\\Google\\Chrome\\User Data';
-        const browser = await chromium.launchPersistentContext(userDataDir, {
-            channel: 'chrome',
-            headless: false,
-            args: ['--profile-directory=Profile 1']
-        });
-        const page = browser.pages()[0] || await browser.newPage();
+            browser = await chromium.connectOverCDP('http://127.0.0.1:9222', { timeout: 10000 });
+        } catch (e) {
+            console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
+            throw e;
+        }
+        const context = browser.contexts()[0];
+        const page = await context.newPage();
 
         await page.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
@@ -311,6 +307,6 @@ for (const bot of AI_BOTS) {
             'utf-8'
         );
         console.log(`  ✅ Bot #${bot.id} xong!`);
-        await browser.close();
+        await page.close();
     });
 }

@@ -273,19 +273,15 @@ for (const bot of COLAB_BOTS) {
     test(`[CF] ColabBot #${bot.id} – ${bot.name}`, async () => {
         test.setTimeout(720_000);   // 12 phút (crawl 4 trang × ~2 phút)
 
+        let browser;
         try {
-            const { execSync } = require('child_process');
-            execSync('taskkill /F /IM chrome.exe /T', { stdio: 'ignore' });
-        } catch (e) {}
-        await new Promise(r => setTimeout(r, 2000));
-
-        const userDataDir = 'C:\\Users\\ADMIN\\AppData\\Local\\Google\\Chrome\\User Data';
-        const browser = await chromium.launchPersistentContext(userDataDir, {
-            channel: 'chrome',
-            headless: false,
-            args: ['--profile-directory=Profile 1']
-        });
-        const page = browser.pages()[0] || await browser.newPage();
+            browser = await chromium.connectOverCDP('http://127.0.0.1:9222', { timeout: 10000 });
+        } catch (e) {
+            console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
+            throw e;
+        }
+        const context = browser.contexts()[0];
+        const page = await context.newPage();
 
         await page.setExtraHTTPHeaders({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
@@ -403,6 +399,6 @@ for (const bot of COLAB_BOTS) {
         console.log(`\n  ✅ Xong → output/collab-bot-${bot.id}.json`);
         console.log(`${'➖'.repeat(60)}`);
         
-        await browser.close();
+        await page.close();
     });
 }
