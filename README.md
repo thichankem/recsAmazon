@@ -21,4 +21,5 @@ Hệ gợi ý sử dụng dữ liệu amazon
 - evaluation: chấm điểm các bài test
 
 4. Các công nghệ được sử dụng: 
-Phát triển: anaconda, ngôn ngữ python, jupyter notebook, thư viện chủ yếu 
+Phát triển: anaconda, ngôn ngữ python, jupyter notebook, thư viện chủ yếu: sklearn, numpy, pickle
+Kiểm thử: playwright, web giả lập nodejs
