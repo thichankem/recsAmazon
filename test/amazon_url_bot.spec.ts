@@ -18,15 +18,16 @@ const TARGET_URL = process.env.TEST_URL || 'https://www.apple.com/iphone-15-pro/
 
 test('🌐 Bot cào trang web bất kỳ -> Content Based Model', async () => {
     test.setTimeout(120000); // Cho phép chờ 2 phút
-    let browser;
-    try {
-        browser = await chromium.connectOverCDP('http://localhost:9222', { timeout: 10000 });
-    } catch (e) {
-        console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
-        throw e;
-    }
-    const context = browser.contexts()[0];
-    const page = await context.newPage();
+    try { execSync('taskkill /F /IM chrome.exe /T', { stdio: 'ignore' }); } catch (e) {}
+    await new Promise(r => setTimeout(r, 2000));
+    
+    const userDataDir = 'C:\\Users\\ADMIN\\AppData\\Local\\Google\\Chrome\\User Data';
+    const browser = await chromium.launchPersistentContext(userDataDir, {
+        channel: 'chrome',
+        headless: false,
+        args: ['--profile-directory=Profile 1']
+    });
+    const page = browser.pages()[0] || await browser.newPage();
 
     console.log(`\n════════════════════════════════════════════════════════════`);
     console.log(`🌐 TÙY CHỈNH URL BOT`);
