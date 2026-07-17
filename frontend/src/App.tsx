@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+
+const STORAGE_KEY = 'amazon-recs-state';
 import { CheckCircle } from 'lucide-react';
 import { Product, RecUser } from './types';
-import { PRODUCTS, USERS } from './data/products';
+import { USERS } from './data/products';
 import Header from './components/Header';
 import ProductCard from './components/ProductCard';
 import ProductDetailModal from './components/ProductDetailModal';
@@ -14,29 +16,79 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [cartCount, setCartCount] = useState<number>(0);
   const [showToast, setShowToast] = useState<string | null>(null);
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
-  const [viewedProductTitles, setViewedProductTitles] = useState<string[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [viewedProducts, setViewedProducts] = useState<string[]>([]);
+  const [collaborativeProducts, setCollaborativeProducts] = useState<Product[]>([]);
+  const [isLoadingCollab, setIsLoadingCollab] = useState<boolean>(false);
 
   // --- 2. Interactive UI Handlers ---
   useEffect(() => {
-    const loadRecommendations = async () => {
-      const baseHistory = selectedUser.history
-        .map((asin) => PRODUCTS.find((product) => product.parent_asin === asin)?.title)
-        .filter(Boolean) as string[];
-      const viewedTitles = [...baseHistory, ...viewedProductTitles].filter(Boolean);
-      const recs = await getCollaborativeRecommendations(viewedTitles, 30);
-      setRecommendedProducts(recs);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.viewedProducts)) {
+          setViewedProducts(parsed.viewedProducts);
+        }
+        if (parsed.searchQuery) {
+          setSearchQuery(parsed.searchQuery);
+        }
+      } catch (error) {
+        console.error('Failed to restore state', error);
+      }
+    }
+
+    const loadProducts = async () => {
+      try {
+        const response = await fetch('/api/data/products');
+        if (!response.ok) throw new Error('Failed to load data');
+        const data = await response.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to load products from data folder:', error);
+        setProducts([]);
+      }
     };
 
-    loadRecommendations();
-  }, [selectedUser, viewedProductTitles]);
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ viewedProducts, searchQuery }));
+  }, [viewedProducts, searchQuery]);
 
   const handleViewProductDetails = (product: Product) => {
     setSelectedProduct(product);
-    setViewedProductTitles((prev) => {
+    setViewedProducts((prev) => {
       const next = [product.title, ...prev.filter((title) => title !== product.title)].slice(0, 8);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ viewedProducts: next }));
       return next;
     });
+  };
+
+  useEffect(() => {
+    if (viewedProducts.length === 0) {
+      setCollaborativeProducts([]);
+      return;
+    }
+
+    let isMounted = true;
+    const fetchRecs = async () => {
+      setIsLoadingCollab(true);
+      const recs = await getCollaborativeRecommendations(viewedProducts, products, 5);
+      if (isMounted) {
+        setCollaborativeProducts(recs);
+        setIsLoadingCollab(false);
+      }
+    };
+    fetchRecs();
+    return () => { isMounted = false; };
+  }, [viewedProducts, products]);
+
+  const handleGoHome = () => {
+    setSelectedProduct(null);
+    setSearchQuery('');
+    // Không xóa viewedProducts để giữ lại gợi ý ở trang chủ
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
@@ -53,7 +105,7 @@ export default function App() {
   };
 
   // Filter main products grid based on search bar
-  const filteredProducts = PRODUCTS.filter(p => {
+  const filteredProducts = products.filter(p => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -75,11 +127,12 @@ export default function App() {
         onSearchChange={setSearchQuery}
         cartCount={cartCount}
         isSandboxActive={false}
+        onGoHome={handleGoHome}
       />
 
       {/* 2. Main Storefront Grid */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6" id="storefront-container">
-        
+
         {searchQuery ? (
           /* Search results column */
           <div className="bg-white rounded-xl border border-zinc-200/80 p-6 shadow-sm">
@@ -90,7 +143,7 @@ export default function App() {
               <div className="bg-zinc-50 border border-zinc-200/60 rounded-lg p-10 text-center">
                 <p className="text-sm text-zinc-600 font-semibold">Không tìm thấy sản phẩm phù hợp với từ khóa của bạn.</p>
                 <p className="text-xs text-zinc-500 mt-1">Thử tìm kiếm các từ khóa chung như "Sony", "Coffee", "Yoga", hoặc danh mục.</p>
-                <button 
+                <button
                   onClick={() => setSearchQuery('')}
                   className="mt-4 px-4 py-1.5 bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200 rounded text-xs font-semibold cursor-pointer transition-colors"
                 >
@@ -100,7 +153,7 @@ export default function App() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredProducts.map((p) => (
-                  <ProductCard 
+                  <ProductCard
                     key={p.parent_asin}
                     product={p}
                     onViewDetails={handleViewProductDetails}
@@ -113,51 +166,36 @@ export default function App() {
         ) : (
           /* Standard Store Home View with Carousel & Catalog Grid */
           <div className="space-y-6">
-            
-            <div className="bg-white border border-zinc-200/80 rounded-xl p-5 shadow-sm text-left">
-              <div className="border-b border-zinc-100 pb-3 mb-4">
-                <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wide">
-                  Gợi ý cho bạn ({recommendedProducts.length} sản phẩm)
-                </h3>
-                <p className="text-[10px] text-zinc-500 mt-0.5">
-                  Dựa trên hành vi xem và lịch sử tương tác của người dùng, hệ thống dùng collaborative filtering để đề xuất.
-                </p>
-              </div>
-
-              <div className="flex gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar scroll-smooth">
-                {recommendedProducts.map((product) => (
-                  <ProductCard
-                    key={product.parent_asin}
-                    product={product}
-                    onViewDetails={handleViewProductDetails}
-                    onAddToCart={handleAddToCart}
-                    isRecommendation={true}
-                  />
-                ))}
-              </div>
-            </div>
 
             {/* ROW 2: "All Products" list */}
             <div id="catalog-row" className="bg-white border border-zinc-200/80 rounded-xl p-5 shadow-sm text-left">
               <div className="border-b border-zinc-100 pb-3 mb-4">
                 <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wide">
-                  Danh sách sản phẩm ({PRODUCTS.length} mặt hàng)
+                  {collaborativeProducts.length > 0 ? "Gợi ý dành riêng cho bạn" : `Danh sách sản phẩm`}
                 </h3>
                 <p className="text-[10px] text-zinc-500 mt-0.5">
-                  Duyệt qua danh mục. Nhấp vào bất kỳ sản phẩm nào để xem chi tiết thông số kỹ thuật và đánh giá.
+                  {collaborativeProducts.length > 0
+                    ? "Dựa trên các sản phẩm bạn đã xem gần đây."
+                    : "Duyệt qua danh mục. Nhấp vào bất kỳ sản phẩm nào để xem chi tiết thông số kỹ thuật và đánh giá."}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {PRODUCTS.map((product) => (
-                  <ProductCard 
-                    key={product.parent_asin}
-                    product={product}
-                    onViewDetails={handleViewProductDetails}
-                    onAddToCart={handleAddToCart}
-                  />
-                ))}
-              </div>
+              {isLoadingCollab ? (
+                <div className="h-40 flex flex-col items-center justify-center">
+                  <span className="text-sm font-bold text-indigo-600 block mb-1">Đang tải gợi ý...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {(collaborativeProducts.length > 0 ? collaborativeProducts : products).map((product) => (
+                    <ProductCard
+                      key={product.parent_asin}
+                      product={product}
+                      onViewDetails={handleViewProductDetails}
+                      onAddToCart={handleAddToCart}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
@@ -168,6 +206,7 @@ export default function App() {
       {selectedProduct && (
         <ProductDetailModal
           product={selectedProduct}
+          catalogProducts={products}
           onClose={() => setSelectedProduct(null)}
           onViewProduct={handleViewProductDetails}
           onAddToCart={handleAddToCart}

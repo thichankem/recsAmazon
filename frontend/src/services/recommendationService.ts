@@ -1,17 +1,16 @@
 import { Product } from '../types';
-import { PRODUCTS } from '../data/products';
 
-const normalize = (value: string) => value.toLowerCase().trim();
+const normalize = (value: string) => (value || '').toLowerCase().trim();
 
-const getTopRatedProducts = (topK = 30): Product[] => {
-  return [...PRODUCTS]
+const getTopRatedProducts = (allProducts: Product[], topK = 30): Product[] => {
+  return [...allProducts]
     .sort((a, b) => b.average_rating - a.average_rating)
     .slice(0, topK);
 };
 
-const mapTitlesToProducts = (titles: string[], topK = 30): Product[] => {
+const mapTitlesToProducts = (titles: string[], allProducts: Product[], topK = 30): Product[] => {
   if (!Array.isArray(titles) || titles.length === 0) {
-    return getTopRatedProducts(topK);
+    return getTopRatedProducts(allProducts, topK);
   }
 
   const matched: Product[] = [];
@@ -21,7 +20,7 @@ const mapTitlesToProducts = (titles: string[], topK = 30): Product[] => {
     const normalizedTitle = normalize(title);
     if (!normalizedTitle) continue;
 
-    const bestMatch = PRODUCTS.find((product) => {
+    const bestMatch = allProducts.find((product) => {
       const normalizedProductTitle = normalize(product.title);
       return (
         normalizedProductTitle === normalizedTitle ||
@@ -40,14 +39,14 @@ const mapTitlesToProducts = (titles: string[], topK = 30): Product[] => {
     return matched.slice(0, topK);
   }
 
-  const fallback = getTopRatedProducts(topK).filter(
+  const fallback = getTopRatedProducts(allProducts, topK).filter(
     (product) => !matched.some((item) => item.parent_asin === product.parent_asin)
   );
 
   return [...matched, ...fallback].slice(0, topK);
 };
 
-export async function getCollaborativeRecommendations(viewedTitles: string[], topK = 30): Promise<Product[]> {
+export async function getCollaborativeRecommendations(viewedTitles: string[], allProducts: Product[], topK = 30): Promise<Product[]> {
   try {
     const response = await fetch('/api/recommendations/collaborative', {
       method: 'POST',
@@ -60,15 +59,21 @@ export async function getCollaborativeRecommendations(viewedTitles: string[], to
     }
 
     const data = await response.json();
-    const titles = Array.isArray(data?.titles) ? data.titles : [];
-    return mapTitlesToProducts(titles, topK);
+    const items = Array.isArray(data?.titles) ? data.titles : [];
+    
+    // Nếu backend trả về object có parent_asin (đã được làm giàu thông tin)
+    if (items.length > 0 && typeof items[0] === 'object' && items[0].parent_asin) {
+        return items as Product[];
+    }
+    
+    return mapTitlesToProducts(items, allProducts, topK);
   } catch (error) {
     console.error('getCollaborativeRecommendations error:', error);
-    return getTopRatedProducts(topK);
+    return getTopRatedProducts(allProducts, topK);
   }
 }
 
-export async function getContentRecommendations(title: string, description: string, topK = 8): Promise<Product[]> {
+export async function getContentRecommendations(title: string, description: string, allProducts: Product[], topK = 8): Promise<Product[]> {
   try {
     const response = await fetch('/api/recommendations/content', {
       method: 'POST',
@@ -81,10 +86,16 @@ export async function getContentRecommendations(title: string, description: stri
     }
 
     const data = await response.json();
-    const titles = Array.isArray(data?.titles) ? data.titles : [];
-    return mapTitlesToProducts(titles, topK);
+    const items = Array.isArray(data?.titles) ? data.titles : [];
+    
+    // Nếu backend trả về object có parent_asin (đã được làm giàu thông tin)
+    if (items.length > 0 && typeof items[0] === 'object' && items[0].parent_asin) {
+        return items as Product[];
+    }
+    
+    return mapTitlesToProducts(items, allProducts, topK);
   } catch (error) {
     console.error('getContentRecommendations error:', error);
-    return getTopRatedProducts(topK);
+    return getTopRatedProducts(allProducts, topK);
   }
 }

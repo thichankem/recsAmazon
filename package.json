@@ -1,0 +1,27 @@
+{
+  "name": "recsamazon",
+  "version": "1.0.0",
+  "description": "Dự án này là bộ khung kiểm thử và đánh giá hiệu năng (benchmarking) toàn diện cho các thuật toán gợi ý sản phẩm. Framework hỗ trợ giả lập hành vi người dùng, đánh giá các kịch bản trải nghiệm thực tế (Trang chủ, Chi tiết sản phẩm, Cold-Start), thu thập độ trễ (latency), và trực quan hóa kết quả thông qua dashboard tương tác Streamlit.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thichankem/recsAmazon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thichankem/recsAmazon/issues"
+  },
+  "homepage": "https://github.com/thichankem/recsAmazon#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1"
+  }
+}

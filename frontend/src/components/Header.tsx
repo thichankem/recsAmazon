@@ -10,6 +10,7 @@ interface HeaderProps {
   onSearchChange: (query: string) => void;
   cartCount: number;
   isSandboxActive: boolean;
+  onGoHome?: () => void;
   onResetDatabase?: () => void;
 }
 
@@ -19,7 +20,8 @@ export default function Header({
   searchQuery,
   onSearchChange,
   cartCount,
-  isSandboxActive
+  isSandboxActive,
+  onGoHome,
 }: HeaderProps) {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
@@ -28,17 +30,19 @@ export default function Header({
       {/* Primary header bar */}
       <div className="flex items-center justify-between h-14 px-4 gap-4">
         {/* Logo Style */}
-        <div className="flex items-center cursor-pointer py-1 px-2 hover:bg-zinc-100 rounded transition-all" id="header-logo">
+        <button
+          type="button"
+          onClick={() => onGoHome?.()}
+          className="flex items-center cursor-pointer py-1 px-2 hover:bg-zinc-100 rounded transition-all"
+          id="header-logo"
+        >
           <div className="flex items-center space-x-3">
-            <div className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-xs font-bold tracking-tighter transition-colors">
-              SHOP_ENGINE v1.0
-            </div>
             <div className="h-4 w-[1px] bg-zinc-200 hidden sm:block"></div>
             <span className="text-base font-bold tracking-tight text-zinc-900 flex items-center">
               amazon<span className="text-indigo-600 font-black text-xs ml-1 px-1.5 py-0.5 bg-indigo-50 border border-indigo-100 rounded">Recs</span>
             </span>
           </div>
-        </div>
+        </button>
 
         {/* Deliver to Vietnam */}
         <div className="hidden md:flex items-center cursor-pointer py-1 px-2 hover:bg-zinc-100 rounded transition-all" id="header-location">
@@ -74,7 +78,7 @@ export default function Header({
 
         {/* User Switcher */}
         <div className="relative">
-          <div 
+          <div
             onClick={() => setShowUserDropdown(!showUserDropdown)}
             className="flex items-center cursor-pointer py-1 px-2 hover:bg-zinc-100 rounded text-left gap-2 transition-all"
             id="user-profile-switcher"
@@ -92,8 +96,8 @@ export default function Header({
 
           {showUserDropdown && (
             <>
-              <div 
-                className="fixed inset-0 z-40 bg-transparent" 
+              <div
+                className="fixed inset-0 z-40 bg-transparent"
                 onClick={() => setShowUserDropdown(false)}
               />
               <div className="absolute right-0 mt-2 w-64 bg-white text-zinc-800 rounded-lg shadow-xl border border-zinc-200 z-50 py-2 text-xs font-sans">
@@ -108,9 +112,8 @@ export default function Header({
                         onSelectUser(user);
                         setShowUserDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-2 hover:bg-zinc-50 flex items-start gap-2 border-l-2 transition-colors ${
-                        selectedUser.id === user.id ? 'border-indigo-600 bg-indigo-50/50' : 'border-transparent'
-                      }`}
+                      className={`w-full text-left px-3 py-2 hover:bg-zinc-50 flex items-start gap-2 border-l-2 transition-colors ${selectedUser.id === user.id ? 'border-indigo-600 bg-indigo-50/50' : 'border-transparent'
+                        }`}
                     >
                       <div className={`h-6 w-6 rounded-full shrink-0 ${user.avatarColor} text-white flex items-center justify-center font-bold text-xs uppercase`}>
                         {user.name[0]}
@@ -127,12 +130,6 @@ export default function Header({
               </div>
             </>
           )}
-        </div>
-
-        {/* Orders block */}
-        <div className="hidden sm:flex flex-col text-xs cursor-pointer py-1 px-2 hover:bg-zinc-100 rounded transition-all" id="header-orders">
-          <span className="text-zinc-400">Trạng thái</span>
-          <span className="font-bold text-indigo-600">Hoạt động</span>
         </div>
 
         {/* Cart */}
@@ -157,12 +154,6 @@ export default function Header({
           <span className="cursor-pointer hover:text-indigo-600 text-zinc-600 transition-colors">Dịch vụ khách hàng</span>
           <span className="cursor-pointer hover:text-indigo-600 text-zinc-600 transition-colors">Sản phẩm mới</span>
           <span className="cursor-pointer hover:text-indigo-600 text-zinc-600 transition-colors">Thẻ quà tặng</span>
-        </div>
-        <div className="flex items-center gap-2 select-none text-right shrink-0">
-          <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-zinc-400 font-mono text-[10px] uppercase">
-            Hệ thống chạy trên Cổng 3000
-          </span>
         </div>
       </div>
     </header>

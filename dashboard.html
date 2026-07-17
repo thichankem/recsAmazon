@@ -350,29 +350,36 @@
             return null;
         }
 
+        // ──────────────────────────────────────────────────
+        // Thuật toán so khớp NLP: Trigram Jaccard Similarity
+        // ──────────────────────────────────────────────────
+        function getTrigrams(str) {
+            const s = (str || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+            const trigrams = new Set();
+            for (let i = 0; i < s.length - 2; i++) {
+                trigrams.add(s.substring(i, i + 3));
+            }
+            return trigrams;
+        }
+
         function isMatch(s1, s2) {
             const b1 = getBrand(s1);
             const b2 = getBrand(s2);
-            
-            // Nếu thuộc 2 hãng ĐỐI LẬP NHAU (vd Apple vs Samsung) -> CHẮC CHẮN SAI (Chặn luôn)
+            // Nếu thuộc 2 hãng ĐỐI LẬP NHAU -> Chặn luôn
             if (b1 && b2 && b1 !== b2) return false; 
             
-            // Nếu không khắc hệ, bắt đầu so từ khoá
-            const set1 = extractKeywords(s1);
-            const set2 = extractKeywords(s2);
-            let common = 0;
-            for (let w of set1) {
-                if (set2.has(w)) common++;
+            const set1 = getTrigrams(s1);
+            const set2 = getTrigrams(s2);
+            if (set1.size === 0 || set2.size === 0) return false;
+            
+            let intersection = 0;
+            for (let t of set1) {
+                if (set2.has(t)) intersection++;
             }
             
-            // Trùng >= 2 từ khoá -> OK (vd: "iphone" & "14" hoặc "galaxy" & "s23")
-            if (common >= 2) return true; 
-            
-            // Trùng 1 từ khoá cốt lõi dài >= 5 -> OK (vd: "playstation", "controller", "charger")
-            for (let w of set1) {
-                if (set2.has(w) && w.length >= 5) return true; 
-            }
-            return false;
+            const sim = intersection / (set1.size + set2.size - intersection);
+            // Ngưỡng 0.35 đảm bảo 2 sản phẩm phải thực sự rất giống nhau về mặt text
+            return sim >= 0.35;
         }
 
         function calcOverlap(modelRecs, amazonRecs) {
@@ -454,6 +461,9 @@
             } catch (e) {
                 document.getElementById('cb-input').innerHTML =
                     `<span class="text-red-400 text-sm">⚠️ ${e.message}</span>`;
+                renderList('cb-amazon', []);
+                renderList('cb-model', []);
+                updateRing('cb', 0, 0, 0);
             }
         }
 
@@ -492,6 +502,9 @@
             } catch (e) {
                 document.getElementById('cf-input').innerHTML =
                     `<span class="text-red-400 text-sm">⚠️ ${e.message}</span>`;
+                renderList('cf-amazon', []);
+                renderList('cf-model', []);
+                updateRing('cf', 0, 0, 0);
             }
         }
 

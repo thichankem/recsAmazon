@@ -1,0 +1,20 @@
+{
+  "botId": 1,
+  "botName": "Bot_Apple_Fan",
+  "inputData": {
+    "title": "Apple iPhone 16 Pro Max, 512GB, Titanium",
+    "description": "The latest iPhone with A18 Pro chip, titanium design, and advanced camera system."
+  },
+  "expectedOutput": [
+    "iPhone 16 Pro Max Clear Case with MagSafe",
+    "Apple 20W USB-C Power Adapter",
+    "AirPods Pro (2nd Generation)",
+    "Apple Watch Series 9",
+    "Screen Protector for iPhone 16 Pro Max"
+  ],
+  "myModelOutput": [
+    "iPhone 16 Pro Max Clear Case with MagSafe",
+    "Samsung Galaxy S24 Ultra Silicone Case",
+    "Apple 20W USB-C Power Adapter"
+  ]
+}

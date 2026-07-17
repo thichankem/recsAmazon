@@ -1105,7 +1105,7 @@ PRODUCTS.forEach(product => {
       verified_purchase: true,
       helpful_vote: Math.floor(Math.random() * 20) + 2
     });
-    
+
     REVIEWS.push({
       rating: Math.round(product.average_rating) || 4,
       title: "Great value and build quality",

@@ -1,0 +1,23 @@
+{
+  "botId": 2,
+  "botName": "Bot_Cong_Nghe",
+  "scenario": "Xây dựng PC Gaming",
+  "inputData": {
+    "originalKeywords": [
+      "RTX 4090",
+      "AMD Ryzen 9 7950X",
+      "Corsair 32GB DDR5"
+    ]
+  },
+  "amazonGroundTruth": [
+    "ASUS ROG Strix GeForce RTX 4090 OC Edition",
+    "NZXT Kraken Elite 360 RGB AIO Cooler",
+    "Corsair RM1000x 1000W Gold Power Supply",
+    "Samsung 990 PRO 2TB NVMe SSD"
+  ],
+  "collabModelOutput": [
+    "Samsung 990 PRO 2TB NVMe SSD",
+    "ASUS ROG Strix GeForce RTX 4090 OC Edition",
+    "Logitech G502 LIGHTSPEED Wireless Mouse"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "botId": 3,
+  "botName": "Bot_Gamer",
+  "inputData": {
+    "title": "ASUS ROG Phone 9 Pro, Gaming Smartphone, 16GB RAM",
+    "description": "Ultimate gaming phone with 165Hz display and AeroActive Cooler."
+  },
+  "expectedOutput": [
+    "AeroActive Cooler X for ROG Phone 9",
+    "ASUS ROG Kunai 3 Gamepad",
+    "ROG Cetra True Wireless Gaming Earbuds"
+  ],
+  "myModelOutput": [
+    "AeroActive Cooler X for ROG Phone 9",
+    "Razer Kishi V2 Mobile Gaming Controller",
+    "ASUS ROG Kunai 3 Gamepad"
+  ]
+}

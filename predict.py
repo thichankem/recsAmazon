@@ -1,8 +1,12 @@
 import sys
+import os
 import json
 import pickle
 import numpy as np
+import warnings
 from sklearn.metrics.pairwise import cosine_similarity
+
+warnings.filterwarnings('ignore')
 
 # Đồng bộ luồng đọc/ghi dạng UTF-8 để không bị lỗi ký tự lạ trên Windows
 sys.stdout.reconfigure(encoding='utf-8')
@@ -24,11 +28,24 @@ def load_model_and_predict(full_content):
         # 2. Tính toán độ tương đồng Cosine giữa sản phẩm vừa cào và kho dữ liệu của bạn
         sim_scores = cosine_similarity(query_vector, tfidf_matrix).flatten()
         
-        # 3. Trích xuất top 3 sản phẩm phù hợp nhất từ dataframe của bạn
-        top_indices = np.argsort(sim_scores)[::-1][:3]
-        predicted_products = df_unique.iloc[top_indices]['title'].tolist()
+        # 3. Trích xuất top 5 sản phẩm phù hợp nhất từ dataframe của bạn
+        top_indices = np.argsort(sim_scores)[::-1][:5]
+        predicted_titles = df_unique.iloc[top_indices]['title'].tolist()
         
-        return predicted_products[:3] # Trả về đúng 3 sản phẩm xuất sắc nhất
+        # Load metadata
+        metadata_cache = {}
+        if os.path.exists('model_output/metadata_cache.pkl'):
+            with open('model_output/metadata_cache.pkl', 'rb') as f:
+                metadata_cache = pickle.load(f)
+                
+        results = []
+        for title in predicted_titles:
+            if title in metadata_cache:
+                results.append(metadata_cache[title])
+            else:
+                results.append({"title": title})
+                
+        return results[:5]
         
     except Exception as e:
         return [f"Lỗi chạy model .pkl: {str(e)}"]

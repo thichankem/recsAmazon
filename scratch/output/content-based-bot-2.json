@@ -1,0 +1,19 @@
+{
+  "botId": 2,
+  "botName": "Bot_Samsung_Loyal",
+  "inputData": {
+    "title": "Samsung Galaxy S25 Ultra 5G, 256GB, Phantom Black",
+    "description": "Galaxy S25 Ultra featuring Galaxy AI, Snapdragon 8 Gen 4, S Pen included."
+  },
+  "expectedOutput": [
+    "Samsung Galaxy Buds 3 Pro",
+    "Samsung 45W Super Fast Charging Wall Charger",
+    "Galaxy S25 Ultra Leather Case",
+    "Galaxy Watch 7 Classic"
+  ],
+  "myModelOutput": [
+    "Samsung Galaxy Buds 3 Pro",
+    "Galaxy S25 Ultra Leather Case",
+    "Spigen Tough Armor Case for Galaxy S25 Ultra"
+  ]
+}

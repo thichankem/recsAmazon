@@ -1,0 +1,23 @@
+{
+  "botId": 1,
+  "botName": "Bot_Gia_Dinh",
+  "scenario": "Tìm đồ gia dụng thông minh",
+  "inputData": {
+    "originalKeywords": [
+      "Robot Vacuum",
+      "Air Purifier",
+      "Smart Lock"
+    ]
+  },
+  "amazonGroundTruth": [
+    "Roborock S8 Pro Ultra Robot Vacuum and Mop",
+    "Dyson Purifier Cool Gen1",
+    "August Home Wi-Fi Smart Lock",
+    "Ring Video Doorbell Plus"
+  ],
+  "collabModelOutput": [
+    "Roborock S8 Pro Ultra Robot Vacuum and Mop",
+    "August Home Wi-Fi Smart Lock",
+    "Philips Hue Smart Bulb Starter Kit"
+  ]
+}

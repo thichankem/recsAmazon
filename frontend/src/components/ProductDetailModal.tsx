@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { X, Star, ThumbsUp, ShieldCheck, ShoppingCart, ArrowRight } from 'lucide-react';
 import { Product } from '../types';
-import { REVIEWS, PRODUCTS } from '../data/products';
+import { REVIEWS } from '../data/products';
 import ProductCard from './ProductCard';
 import { getContentRecommendations } from '../services/recommendationService';
 
 interface ProductDetailModalProps {
   product: Product;
+  catalogProducts: Product[];
   onClose: () => void;
   onViewProduct: (product: Product) => void;
   onAddToCart: (product: Product, e: React.MouseEvent) => void;
@@ -14,6 +15,7 @@ interface ProductDetailModalProps {
 
 export default function ProductDetailModal({
   product,
+  catalogProducts,
   onClose,
   onViewProduct,
   onAddToCart
@@ -48,14 +50,15 @@ export default function ProductDetailModal({
     let isMounted = true;
     const loadRecommendations = async () => {
       setIsLoadingRecommendations(true);
-      const fallback = PRODUCTS.filter(
+      const fallback = catalogProducts.filter(
         (p) => p.main_category === product.main_category && p.parent_asin !== product.parent_asin
       ).slice(0, 5);
 
       const contentRecommendations = await getContentRecommendations(
         `${product.title}\n${product.description.join('\n')}\n${product.features.join('\n')}\n${Object.entries(product.details).map(([key, val]) => `${key}: ${val}`).join('\n')}`,
         product.description.join(' '),
-        8
+        catalogProducts,
+        5
       );
 
       if (!isMounted) return;

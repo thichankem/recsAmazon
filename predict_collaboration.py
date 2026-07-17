@@ -205,16 +205,27 @@ if __name__ == '__main__':
             recs = ['Lỗi: viewed_titles rỗng']
         else:
             model = load_model()
-            if method == 'svd':
-                recs = recommend_svd(viewed_titles, model, top_k)
+            if method == "item_cf":
+                recommended_titles = recommend_item_cf(viewed_titles, model, top_k)
+            elif method == "svd":
+                recommended_titles = recommend_svd(viewed_titles, model, top_k)
             else:
-                recs = recommend_item_cf(viewed_titles, model, top_k)
+                recommended_titles = [f"Lỗi: Phương pháp '{method}' không được hỗ trợ!"]
 
-    except FileNotFoundError as e:
-        recs = [f'Lỗi: {str(e)}']
+            # Load metadata
+            metadata_cache = {}
+            if os.path.exists('model_output/metadata_cache.pkl'):
+                with open('model_output/metadata_cache.pkl', 'rb') as f:
+                    metadata_cache = pickle.load(f)
+
+            results = []
+            for title in recommended_titles:
+                if title in metadata_cache:
+                    results.append(metadata_cache[title])
+                else:
+                    results.append({"title": title})
+
+            print(json.dumps(results, ensure_ascii=False))
+
     except Exception as e:
-        import traceback
-        traceback.print_exc(file=sys.stderr)
-        recs = [f'Lỗi: {str(e)[:100]}']
-
-    print(json.dumps(recs, ensure_ascii=False))
+        print(json.dumps([f"Lỗi hệ thống: {str(e)}"], ensure_ascii=False))
