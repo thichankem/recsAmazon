@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom styles for amazon and terminal look */
+.amazon-orange {
+  color: #FF9900;
+}
+
+.bg-amazon-blue-dark {
+  background-color: #131921;
+}
+
+.bg-amazon-blue-light {
+  background-color: #232f3e;
+}
+
+.border-amazon-orange {
+  border-color: #FF9900;
+}
+
+.bg-amazon-orange {
+  background-color: #FF9900;
+}
+
+.bg-amazon-yellow {
+  background-color: #f0c14b;
+}
+
+.bg-amazon-yellow-hover {
+  background-color: #ddb347;
+}
+
+/* Hide scrollbar for clean horizontal scrolls */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
