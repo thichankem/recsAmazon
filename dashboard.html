@@ -262,25 +262,15 @@
         // Config bots
         // ──────────────────────────────────────────────────        // Cấu hình danh sách Bots
         const CB_BOTS = [
-            { id: 1, name: "CB_Bose_Headphones" },
-            { id: 2, name: "CB_Anker_Charger" },
-            { id: 3, name: "CB_Razer_Mouse" },
-            { id: 4, name: "CB_Samsung_S23" },
-            { id: 5, name: "CB_Apple_Watch" },
-            { id: 6, name: "CB_SanDisk_SSD" },
-            { id: 7, name: "CB_Kindle_Paperwhite" },
-            { id: 8, name: "CB_Logitech_Webcam" },
-            { id: 9, name: "CB_Spigen_Case" },
-            { id: 10, name: "CB_Sony_Camera" },
+            { id: 1, name: "Bot_Apple_Fan" },
+            { id: 2, name: "Bot_Samsung_Loyal" },
+            { id: 3, name: "Bot_Gamer" },
             { id: 'url', name: "🌐 CB_Custom_URL_Bot" }
         ];
 
         const CF_BOTS = [
             { id: 1, name: 'ColabBot_Apple_Ecosystem' },
-            { id: 2, name: 'ColabBot_Gaming_Mobile' },
-            { id: 3, name: 'ColabBot_Phone_Protection' },
-            { id: 4, name: 'ColabBot_Audio_Setup' },
-            { id: 5, name: 'ColabBot_Power_Travel' },
+            { id: 2, name: 'ColabBot_Gaming_Mobile' }
         ];
 
         // ──────────────────────────────────────────────────
@@ -541,8 +531,8 @@
 
             document.getElementById('cmp-cb-avg').textContent = cbAvg !== null ? `${cbAvg}%` : '—';
             document.getElementById('cmp-cf-avg').textContent = cfAvg !== null ? `${cfAvg}%` : '—';
-            document.getElementById('cmp-cb-done').textContent = `${cbResults.length}/10`;
-            document.getElementById('cmp-cf-done').textContent = `${cfResults.length}/5`;
+            document.getElementById('cmp-cb-done').textContent = `${cbResults.length}/${CB_BOTS.length - 1}`; // -1 for custom url bot
+            document.getElementById('cmp-cf-done').textContent = `${cfResults.length}/${CF_BOTS.length}`;
 
             // Winner banner
             const banner = document.getElementById('winner-banner');
@@ -569,7 +559,6 @@
                 ...cbResults.map(b => ({ type: 'CB', ...b }))
             ];
 
-            const botFeed = document.getElementById('bot-feed');
             if (!botFeed) return;
             
             if (allBots.length === 0) {
@@ -674,7 +663,7 @@
             setTimeout(() => msg.remove(), 5000);
 
             try {
-                await fetch('/api/run-bot', {
+                await fetch('http://localhost:3000/api/run-bot', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type, id, url })
@@ -684,6 +673,9 @@
                 alert('Không thể gọi Server. Chắc chắn bạn đã chạy: node server.js');
             }
         }
+
+        // Tự động load dữ liệu so sánh ban đầu khi mở trang
+        loadComparison();
     </script>
 </body>
 </html>
