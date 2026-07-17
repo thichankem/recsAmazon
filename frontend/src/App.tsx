@@ -43,10 +43,11 @@ export default function App() {
         const response = await fetch('/api/data/products');
         if (!response.ok) throw new Error('Failed to load data');
         const data = await response.json();
-        setProducts(Array.isArray(data) ? data : []);
+        // Prepend static PRODUCTS to ensure our demo Samsung items are always available and at the top
+        setProducts([...PRODUCTS, ...(Array.isArray(data) ? data : [])]);
       } catch (error) {
-        console.error('Failed to load products from data folder:', error);
-        setProducts([]);
+        console.error('Failed to load products from API, falling back to mock data:', error);
+        setProducts([...PRODUCTS]);
       }
     };
 
@@ -168,16 +169,39 @@ export default function App() {
           <div className="space-y-6">
 
             {/* ROW 2: "All Products" list */}
-            <div id="catalog-row" className="bg-white border border-zinc-200/80 rounded-xl p-5 shadow-sm text-left">
-              <div className="border-b border-zinc-100 pb-3 mb-4">
-                <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wide">
-                  {collaborativeProducts.length > 0 ? "Gợi ý dành riêng cho bạn" : `Danh sách sản phẩm`}
-                </h3>
-                <p className="text-[10px] text-zinc-500 mt-0.5">
-                  {collaborativeProducts.length > 0
-                    ? "Dựa trên các sản phẩm bạn đã xem gần đây."
-                    : "Duyệt qua danh mục. Nhấp vào bất kỳ sản phẩm nào để xem chi tiết thông số kỹ thuật và đánh giá."}
-                </p>
+            <div id="catalog-row" className={`bg-white border ${collaborativeProducts.length > 0 ? 'border-indigo-500/50 shadow-indigo-500/10' : 'border-zinc-200/80'} rounded-xl p-6 shadow-xl text-left relative overflow-hidden transition-all duration-500`}>
+              
+              {/* Optional Background Gradient for Recommendations */}
+              {collaborativeProducts.length > 0 && (
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 opacity-50 pointer-events-none" />
+              )}
+              
+              <div className="border-b border-zinc-100 pb-4 mb-6 relative z-10 flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 uppercase tracking-widest flex items-center gap-2">
+                    {collaborativeProducts.length > 0 ? (
+                      <>
+                        <span className="relative flex h-3 w-3 mr-1">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                        </span>
+                        Gợi ý dành riêng cho bạn
+                      </>
+                    ) : (
+                      <span className="text-zinc-900">Danh sách sản phẩm</span>
+                    )}
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1.5 font-medium">
+                    {collaborativeProducts.length > 0
+                      ? "Dựa trên các sản phẩm bạn đã xem gần đây, AI của chúng tôi đề xuất những mặt hàng này."
+                      : "Duyệt qua danh mục. Nhấp vào bất kỳ sản phẩm nào để xem chi tiết thông số kỹ thuật và đánh giá."}
+                  </p>
+                </div>
+                {collaborativeProducts.length > 0 && (
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-indigo-50 rounded-full border border-indigo-100">
+                    <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wide">Powered by AI</span>
+                  </div>
+                )}
               </div>
 
               {isLoadingCollab ? (

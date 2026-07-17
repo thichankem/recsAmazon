@@ -74,7 +74,7 @@ export default function ProductCard({
 
   return (
     <div 
-      className={`group flex flex-col bg-white border border-zinc-200/80 hover:border-indigo-500 rounded-xl shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden text-zinc-700 text-xs text-left cursor-pointer ${
+      className={`group flex flex-col bg-white border ${isRecommendation ? 'border-indigo-100/80 shadow-indigo-500/5' : 'border-zinc-200/80'} hover:border-indigo-500 rounded-xl shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden text-zinc-700 text-xs text-left cursor-pointer ${
         isRecommendation ? 'w-56 shrink-0' : 'w-full'
       }`}
       onClick={() => onViewDetails(product)}

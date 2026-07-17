@@ -339,13 +339,20 @@ export default function ProductDetailModal({
           </div>
 
           {/* 4. Recommendation system list under details */}
-          <div className="border-t border-zinc-200 pt-6 text-left">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div className="border-t border-zinc-200 pt-6 text-left relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-50/50 to-white border border-indigo-100/50 p-6 mt-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 relative z-10">
               <div>
-                <h3 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wide flex items-center gap-2">
+                <h3 className="text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 uppercase tracking-widest flex items-center gap-2">
+                  <span className="relative flex h-3 w-3 mr-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                  </span>
                   <span>Sản phẩm gợi ý liên quan</span>
-                  <span className="text-xs text-zinc-400 lowercase font-medium">Sản phẩm liên quan đến mặt hàng này</span>
                 </h3>
+                <span className="text-xs text-zinc-500 font-medium block mt-1">Được đề xuất bởi hệ thống AI dựa trên nội dung mặt hàng này</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-zinc-200 shadow-sm">
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wide">AI Recommendation</span>
               </div>
             </div>
 
