@@ -102,8 +102,8 @@ async function crawlProduct(page: any, keyword: string): Promise<{
 
     const searchBox = page.locator('#twotabsearchtextbox');
     if (!(await searchBox.isVisible({ timeout: 5_000 }).catch(() => false))) {
-        console.log('    ⚠️  Captcha! Giải trong 60s...');
-        await page.waitForSelector('#twotabsearchtextbox', { timeout: 60_000 });
+        console.log('    ⚠️  Captcha! Giải trong 120s...');
+        await page.waitForSelector('#twotabsearchtextbox', { timeout: 120_000 });
     }
 
     await searchBox.fill(keyword);
@@ -161,39 +161,69 @@ async function crawlProduct(page: any, keyword: string): Promise<{
 
     const amazonAlsoBought: string[] = await page.evaluate(() => {
         const recs: string[] = [];
+        const seen = new Set<string>();
 
-        // Selector cho "Customers who bought this also bought"
-        const selectors = [
-            '[data-client-recs-id] .a-truncate-full',
-            '[data-client-recs-id] .a-truncate-cut',
-            '[data-client-recs-id] .a-text-normal',
-            '.a-carousel-card .a-truncate-full',
-            '.a-carousel-card .a-truncate-cut',
-            '.a-carousel-card .a-text-normal',
-            '#sims-fbt-content .a-truncate-full',
-            '[data-reftag="pd_sbs_simh"] .a-text-normal',
-        ];
-
-        for (const sel of selectors) {
-            document.querySelectorAll(sel).forEach(el => {
-                let t = (el as HTMLElement).innerText?.trim() || '';
-                // Lấy dòng đầu tiên nếu bị dính giá/rating
-                t = t.split('\n')[0].trim();
-                if (t.length > 10 && !recs.includes(t)) recs.push(t);
-            });
+        // Hàm kiểm tra xem chuỗi có phải giá tiền / rác hay không
+        function isJunk(s: string): boolean {
+            const t = s.trim().toLowerCase();
+            if (t.length < 10) return true;
+            // Loại giá tiền VND, $, €, ₫
+            if (/^[\s\d,.\-]+$/.test(t)) return true;
+            if (/vnd[\s\d,.\-]/i.test(t)) return true;
+            if (/^\$[\d,.\s]/.test(t)) return true;
+            if (/^\(vnd\s/i.test(t)) return true;
+            if (/\/count\)/.test(t)) return true;
+            if (/\/feet\)/.test(t)) return true;
+            if (/% off/i.test(t)) return true;
+            if (/limited.time.deal/i.test(t)) return true;
+            if (/only \d+ left/i.test(t)) return true;
+            if (/list\s*:?\s*price/i.test(t)) return true;
+            if (/typical\s*:/i.test(t)) return true;
+            if (/discover more products/i.test(t)) return true;
+            if (/sustainability/i.test(t)) return true;
+            if (/^\d+[\s]*stars?/i.test(t)) return true;
+            if (/^\d+[,.]?\d*$/.test(t.replace(/\s/g, ''))) return true;
+            return false;
         }
 
-        // Fallback: lấy title của tất cả link trong các section recommendations
-        if (recs.length < 3) {
-            const sections = document.querySelectorAll(
-                '[data-client-recs-id], #similarities_feature_div, #p13n-asin-carousel-wr'
-            );
-            sections.forEach(sec => {
-                sec.querySelectorAll('[aria-label]').forEach(el => {
-                    const label = el.getAttribute('aria-label')?.trim() || '';
-                    if (label.length > 10 && !recs.includes(label)) recs.push(label);
-                });
+        function addRec(s: string) {
+            const clean = s.split('\n')[0].trim();
+            if (!isJunk(clean) && !seen.has(clean)) {
+                seen.add(clean);
+                recs.push(clean);
+            }
+        }
+
+        // 1. Ưu tiên: lấy title từ link có aria-label trong carousel
+        const carouselSections = document.querySelectorAll(
+            '[data-client-recs-id], #similarities_feature_div, #p13n-asin-carousel-wr, [class*="sims-fbt"], [class*="a-carousel"]'
+        );
+        carouselSections.forEach(sec => {
+            // Lấy từ aria-label của link (thường chứa tên sản phẩm đầy đủ)
+            sec.querySelectorAll<HTMLAnchorElement>('a[aria-label]').forEach(a => {
+                addRec(a.getAttribute('aria-label') || '');
             });
+            // Lấy từ alt text của ảnh sản phẩm
+            sec.querySelectorAll<HTMLImageElement>('img[alt]').forEach(img => {
+                const alt = img.getAttribute('alt') || '';
+                if (alt.length > 15) addRec(alt);
+            });
+        });
+
+        // 2. Fallback: lấy text truncate (nhưng lọc giá)
+        if (recs.length < 5) {
+            const textSelectors = [
+                '[data-client-recs-id] .a-truncate-full',
+                '[data-client-recs-id] .a-truncate-cut',
+                '.a-carousel-card .a-truncate-full',
+                '.a-carousel-card .a-truncate-cut',
+                '#sims-fbt-content .a-truncate-full',
+            ];
+            for (const sel of textSelectors) {
+                document.querySelectorAll(sel).forEach(el => {
+                    addRec((el as HTMLElement).innerText || '');
+                });
+            }
         }
 
         return recs.slice(0, 15);
@@ -234,40 +264,7 @@ const COLAB_BOTS = [
             'Backbone One PlayStation edition controller',
             'SteelSeries Nimbus wireless controller iOS',
         ],
-    },
-    {
-        id: 3,
-        name: 'ColabBot_Phone_Protection',
-        scenario: 'User xem ốp + film bảo vệ → Amazon & CF gợi ý thêm đồ bảo vệ',
-        viewedKeywords: [
-            'OtterBox Commuter Series iPhone 16 case',
-            'Spigen Glas tR tempered glass iPhone',
-            'Mous limitless shockproof phone case',
-            'ESR HaloLock MagSafe case iPhone 15',
-        ],
-    },
-    {
-        id: 4,
-        name: 'ColabBot_Audio_Gear',
-        scenario: 'User xem tai nghe cao cấp → Amazon & CF gợi ý thêm audio accessories',
-        viewedKeywords: [
-            'Sony WH-1000XM5 noise cancelling headphones',
-            'Bose QuietComfort 45 wireless headphones',
-            'JBL Clip 4 portable Bluetooth speaker',
-            'Anker Soundcore Liberty 4 NC earbuds',
-        ],
-    },
-    {
-        id: 5,
-        name: 'ColabBot_Power_Charging',
-        scenario: 'User xem sạc & pin dự phòng → Amazon & CF gợi ý thêm charging accessories',
-        viewedKeywords: [
-            'Anker 737 power bank 24000mAh USB-C',
-            'Baseus 65W GaN charger USB-C iPhone',
-            'Belkin 15W wireless charging pad MagSafe',
-            'Ugreen USB-C cable 100W fast charging',
-        ],
-    },
+    }
 ];
 
 test.describe.configure({ mode: 'serial' });

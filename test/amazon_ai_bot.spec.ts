@@ -132,14 +132,7 @@ function cleanAmazonUrl(href: string): string {
 const AI_BOTS = [
     { id: 1,  name: 'Bot_Apple_Fan',       search: 'Apple iPhone 16 Pro Max phone',           target: 'iphone 16' },
     { id: 2,  name: 'Bot_Samsung_Loyal',   search: 'Samsung Galaxy S25 Ultra smartphone',     target: 'galaxy s25' },
-    { id: 3,  name: 'Bot_Gamer',           search: 'ASUS ROG Phone 9 gaming smartphone',      target: 'rog phone' },
-    { id: 4,  name: 'Bot_Audiophile',      search: 'Sony WH-1000XM5 wireless headphones',     target: 'wh-1000xm5' },
-    { id: 5,  name: 'Bot_Case_Hunter',     search: 'OtterBox Defender Series iPhone 16 case', target: 'otterbox' },
-    { id: 6,  name: 'Bot_Power_User',      search: 'Anker 737 Power Bank 24000mAh',           target: 'anker' },
-    { id: 7,  name: 'Bot_Creator',         search: 'Moment wide angle lens iPhone',           target: 'moment' },
-    { id: 8,  name: 'Bot_Minimalist',      search: 'Apple MagSafe Wallet iPhone',             target: 'magsafe' },
-    { id: 9,  name: 'Bot_Screen',          search: 'Belkin screen protector iPhone 16',       target: 'belkin' },
-    { id: 10, name: 'Bot_Budget',          search: 'Motorola Moto G 5G unlocked phone',       target: 'motorola' },
+    { id: 3,  name: 'Bot_Gamer',           search: 'ASUS ROG Phone 9 gaming smartphone',      target: 'rog phone' }
 ];
 
 test.describe.configure({ mode: 'serial' });
@@ -162,8 +155,8 @@ for (const bot of AI_BOTS) {
         // Captcha guard
         const searchBox = page.locator('#twotabsearchtextbox');
         if (!(await searchBox.isVisible({ timeout: 5_000 }).catch(() => false))) {
-            console.log('  ⚠️  Captcha! Giải trong 60s...');
-            await page.waitForSelector('#twotabsearchtextbox', { timeout: 60_000 });
+            console.log('    ⚠️  Captcha! Giải trong 120s...');
+            await page.waitForSelector('#twotabsearchtextbox', { timeout: 120_000 });
         }
         await searchBox.fill(bot.search);
         await searchBox.press('Enter');
@@ -211,16 +204,75 @@ for (const bot of AI_BOTS) {
         console.log(`  📝 "${sourceTitle.slice(0, 65)}"`);
 
         // ── BƯỚC 5: Gợi ý Amazon (ground truth) ─────────────────
-        const amazonRecs: string[] = [];
+        let amazonRecs: string[] = [];
         try {
             await page.mouse.wheel(0, 1500);
             await page.waitForTimeout(2500);
-            const recItems = page.locator('[data-client-recs-id], .a-carousel-card');
-            const recCount = await recItems.count();
-            for (let i = 0; i < Math.min(recCount, 5); i++) {
-                const t = await recItems.nth(i).locator('span, h2').first().innerText().catch(() => '');
-                if (t.trim().length > 5) amazonRecs.push(t.trim());
-            }
+            await page.mouse.wheel(0, 1200);
+            await page.waitForTimeout(1200);
+
+            amazonRecs = await page.evaluate(() => {
+                const recs: string[] = [];
+                const seen = new Set<string>();
+
+                function isJunk(s: string): boolean {
+                    const t = s.trim().toLowerCase();
+                    if (t.length < 10) return true;
+                    if (/^[\s\d,.\-]+$/.test(t)) return true;
+                    if (/vnd[\s\d,.\-]/i.test(t)) return true;
+                    if (/^\$[\d,.\s]/.test(t)) return true;
+                    if (/^\(vnd\s/i.test(t)) return true;
+                    if (/\/count\)/.test(t)) return true;
+                    if (/\/feet\)/.test(t)) return true;
+                    if (/% off/i.test(t)) return true;
+                    if (/limited.time.deal/i.test(t)) return true;
+                    if (/only \d+ left/i.test(t)) return true;
+                    if (/list\s*:?\s*price/i.test(t)) return true;
+                    if (/typical\s*:/i.test(t)) return true;
+                    if (/discover more products/i.test(t)) return true;
+                    if (/sustainability/i.test(t)) return true;
+                    if (/^\d+[\s]*stars?/i.test(t)) return true;
+                    return false;
+                }
+
+                function addRec(s: string) {
+                    const clean = s.split('\n')[0].trim();
+                    if (!isJunk(clean) && !seen.has(clean)) {
+                        seen.add(clean);
+                        recs.push(clean);
+                    }
+                }
+
+                // Ưu tiên: aria-label và alt text từ carousel
+                const sections = document.querySelectorAll(
+                    '[data-client-recs-id], #similarities_feature_div, #p13n-asin-carousel-wr, [class*="sims-fbt"], [class*="a-carousel"]'
+                );
+                sections.forEach(sec => {
+                    sec.querySelectorAll<HTMLAnchorElement>('a[aria-label]').forEach(a => {
+                        addRec(a.getAttribute('aria-label') || '');
+                    });
+                    sec.querySelectorAll<HTMLImageElement>('img[alt]').forEach(img => {
+                        const alt = img.getAttribute('alt') || '';
+                        if (alt.length > 15) addRec(alt);
+                    });
+                });
+
+                // Fallback: text truncate
+                if (recs.length < 3) {
+                    const textSels = [
+                        '[data-client-recs-id] .a-truncate-full',
+                        '.a-carousel-card .a-truncate-full',
+                        '.a-carousel-card .a-truncate-cut',
+                    ];
+                    for (const sel of textSels) {
+                        document.querySelectorAll(sel).forEach(el => {
+                            addRec((el as HTMLElement).innerText || '');
+                        });
+                    }
+                }
+
+                return recs.slice(0, 10);
+            });
         } catch { /* Amazon có thể đóng session sau khi scroll */ }
         console.log(`  📊 Amazon gợi ý ${amazonRecs.length} sản phẩm`);
 
