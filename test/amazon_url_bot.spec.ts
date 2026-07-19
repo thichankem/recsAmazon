@@ -8,25 +8,20 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { test, chromium } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { launchRealBrowser, humanDelay } from './bot-helpers';
 
 // 🌐 ĐIỀN URL BẠN MUỐN TEST VÀO ĐÂY:
 const TARGET_URL = process.env.TEST_URL || 'https://www.apple.com/iphone-15-pro/';
 
 test('🌐 Bot cào trang web bất kỳ -> Content Based Model', async () => {
-    test.setTimeout(120000); // Cho phép chờ 2 phút
-    let browser;
-    try {
-        browser = await chromium.connectOverCDP('http://127.0.0.1:9222', { timeout: 10000 });
-    } catch (e) {
-        console.error("LỖI: Chưa khởi động Chrome ở chế độ Bot. Hãy chạy file KhoiDongChromeBot.bat trước!");
-        throw e;
-    }
-    const context = browser.contexts()[0];
-    const page = await context.newPage();
+    test.setTimeout(120000);
+
+    // ── Khởi tạo Chrome thật (không cần KhoiDongChromeBot.bat) ──
+    const { context, page } = await launchRealBrowser();
 
     console.log(`\n════════════════════════════════════════════════════════════`);
     console.log(`🌐 TÙY CHỈNH URL BOT`);
@@ -44,12 +39,12 @@ test('🌐 Bot cào trang web bất kỳ -> Content Based Model', async () => {
         await page.waitForNavigation({ timeout: 60000 }).catch(() => {});
     }
 
-    // Đợi thêm tí cho page load text
-    await page.waitForTimeout(3000);
+    // Đợi thêm cho page load text
+    await humanDelay(page, 2000, 4000);
 
     // 2. Lấy TOÀN BỘ text của trang (loại bỏ code JS/CSS)
     const pageText = await page.evaluate(() => {
-        return document.body.innerText.substring(0, 8000); // Lấy tối đa 8000 ký tự đầu tiên để tránh tràn bộ nhớ
+        return document.body.innerText.substring(0, 8000);
     });
     const pageTitle = await page.title();
     
@@ -62,27 +57,16 @@ test('🌐 Bot cào trang web bất kỳ -> Content Based Model', async () => {
         description: pageText,
         top_k: 10
     };
-    
-    // Convert to JSON and escape correctly for Windows shell
-    // Node.js child_process allows passing input via stdin nicely
-    const pythonCode = `
-import sys, json, subprocess
-payload = json.loads(sys.stdin.read())
-p = subprocess.Popen(['python', 'predict.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
-out, err = p.communicate(json.dumps(payload))
-print(out)
-    `;
 
-    // Thực thi Python và truyền payload
     let predictions: string[] = [];
     try {
         const out = execSync(`python -c "import sys, json, subprocess; p = subprocess.Popen(['python', 'predict.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace'); out, err = p.communicate(sys.stdin.read()); print(out)"`, {
-            input: JSON.stringify(payload).replace(/[\uD800-\uDFFF]/g, ''), // Loại bỏ surrogate characters từ Node.js trước khi gửi
+            input: JSON.stringify(payload).replace(/[\uD800-\uDFFF]/g, ''),
             encoding: 'utf-8'
         });
         
         predictions = JSON.parse(out.trim());
-    } catch (e) {
+    } catch (e: any) {
         console.log("    Lỗi chạy Python model:", e.message);
         predictions = [];
     }
@@ -99,7 +83,7 @@ print(out)
             title: pageTitle,
             description: pageText
         },
-        expectedOutput: [], // URL ngoài thì không có ground truth của Amazon
+        expectedOutput: [],
         myModelOutput: predictions
     };
 
@@ -113,4 +97,5 @@ print(out)
     console.log(`\n  ✅ Xong → output/content-based-bot-url.json\n`);
     
     await page.close();
+    await context.close();
 });
