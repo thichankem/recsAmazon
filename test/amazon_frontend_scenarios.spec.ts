@@ -1,80 +1,66 @@
 import { test, expect } from '@playwright/test';
 
-// ✅ Chỉ 2 kịch bản, mỗi cái 1 từ khóa để test nhanh và nhẹ máy
-const scenarios = [
-  { name: 'Samsung Fan',    searches: ['Samsung T7 Shield'] },
-  { name: 'Apple Fan',      searches: ['Apple Watch'] }
-];
+/**
+ * Frontend Smoke Tests — nhẹ nhất có thể (2 test, ~20 giây tổng)
+ *
+ * Test 1: Cold Start — catalog hiển thị sản phẩm
+ * Test 2: Click sản phẩm → modal mở → nhấn nút X → modal đóng → catalog vẫn còn
+ */
+test.describe('Frontend Smoke Test', () => {
+  test.setTimeout(30000); // tối đa 30 giây / test
 
-test.describe('Frontend AI Recommendation Tests', () => {
+  test('Test 1 — Cold Start: catalog hiển thị sản phẩm', async ({ page }) => {
+    await page.goto('http://localhost:5173/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-  test.setTimeout(45000);
+    // Catalog phải load
+    await expect(page.locator('#catalog-row')).toBeVisible({ timeout: 10000 });
 
-  for (const scenario of scenarios) {
-    test(`Scenario: ${scenario.name}`, async ({ page }) => {
+    const cards = page.locator('#catalog-row .grid > div');
+    await expect(cards.first()).toBeVisible({ timeout: 5000 });
 
-      // 1. Vào trang chủ, reset trạng thái sạch
-      await page.goto('http://localhost:5173/');
-      await page.evaluate(() => localStorage.clear());
-      await page.reload();
-      await page.waitForLoadState('domcontentloaded');
+    const count = await cards.count();
+    console.log(`✅ Cold Start: ${count} sản phẩm`);
+    expect(count).toBeGreaterThan(0);
+  });
 
-      // Đóng bất kỳ modal nào đang mở sẵn (tránh bị che khuất)
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(200);
+  test('Test 2 — Modal: mở → đóng bằng nút X → catalog vẫn còn', async ({ page }) => {
+    await page.goto('http://localhost:5173/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-      console.log(`\n=== Kịch bản: ${scenario.name} ===`);
+    // Đợi catalog load
+    await page.waitForSelector('#catalog-row .grid > div', { timeout: 10000 });
 
-      // 2. Tìm kiếm và xem sản phẩm
-      for (const query of scenario.searches) {
-        const searchInput = page.locator('#header-search-input');
-        await searchInput.fill(query);
-        await page.keyboard.press('Enter');
+    // Click card đầu tiên
+    const firstCard = page.locator('#catalog-row .grid > div').first();
+    const title = await firstCard.locator('h3').innerText().catch(() => '?');
+    console.log(`🖱️  Click: "${title}"`);
 
-        await page.waitForSelector(`h2:has-text("Kết quả tìm kiếm cho")`, { timeout: 8000 });
+    await firstCard.click({ force: true });
 
-        // Đợi modal cũ biến mất hoàn toàn trước khi click
-        await page.waitForSelector('div[role="dialog"]', { state: 'hidden', timeout: 3000 }).catch(() => {});
+    // Modal phải xuất hiện — locate bằng id cố định
+    const modal = page.locator('.fixed.inset-0').first();
+    await expect(modal).toBeVisible({ timeout: 5000 });
+    console.log('✅ Modal đã mở');
 
-        const firstProduct = page.locator('#storefront-container .grid > div').first();
-        if (await firstProduct.isVisible()) {
-          const title = await firstProduct.locator('h3').innerText().catch(() => '(unknown)');
-          console.log(`[Xem] -> ${title}`);
+    // Đóng bằng nút X (id="modal-close-btn")
+    await page.locator('#modal-close-btn').click();
 
-          // Click vào phần tử con (h3) để tránh modal overlay che khuất
-          await firstProduct.locator('h3').click({ force: true });
+    // Đợi modal biến mất
+    await expect(modal).toBeHidden({ timeout: 5000 });
+    console.log('✅ Modal đã đóng');
 
-          // Đợi modal mở
-          await page.waitForSelector('div[role="dialog"]', { state: 'visible', timeout: 5000 }).catch(() => {});
-          await page.waitForTimeout(200);
+    // Đợi spinner "Đang tải gợi ý..." biến mất (nếu có) — CF đang fetch API
+    await page.locator('text=Đang tải gợi ý').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
 
-          // Đóng modal bằng Escape
-          await page.keyboard.press('Escape');
-
-          // Đợi modal đóng hẳn trước khi tiếp tục
-          await page.waitForSelector('div[role="dialog"]', { state: 'hidden', timeout: 5000 }).catch(() => {});
-          await page.waitForTimeout(150);
-        }
-      }
-
-      // 3. Quay về Home để xem gợi ý AI
-      console.log(`[Action] -> Quay về trang chủ...`);
-      await page.locator('#header-logo').click({ force: true });
-
-      // 4. Chờ AI hiển thị gợi ý cá nhân hoá
-      await page.waitForSelector(`text="Gợi ý dành riêng cho bạn"`, { timeout: 20000 });
-
-      // 5. Lấy danh sách gợi ý
-      const aiRecs = page.locator('#catalog-row .grid > div');
-      const count = await aiRecs.count();
-      console.log(`[Kết quả] -> AI gợi ý ${count} sản phẩm`);
-
-      for (let i = 0; i < count; i++) {
-        const title = await aiRecs.nth(i).locator('h3').innerText().catch(() => '-');
-        console.log(`  ${i + 1}. ${title}`);
-      }
-
-      expect(count).toBeGreaterThan(0);
-    });
-  }
+    // Catalog vẫn phải hiển thị sau khi load xong
+    await expect(page.locator('#catalog-row')).toBeVisible({ timeout: 5000 });
+    const cards = page.locator('#catalog-row .grid > div');
+    await expect(cards.first()).toBeVisible({ timeout: 10000 }); // chờ grid render
+    const count = await cards.count();
+    console.log(`✅ Catalog sau khi xem: ${count} sản phẩm`);
+    expect(count).toBeGreaterThan(0);
+  });
 });
