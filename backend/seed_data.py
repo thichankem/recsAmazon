@@ -2,7 +2,7 @@ import random
 import sys
 
 sys.stdout.reconfigure(encoding='utf-8')
-from database import users_collection, products_collection, interactions_collection
+from database import supabase
 from datetime import datetime
 
 # Các danh mục theo yêu cầu
@@ -78,8 +78,11 @@ def generate_products():
                 products.append(var_product)
                 pid += 1
 
-    products_collection.delete_many({})
-    products_collection.insert_many(products)
+    try:
+        supabase.table('products').delete().neq('_id', '0').execute()
+    except:
+        pass
+    supabase.table('products').insert(products).execute()
     print(f"Đã xoá dữ liệu cũ và tạo mới {len(products)} sản phẩm.")
     return products
 
@@ -92,8 +95,11 @@ def generate_users(num_users=20):
         }
         users.append(user)
         
-    users_collection.delete_many({})
-    users_collection.insert_many(users)
+    try:
+        supabase.table('users').delete().neq('_id', '0').execute()
+    except:
+        pass
+    supabase.table('users').insert(users).execute()
     print(f"Đã xoá dữ liệu cũ và tạo mới {num_users} người dùng.")
     return users
 
@@ -120,9 +126,13 @@ def generate_interactions(users, products, num_interactions=400):
         }
         interactions.append(interaction)
         
-    interactions_collection.delete_many({})
+    try:
+        supabase.table('interactions').delete().neq('user_id', '0').execute()
+    except:
+        pass
     if interactions:
-        interactions_collection.insert_many(interactions)
+        # Supabase insert limit is usually 1000, we have 400 or 500 so it's fine.
+        supabase.table('interactions').insert(interactions).execute()
     print(f"Đã xoá dữ liệu cũ và tạo mới {num_interactions} lịch sử click chuột.")
 
 if __name__ == "__main__":

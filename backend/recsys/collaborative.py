@@ -1,7 +1,8 @@
 import pandas as pd
 from sklearn.decomposition import TruncatedSVD
 import numpy as np
-from database import products_collection, interactions_collection, users_collection
+import random
+from database import supabase
 
 def get_collaborative_recommendations(user_id: str, top_n: int = 5):
     """
@@ -9,12 +10,15 @@ def get_collaborative_recommendations(user_id: str, top_n: int = 5):
     using TruncatedSVD (Matrix Factorization).
     """
     # Fetch data
-    interactions = list(interactions_collection.find({}))
-    products = list(products_collection.find({}))
+    res_int = supabase.table('interactions').select('*').execute()
+    res_prod = supabase.table('products').select('*').execute()
+    
+    interactions = res_int.data
+    products = res_prod.data
     
     if not interactions or not products:
-        # Fallback to popular products or random if no data
-        return list(products_collection.aggregate([{"$sample": {"size": top_n}}]))
+        # Fallback to random if no data
+        return random.sample(products, min(len(products), top_n)) if products else []
         
     df_interactions = pd.DataFrame(interactions)
     df_products = pd.DataFrame(products)
@@ -30,14 +34,14 @@ def get_collaborative_recommendations(user_id: str, top_n: int = 5):
     # Create User-Item Matrix
     user_item_matrix = grouped_interactions.pivot(index='user_id', columns='product_id', values='count').fillna(0)
     
-    # If the user has no interactions, return popular/random products
+    # If the user has no interactions, return random products
     if user_id not in user_item_matrix.index:
-        return list(products_collection.aggregate([{"$sample": {"size": top_n}}]))
+        return random.sample(products, min(len(products), top_n))
 
     # Matrix Factorization using Truncated SVD
     n_components = min(20, min(user_item_matrix.shape) - 1)
     if n_components <= 0:
-        return list(products_collection.aggregate([{"$sample": {"size": top_n}}]))
+        return random.sample(products, min(len(products), top_n))
         
     svd = TruncatedSVD(n_components=n_components, random_state=42)
     matrix_factorized = svd.fit_transform(user_item_matrix)
@@ -50,9 +54,6 @@ def get_collaborative_recommendations(user_id: str, top_n: int = 5):
     
     # Get user predictions
     user_predictions = preds_df.loc[user_id]
-    
-    # Get products the user has already interacted with to exclude them
-    user_interacted_products = grouped_interactions[grouped_interactions['user_id'] == user_id]['product_id'].tolist()
     
     # Do not filter out interacted products so the user can clearly see their preferences reflected at the top
     recommendations = user_predictions.sort_values(ascending=False)

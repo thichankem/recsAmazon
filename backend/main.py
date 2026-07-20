@@ -2,8 +2,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
+from datetime import datetime
 
-from database import products_collection, interactions_collection, users_collection
+from database import supabase
 from recsys.content_based import get_content_based_recommendations
 from recsys.collaborative import get_collaborative_recommendations
 
@@ -29,33 +30,30 @@ def read_root():
 
 @app.get("/api/products", response_model=List[Dict[str, Any]])
 def get_products(q: str = None, limit: int = 50):
-    query = {}
+    query = supabase.table('products').select('*')
     if q:
-        query = {"name": {"$regex": q, "$options": "i"}}
-    products = list(products_collection.find(query).limit(limit))
-    return products
+        query = query.ilike('name', f'%{q}%')
+    
+    response = query.limit(limit).execute()
+    return response.data
 
 @app.get("/api/products/{product_id}", response_model=Dict[str, Any])
 def get_product(product_id: str):
-    product = products_collection.find_one({"_id": product_id})
-    if product:
-        return product
+    response = supabase.table('products').select('*').eq('_id', product_id).execute()
+    if response.data and len(response.data) > 0:
+        return response.data[0]
     raise HTTPException(status_code=404, detail="Product not found")
 
 @app.get("/api/users", response_model=List[Dict[str, Any]])
 def get_users():
-    users = list(users_collection.find({}, {"_id": 1, "name": 1}))
-    # rename _id to id for frontend compatibility or just leave it
-    # We will return _id and name
-    return users
-
-from datetime import datetime
+    response = supabase.table('users').select('_id, name').execute()
+    return response.data
 
 @app.post("/api/interactions")
 def log_interaction(interaction: InteractionRequest):
     data = interaction.dict()
     data["timestamp"] = datetime.now().astimezone().isoformat()
-    interactions_collection.insert_one(data)
+    supabase.table('interactions').insert(data).execute()
     return {"status": "success", "message": "Interaction logged"}
 
 @app.get("/api/recommendations/home", response_model=List[Dict[str, Any]])

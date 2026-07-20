@@ -1,14 +1,15 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from database import products_collection
+from database import supabase
 
 def get_content_based_recommendations(product_id: str, top_n: int = 5):
     """
     Get similar products based on category and description.
     """
     # Fetch all products
-    products = list(products_collection.find({}))
+    response = supabase.table('products').select('*').execute()
+    products = response.data
     if not products:
         return []
 
@@ -20,7 +21,8 @@ def get_content_based_recommendations(product_id: str, top_n: int = 5):
         return []
     
     # Combine features for content-based filtering
-    # We weight category slightly more or just combine them
+    df['category'] = df['category'].fillna('')
+    df['description'] = df['description'].fillna('')
     df['combined_features'] = df['category'] + " " + df['description']
     
     # TF-IDF Vectorization
