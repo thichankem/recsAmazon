@@ -3,7 +3,7 @@ import { X, Star, ThumbsUp, ShieldCheck, ShoppingCart, ArrowRight } from 'lucide
 import { Product } from '../types';
 import { REVIEWS } from '../data/products';
 import ProductCard from './ProductCard';
-import { mapProduct } from '../App';
+import { mapProduct, API_BASE_URL } from '../App';
 
 interface ProductDetailModalProps {
   product: Product;
@@ -25,7 +25,7 @@ export default function ProductDetailModal({
   // Fetch related products (Content-Based Filtering)
   useEffect(() => {
     setLoadingRelated(true);
-    fetch(`http://localhost:8000/api/recommendations/related/${product.parent_asin}?limit=5`)
+    fetch(`${API_BASE_URL}/recommendations/related/${product.parent_asin}?limit=5`)
       .then(res => res.json())
       .then(data => {
         setRelatedProducts(data.map(mapProduct));

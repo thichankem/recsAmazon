@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: amazon-recs-backend
+    env: docker
+    region: singapore
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: MONGO_URI
+        sync: false

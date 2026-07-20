@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+gunicorn
 pymongo
 pandas
 scikit-learn
