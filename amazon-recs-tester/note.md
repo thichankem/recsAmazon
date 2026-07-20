@@ -7,8 +7,8 @@ hệ gợi ý ở trang chi tiết sản phẩm sẽ dựa vào danh mục và d
 
 
 
-# Chuyển vào thư mục chứa dự án (bạn thay đường dẫn nếu khác nhé)
-cd "C:\Users\ADMIN\OneDrive\Máy tính\recommendation system\backend"
+# Chuyển vào thư mục chứa dự án
+cd "C:\Users\ADMIN\OneDrive\Máy tính\recsAmazon\backend"
 
 # Chạy server FastAPI
 .\venv\Scripts\python.exe -m uvicorn main:app --reload
@@ -16,7 +16,7 @@ cd "C:\Users\ADMIN\OneDrive\Máy tính\recommendation system\backend"
 
 
 # Chuyển vào thư mục frontend
-cd "C:\Users\ADMIN\OneDrive\Máy tính\recommendation system\amazon-recs-tester"
+cd "C:\Users\ADMIN\OneDrive\Máy tính\recsAmazon\amazon-recs-tester"
 
 # Chạy server giao diện web
 npm run dev
