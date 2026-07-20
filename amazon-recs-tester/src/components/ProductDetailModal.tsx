@@ -3,7 +3,7 @@ import { X, Star, ThumbsUp, ShieldCheck, ShoppingCart, ArrowRight } from 'lucide
 import { Product } from '../types';
 import { REVIEWS } from '../data/products';
 import ProductCard from './ProductCard';
-import { mapProduct, API_BASE_URL } from '../App';
+import { mapProduct, API_BASE_URL } from '../config';
 
 interface ProductDetailModalProps {
   product: Product;

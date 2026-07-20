@@ -4,25 +4,9 @@ import { Product, RecUser } from './types';
 import Header from './components/Header';
 import ProductCard from './components/ProductCard';
 import ProductDetailModal from './components/ProductDetailModal';
+import { mapProduct, API_BASE_URL } from './config';
 
-// Helper to map backend product to frontend Product type
-export const mapProduct = (apiProduct: any): Product => ({
-  parent_asin: apiProduct._id,
-  title: apiProduct.name,
-  main_category: apiProduct.category,
-  categories: [apiProduct.category],
-  price: apiProduct.price,
-  description: [apiProduct.description],
-  average_rating: 4.5,
-  rating_number: Math.floor(Math.random() * 500) + 10,
-  features: ["Chất lượng cao", "Bền bỉ", "Thiết kế đẹp"],
-  store: 'AI Store',
-  details: {},
-  bought_together: [],
-  image_url: apiProduct.image_url
-});
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export default function App() {
   // --- 1. Configurations & States ---
@@ -120,8 +104,8 @@ export default function App() {
         action: 'click'
       })
     })
-    .then(() => fetchRecommendations(selectedUser.id))
-    .catch(err => console.error("Error logging interaction:", err));
+      .then(() => fetchRecommendations(selectedUser.id))
+      .catch(err => console.error("Error logging interaction:", err));
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
@@ -139,8 +123,8 @@ export default function App() {
         action: 'add_to_cart'
       })
     })
-    .then(() => fetchRecommendations(selectedUser.id))
-    .catch(err => console.error("Error logging interaction:", err));
+      .then(() => fetchRecommendations(selectedUser.id))
+      .catch(err => console.error("Error logging interaction:", err));
   };
 
   const triggerToast = (msg: string) => {
@@ -207,11 +191,8 @@ export default function App() {
               <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
               <div className="border-b border-zinc-100 pb-3 mb-4">
                 <h3 className="text-sm font-extrabold text-indigo-700 uppercase tracking-wide flex items-center gap-2">
-                  ✨ Dành riêng cho {selectedUser?.name} {selectedUser?.persona && `- ${selectedUser.persona}`} ({recommendations.length} mặt hàng)
+                  Danh sách sản phẩm
                 </h3>
-                <p className="text-[10px] text-zinc-500 mt-0.5">
-                  Danh sách sản phẩm được cá nhân hóa hoàn toàn dựa trên lịch sử xem hàng (Collaborative Filtering).
-                </p>
               </div>
 
               {loading ? (
