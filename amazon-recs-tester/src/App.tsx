@@ -5,8 +5,7 @@ import Header from './components/Header';
 import ProductCard from './components/ProductCard';
 import ProductDetailModal from './components/ProductDetailModal';
 import { mapProduct, API_BASE_URL } from './config';
-
-
+import { supabase } from './lib/supabase';
 
 export default function App() {
   // --- 1. Configurations & States ---
@@ -23,42 +22,191 @@ export default function App() {
   const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const formatUsers = (data: any[]): RecUser[] => {
+    const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500', 'bg-indigo-500', 'bg-teal-500', 'bg-pink-500'];
+    return data.map((u: any, idx: number) => ({
+      id: u._id,
+      name: u.name,
+      avatarColor: colors[idx % colors.length],
+      persona: '',
+      history: [],
+      preferredCategories: []
+    }));
+  };
+
   // --- 2. Fetch Data ---
   useEffect(() => {
-    fetch(`${API_BASE_URL}/users`)
-      .then(res => res.json())
-      .then(data => {
-        const mappedUsers: RecUser[] = data.map((u: any, idx: number) => {
-          const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500', 'bg-indigo-500', 'bg-teal-500', 'bg-pink-500'];
-          return {
-            id: u._id,
-            name: u.name,
-            avatarColor: colors[idx % colors.length],
-            persona: '',
-            history: [],
-            preferredCategories: []
-          };
-        });
-        setUsers(mappedUsers);
-        if (mappedUsers.length > 0) {
-          setSelectedUser(mappedUsers[0]);
-        }
+    // Try FastAPI backend first with short timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 500);
+
+    fetch(`${API_BASE_URL}/users`, { signal: controller.signal })
+      .then(res => {
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error('API request failed');
+        return res.json();
       })
-      .catch(err => console.error("Error fetching users:", err));
+      .then(data => {
+        const mappedUsers = formatUsers(data);
+        setUsers(mappedUsers);
+        if (mappedUsers.length > 0) setSelectedUser(mappedUsers[0]);
+      })
+      .catch(async () => {
+        // Fallback directly to Supabase
+        try {
+          const { data, error } = await supabase.from('users').select('_id, name');
+          if (error) throw error;
+          const mappedUsers = formatUsers(data || []);
+          setUsers(mappedUsers);
+          if (mappedUsers.length > 0) setSelectedUser(mappedUsers[0]);
+          else setLoading(false);
+        } catch (err) {
+          console.error("Error fetching users from Supabase:", err);
+          setLoading(false);
+        }
+      });
   }, []);
 
-  const fetchRecommendations = (userId: string) => {
+  const getHash = (str: string): number => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+
+  const fetchRecommendationsFromSupabase = async (userId: string) => {
+    try {
+      const { data: allProducts } = await supabase.from('products').select('*');
+      if (!allProducts || allProducts.length === 0) return;
+
+      const { data: rawInteractions } = await supabase
+        .from('interactions')
+        .select('*');
+
+      const allInteractions = rawInteractions || [];
+
+      if (allInteractions.length > 0) {
+        const getWeight = (item: any) =>
+          item.rating_score ? Number(item.rating_score) : (item.action === 'rating' ? 5 : item.action === 'add_to_cart' ? 3 : 1.5);
+
+        // Target user's interactions
+        const targetInteractions = allInteractions.filter((i: any) => String(i.user_id) === String(userId));
+        
+        // Cold start diversity for users with no interaction history
+        if (targetInteractions.length === 0) {
+          const categories = Array.from(new Set(allProducts.map((p: any) => p.category).filter(Boolean))).sort();
+          if (categories.length > 0) {
+            const hashVal = getHash(userId);
+            const favCategory = categories[hashVal % categories.length];
+            const favProds = [...allProducts.filter((p: any) => p.category === favCategory)];
+            const otherProds = [...allProducts.filter((p: any) => p.category !== favCategory)];
+
+            const favSorted = favProds.sort((a: any, b: any) => (getHash(userId + '_' + a._id) % 10007) - (getHash(userId + '_' + b._id) % 10007));
+            const otherSorted = otherProds.sort((a: any, b: any) => (getHash(userId + '_' + a._id) % 10007) - (getHash(userId + '_' + b._id) % 10007));
+
+            setRecommendations([...favSorted, ...otherSorted].map(mapProduct));
+            return;
+          }
+        }
+
+        const targetProductSet = new Set(targetInteractions.map((i: any) => String(i.product_id)));
+
+        // Category weights for target user
+        const categoryWeights: Record<string, number> = {};
+        targetInteractions.forEach((item: any) => {
+          const weight = getWeight(item);
+          const prod = allProducts.find((p: any) => String(p._id) === String(item.product_id));
+          if (prod && prod.category) {
+            categoryWeights[prod.category] = (categoryWeights[prod.category] || 0) + weight;
+          }
+        });
+
+        const totalCatWeight = Object.values(categoryWeights).reduce((a, b) => a + b, 0) || 1;
+
+        // Find similarities with other users based on shared products
+        const otherUserSimilarity: Record<string, number> = {};
+        allInteractions.forEach((item: any) => {
+          const itemUserId = String(item.user_id);
+          const itemProdId = String(item.product_id);
+          if (itemUserId !== String(userId) && targetProductSet.has(itemProdId)) {
+            otherUserSimilarity[itemUserId] = (otherUserSimilarity[itemUserId] || 0) + getWeight(item);
+          }
+        });
+
+        // Collaborative scores for candidate products from similar users
+        const collabScores: Record<string, number> = {};
+        allInteractions.forEach((item: any) => {
+          const itemUserId = String(item.user_id);
+          const itemProdId = String(item.product_id);
+          if (itemUserId !== String(userId) && otherUserSimilarity[itemUserId]) {
+            const sim = otherUserSimilarity[itemUserId];
+            const weight = getWeight(item);
+            collabScores[itemProdId] = (collabScores[itemProdId] || 0) + sim * weight;
+          }
+        });
+
+        // Global product popularity
+        const globalPopularity: Record<string, number> = {};
+        allInteractions.forEach((item: any) => {
+          const itemProdId = String(item.product_id);
+          globalPopularity[itemProdId] = (globalPopularity[itemProdId] || 0) + getWeight(item);
+        });
+
+        // Score products: Category Affinity gets top priority (200 * catAffinity), Collaborative adds fine tuning (20 * cScore)
+        const scoredProducts = allProducts.map((p: any) => {
+          const pid = String(p._id);
+          const cScore = collabScores[pid] || 0;
+          const catWeight = categoryWeights[p.category] || 0;
+          const catAffinity = totalCatWeight > 0 ? catWeight / totalCatWeight : 0;
+          const popWeight = globalPopularity[pid] || 0;
+          const isUnseen = !targetProductSet.has(pid);
+          const userTieBreaker = (getHash(userId + '_' + pid) % 1000) / 10000;
+
+          let score = 0;
+          if (isUnseen) {
+            score = catAffinity * 1000 + cScore * 10 + popWeight * 0.05 + userTieBreaker;
+          } else {
+            score = catAffinity * 100 + cScore * 2 + popWeight * 0.01 + userTieBreaker;
+          }
+          return { product: p, score };
+        });
+
+        // Sort products by highest score
+        scoredProducts.sort((a, b) => b.score - a.score);
+        setRecommendations(scoredProducts.map(sp => mapProduct(sp.product)));
+      } else {
+        // Cold-start when no interactions exist in DB at all
+        const hashVal = getHash(userId);
+        const sortedProds = [...allProducts].sort((a: any, b: any) => (getHash(userId + '_' + a._id) % 10007) - (getHash(userId + '_' + b._id) % 10007));
+        setRecommendations(sortedProds.map(mapProduct));
+      }
+    } catch (err) {
+      console.error("Error fetching recommendations from Supabase:", err);
+    }
+  };
+
+  const fetchRecommendations = async (userId: string) => {
     setLoading(true);
-    fetch(`${API_BASE_URL}/recommendations/home?user_id=${userId}&limit=50`)
-      .then(res => res.json())
-      .then(data => {
-        setRecommendations(data.map(mapProduct));
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching home recommendations:", err);
-        setLoading(false);
+    setRecommendations([]); // Instantly clear old recommendations on user switch!
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/recommendations/home?user_id=${userId}&limit=50`, {
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error('API request failed');
+      const data = await res.json();
+      setRecommendations(data.map(mapProduct));
+    } catch {
+      await fetchRecommendationsFromSupabase(userId);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -75,37 +223,63 @@ export default function App() {
     setIsSearching(true);
     const delayDebounceFn = setTimeout(() => {
       fetch(`${API_BASE_URL}/products?q=${encodeURIComponent(searchQuery)}&limit=50`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error('API request failed');
+          return res.json();
+        })
         .then(data => {
           setSearchResults(data.map(mapProduct));
           setIsSearching(false);
         })
-        .catch(err => {
-          console.error("Error searching products:", err);
-          setIsSearching(false);
+        .catch(async () => {
+          try {
+            const { data } = await supabase.from('products').select('*').ilike('name', `%${searchQuery}%`).limit(50);
+            setSearchResults((data || []).map(mapProduct));
+          } catch (err) {
+            console.error("Error searching products from Supabase:", err);
+          } finally {
+            setIsSearching(false);
+          }
         });
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // --- 3. Interactive UI Handlers ---
-  const handleViewProductDetails = (product: Product) => {
-    setSelectedProduct(product);
+  // Helper for instant interaction logging and real-time recommendation updates
+  const logInteractionAndRefresh = async (userId: string, productId: string, action: string, ratingScore?: number) => {
+    try {
+      await supabase.from('interactions').insert({
+        user_id: userId,
+        product_id: productId,
+        action: action
+      });
+    } catch (err) {
+      console.error("Interaction insert error:", err);
+    }
 
-    if (!selectedUser) return;
-    // Log interaction to backend
+    // Optional background log to FastAPI
     fetch(`${API_BASE_URL}/interactions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        user_id: selectedUser.id,
-        product_id: product.parent_asin,
-        action: 'click'
+        user_id: userId,
+        product_id: productId,
+        action: action,
+        rating_score: ratingScore
       })
-    })
-      .then(() => fetchRecommendations(selectedUser.id))
-      .catch(err => console.error("Error logging interaction:", err));
+    }).catch(() => {});
+
+    // Instantly refresh recommendations in real-time
+    fetchRecommendations(userId);
+  };
+
+  // --- 3. Interactive UI Handlers ---
+  const handleViewProductDetails = (product: Product) => {
+    setSelectedProduct(product);
+    if (selectedUser) {
+      logInteractionAndRefresh(selectedUser.id, product.parent_asin, 'click');
+    }
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
@@ -113,18 +287,66 @@ export default function App() {
     setCartCount(prev => prev + 1);
     triggerToast(`🛒 Đã thêm vào giỏ hàng: ${product.title.substring(0, 25)}...`);
 
-    if (!selectedUser) return;
-    fetch(`${API_BASE_URL}/interactions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: selectedUser.id,
-        product_id: product.parent_asin,
-        action: 'add_to_cart'
-      })
-    })
-      .then(() => fetchRecommendations(selectedUser.id))
-      .catch(err => console.error("Error logging interaction:", err));
+    if (selectedUser) {
+      logInteractionAndRefresh(selectedUser.id, product.parent_asin, 'add_to_cart');
+    }
+  };
+
+  const handleRateProduct = (product: Product, ratingScore: number) => {
+    triggerToast(`⭐ Đã đánh giá ${ratingScore} sao cho: ${product.title.substring(0, 20)}...`);
+
+    if (selectedUser) {
+      logInteractionAndRefresh(selectedUser.id, product.parent_asin, 'rating', ratingScore);
+    }
+  };
+
+  const handleAddUser = async (name: string) => {
+    const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500', 'bg-indigo-500', 'bg-teal-500', 'bg-pink-500'];
+    try {
+      let newUserObj: RecUser;
+      const res = await fetch(`${API_BASE_URL}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        newUserObj = {
+          id: data._id,
+          name: data.name,
+          avatarColor: colors[users.length % colors.length],
+          persona: '',
+          history: [],
+          preferredCategories: []
+        };
+      } else {
+        throw new Error('Backend API request failed');
+      }
+      setUsers(prev => [...prev, newUserObj]);
+      setSelectedUser(newUserObj);
+      triggerToast(`👤 Đã tạo người dùng mới: ${name}`);
+    } catch {
+      // Fallback directly to Supabase
+      try {
+        const customId = `user_${Date.now()}`;
+        const { data, error } = await supabase.from('users').insert({ _id: customId, name }).select('*');
+        if (error) throw error;
+        const newUserObj: RecUser = {
+          id: data?.[0]?._id || customId,
+          name: data?.[0]?.name || name,
+          avatarColor: colors[users.length % colors.length],
+          persona: '',
+          history: [],
+          preferredCategories: []
+        };
+        setUsers(prev => [...prev, newUserObj]);
+        setSelectedUser(newUserObj);
+        triggerToast(`👤 Đã tạo người dùng mới: ${name}`);
+      } catch (err) {
+        console.error("Error creating user in Supabase:", err);
+        triggerToast(`❌ Lỗi khi tạo người dùng!`);
+      }
+    }
   };
 
   const triggerToast = (msg: string) => {
@@ -143,6 +365,7 @@ export default function App() {
         users={users}
         selectedUser={selectedUser}
         onSelectUser={setSelectedUser}
+        onAddUser={handleAddUser}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         cartCount={cartCount}
@@ -224,6 +447,7 @@ export default function App() {
           onClose={() => setSelectedProduct(null)}
           onViewProduct={handleViewProductDetails}
           onAddToCart={handleAddToCart}
+          onRateProduct={handleRateProduct}
         />
       )}
 

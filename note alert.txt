@@ -1,3 +1,0 @@
-1. input cần là url bất kỳ -> kiểm tra ngữ cảnh đầu vào
-2. Giả lập 10 thread playwright để test hành vì cho random
-3. Chấm điểm lại recommend từ bot tự động truy cập

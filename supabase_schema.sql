@@ -20,5 +20,6 @@ CREATE TABLE IF NOT EXISTS interactions (
     user_id TEXT REFERENCES users(_id),
     product_id TEXT REFERENCES products(_id),
     action TEXT NOT NULL,
+    rating_score NUMERIC,
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

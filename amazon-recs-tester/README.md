@@ -1,20 +1,26 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# E-Commerce Recommendation System
 
-# Run and deploy your AI Studio app
+Hệ thống gợi ý sản phẩm cho e-commerce (Home & Product Detail recommendations).
 
-This contains everything you need to run your app locally.
+## Cấu trúc dự án
 
-View your app in AI Studio: https://ai.studio/apps/f8a89d8c-c359-4710-867f-3f4d34622fec
+- `amazon-recs-tester/`: Giao diện Web Frontend (React + Vite + Tailwind CSS)
+- `backend/`: FastAPI Server (Collaborative & Content-Based Filtering) + Supabase Connection
 
-## Run Locally
+## Hướng dẫn chạy ứng dụng
 
-**Prerequisites:**  Node.js
+### 1. Frontend
+```bash
+cd amazon-recs-tester
+npm install
+npm run dev
+```
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 2. Backend
+```bash
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```

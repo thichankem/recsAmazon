@@ -1,6 +1,0 @@
-{
-  "name": "Amazon Recs Tester",
-  "description": "A sandbox to test and debug custom or simulated product recommendation systems using an Amazon-like store interface.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

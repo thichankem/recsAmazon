@@ -10,14 +10,24 @@ interface ProductDetailModalProps {
   onClose: () => void;
   onViewProduct: (product: Product) => void;
   onAddToCart: (product: Product, e: React.MouseEvent) => void;
+  onRateProduct?: (product: Product, rating: number) => void;
 }
 
 export default function ProductDetailModal({
   product,
   onClose,
   onViewProduct,
-  onAddToCart
+  onAddToCart,
+  onRateProduct
 }: ProductDetailModalProps) {
+  const [userRating, setUserRating] = useState<number | null>(null);
+
+  const handleRate = (score: number) => {
+    setUserRating(score);
+    if (onRateProduct) {
+      onRateProduct(product, score);
+    }
+  };
 
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
@@ -93,16 +103,10 @@ export default function ProductDetailModal({
             {/* Visual Placeholder Cover (Left 5 cols) */}
             <div className="md:col-span-5 flex flex-col gap-4">
               <div className="aspect-square bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col items-center justify-center p-6 text-center select-none shadow-inner overflow-hidden relative">
-                {product.image_url ? (
-                  <img src={product.image_url} alt={product.title} className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply" />
-                ) : (
-                  <>
-                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">{product.store}</span>
-                    <div className="my-5 w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm">
-                      <span className="font-mono text-2xl font-bold uppercase">{product.parent_asin.slice(-4)}</span>
-                    </div>
-                  </>
-                )}
+                <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">{product.store}</span>
+                <div className="my-5 w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm">
+                  <span className="font-mono text-2xl font-bold uppercase">{product.parent_asin.slice(-4)}</span>
+                </div>
 
                 <div className="absolute bottom-4 left-0 right-0 z-10 flex flex-col items-center">
                   <span className="text-[10px] text-zinc-600 font-bold block mb-1 drop-shadow-md">MÃ KHÓA SẢN PHẨM</span>
@@ -147,17 +151,41 @@ export default function ProductDetailModal({
               </div>
 
               {/* Rating block */}
-              <div className="flex items-center gap-2 border-b border-zinc-200 pb-3">
-                <div className="flex text-amber-400">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${i < Math.floor(product.average_rating) ? 'fill-amber-400 text-amber-400' : 'text-zinc-200'}`}
-                    />
-                  ))}
+              <div className="flex flex-col gap-2 border-b border-zinc-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex text-amber-400">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${i < Math.floor(product.average_rating) ? 'fill-amber-400 text-amber-400' : 'text-zinc-200'}`}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-bold text-zinc-800 text-sm">{product.average_rating} trên 5 sao</span>
+                  <span className="text-zinc-400 text-xs">({product.rating_number.toLocaleString()} đánh giá)</span>
                 </div>
-                <span className="font-bold text-zinc-800 text-sm">{product.average_rating} trên 5 sao</span>
-                <span className="text-zinc-400 text-xs">({product.rating_number.toLocaleString()} đánh giá)</span>
+
+                {/* Interactive user rating */}
+                <div className="flex items-center gap-2 bg-indigo-50/60 p-2 rounded-lg border border-indigo-100/80">
+                  <span className="text-xs font-bold text-indigo-900">Đánh giá của bạn:</span>
+                  <div className="flex gap-1 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => handleRate(star)}
+                        className="hover:scale-125 transition-transform cursor-pointer p-0.5"
+                        title={`Đánh giá ${star} sao`}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${userRating && star <= userRating ? 'fill-amber-400 text-amber-400' : 'text-zinc-300 hover:text-amber-300'}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  {userRating && (
+                    <span className="text-xs font-bold text-emerald-600 ml-1">✓ Đã đánh giá {userRating} sao!</span>
+                  )}
+                </div>
               </div>
 
               {/* Description blocks */}
