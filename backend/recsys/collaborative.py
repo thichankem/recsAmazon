@@ -23,10 +23,10 @@ def calculate_interaction_weight(row, user_means):
     if action == 'rating' or (rating_score is not None and not pd.isna(rating_score)):
         score = float(rating_score) if (rating_score is not None and not pd.isna(rating_score)) else 5.0
         u_mean = user_means.get(user_id, 3.0)
-        # Chuẩn hóa đánh giá người dùng (Mean-Centering / Bias Normalization)
-        # Người khó tính (u_mean thấp) cho 4 sao -> Điểm quy đổi cao hơn
-        # Người dễ tính (u_mean cao) cho 4 sao -> Điểm quy đổi đúng thực tế
-        return max(0.5, 3.0 + (score - u_mean))
+        # Chuẩn hóa đánh giá người dùng (Mean-Centering / Bias Normalization):
+        # Nếu đánh giá cao hơn trung bình (score > u_mean) -> Cộng điểm dương (+).
+        # Nếu đánh giá thấp hơn trung bình (score < u_mean) -> Trừ điểm (mang giá trị ÂM -).
+        return score - u_mean
     elif action == 'add_to_cart':
         return 5.0
     elif action == 'click':

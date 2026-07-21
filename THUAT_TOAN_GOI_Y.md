@@ -19,7 +19,9 @@ Gợi ý danh sách sản phẩm cá nhân hóa cho từng người dùng dựa 
    - Gán trọng số tương tác:
      - **Click xem chi tiết (Implicit Click):** Trọng số = `1.0`.
      - **Thêm vào giỏ hàng (Implicit Add to Cart):** Trọng số = `5.0`.
-     - **Đánh giá trực tiếp (Explicit Rating):** Đã được chuẩn hóa Trung bình Người dùng (User Mean-Centering) $\text{Rating Score} = 3.0 + (S_{u,i} - \mu_u)$.
+     - **Đánh giá trực tiếp (Explicit Rating):** Chuẩn hóa độ lệch so với trung bình người dùng $\text{Rating Weight} = S_{u,i} - \mu_u$.
+       - Nếu $S_{u,i} > \mu_u$: Điểm DƯƠNG (+) đại diện cho sự hài lòng.
+       - Nếu $S_{u,i} < \mu_u$: Điểm ÂM (-) đại diện cho sự thất vọng / trừ điểm sản phẩm.
    - Tính tổng tất cả điểm tương tác của từng người dùng đối với từng sản phẩm.
 
 2. **Xây dựng Ma trận Người dùng - Sản phẩm (User-Item Matrix $R$):**

@@ -106,7 +106,7 @@ export default function App() {
           if (act === 'rating' || item.rating_score) {
             const score = item.rating_score ? Number(item.rating_score) : 5;
             const uMean = userCounts[u] ? (userSums[u] / userCounts[u]) : 3.0;
-            return Math.max(0.5, 3.0 + (score - uMean));
+            return score - uMean;
           }
           if (act === 'add_to_cart') return 5.0;
           if (act === 'click') return 1.0;
