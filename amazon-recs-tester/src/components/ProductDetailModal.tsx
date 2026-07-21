@@ -4,6 +4,7 @@ import { Product } from '../types';
 import { REVIEWS } from '../data/products';
 import ProductCard from './ProductCard';
 import { mapProduct, API_BASE_URL } from '../config';
+import { supabase } from '../lib/supabase';
 
 interface ProductDetailModalProps {
   product: Product;
@@ -32,17 +33,44 @@ export default function ProductDetailModal({
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
 
+  const fetchRelatedFromSupabase = async () => {
+    try {
+      const { data: allProducts } = await supabase.from('products').select('*');
+      if (!allProducts || allProducts.length === 0) return;
+
+      const currentCat = product.main_category || (product.categories && product.categories[0]) || '';
+      
+      // Products in same category excluding current product
+      const sameCat = allProducts.filter((p: any) => String(p._id) !== String(product.parent_asin) && p.category === currentCat);
+      const otherCat = allProducts.filter((p: any) => String(p._id) !== String(product.parent_asin) && p.category !== currentCat);
+
+      const combined = [...sameCat, ...otherCat].slice(0, 10);
+      setRelatedProducts(combined.map(mapProduct));
+    } catch (err) {
+      console.error("Error fetching related products from Supabase fallback:", err);
+    }
+  };
+
   // Fetch related products (Content-Based Filtering)
   useEffect(() => {
     setLoadingRelated(true);
-    fetch(`${API_BASE_URL}/recommendations/related/${product.parent_asin}?limit=5`)
-      .then(res => res.json())
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 600);
+
+    fetch(`${API_BASE_URL}/recommendations/related/${product.parent_asin}?limit=10`, {
+      signal: controller.signal
+    })
+      .then(res => {
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error('API request failed');
+        return res.json();
+      })
       .then(data => {
         setRelatedProducts(data.map(mapProduct));
         setLoadingRelated(false);
       })
-      .catch(err => {
-        console.error("Error fetching related products:", err);
+      .catch(async () => {
+        await fetchRelatedFromSupabase();
         setLoadingRelated(false);
       });
   }, [product.parent_asin]);
@@ -207,7 +235,7 @@ export default function ProductDetailModal({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="text-sm font-extrabold text-indigo-700 uppercase tracking-wide flex items-center gap-2">
-                  <span>✨ Sản phẩm gợi ý liên quan (Content-Based)</span>
+                  <span>Sản phẩm gợi ý liên quan</span>
                 </h3>
                 <span className="text-xs text-zinc-400 font-medium">Gợi ý các mặt hàng có nội dung và danh mục tương tự.</span>
               </div>
