@@ -17,14 +17,15 @@ Gợi ý danh sách sản phẩm cá nhân hóa cho từng người dùng dựa 
 1. **Tổng hợp phản hồi Lai (Hybrid Feedback Scoring):**
    - Đọc bảng `interactions` từ cơ sở dữ liệu Supabase.
    - Gán trọng số tương tác:
-     - **Đánh giá trực tiếp (Explicit Rating):** Điểm từ `1.0` đến `5.0` sao.
-     - **Thêm vào giỏ hàng (Implicit Add to Cart):** Trọng số = `3.0`.
      - **Click xem chi tiết (Implicit Click):** Trọng số = `1.0`.
+     - **Thêm vào giỏ hàng (Implicit Add to Cart):** Trọng số = `5.0`.
+     - **Đánh giá trực tiếp (Explicit Rating):** Đã được chuẩn hóa Trung bình Người dùng (User Mean-Centering) $\text{Rating Score} = 3.0 + (S_{u,i} - \mu_u)$.
+   - Tính tổng tất cả điểm tương tác của từng người dùng đối với từng sản phẩm.
 
 2. **Xây dựng Ma trận Người dùng - Sản phẩm (User-Item Matrix $R$):**
    - Hàng (Rows): `user_id`
    - Cột (Columns): `product_id`
-   - Giá trị (Values): Điểm tương tác trung bình của từng user đối với sản phẩm.
+   - Giá trị (Values): Tổng điểm tương tác $\sum \text{weight}$ của từng user đối với từng sản phẩm.
 
 3. **Chuẩn hóa Trung bình Người dùng (User Mean-Centering - Triệt tiêu Bias):**
    - Tính điểm đánh giá trung bình $\mu_u$ của từng người dùng $u$ trên các sản phẩm họ đã tương tác:

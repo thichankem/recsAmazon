@@ -88,8 +88,30 @@ export default function App() {
       const allInteractions = rawInteractions || [];
 
       if (allInteractions.length > 0) {
-        const getWeight = (item: any) =>
-          item.rating_score ? Number(item.rating_score) : (item.action === 'rating' ? 5 : item.action === 'add_to_cart' ? 3 : 1.5);
+        // Calculate user mean ratings for bias normalization
+        const userSums: Record<string, number> = {};
+        const userCounts: Record<string, number> = {};
+        allInteractions.forEach((i: any) => {
+          if (i.action === 'rating' || i.rating_score) {
+            const u = String(i.user_id);
+            const score = i.rating_score ? Number(i.rating_score) : 5;
+            userSums[u] = (userSums[u] || 0) + score;
+            userCounts[u] = (userCounts[u] || 0) + 1;
+          }
+        });
+
+        const getWeight = (item: any) => {
+          const u = String(item.user_id);
+          const act = item.action;
+          if (act === 'rating' || item.rating_score) {
+            const score = item.rating_score ? Number(item.rating_score) : 5;
+            const uMean = userCounts[u] ? (userSums[u] / userCounts[u]) : 3.0;
+            return Math.max(0.5, 3.0 + (score - uMean));
+          }
+          if (act === 'add_to_cart') return 5.0;
+          if (act === 'click') return 1.0;
+          return 1.0;
+        };
 
         // Target user's interactions
         const targetInteractions = allInteractions.filter((i: any) => String(i.user_id) === String(userId));

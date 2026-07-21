@@ -4,19 +4,33 @@ from sklearn.metrics.pairwise import cosine_similarity
 import random
 from database import supabase
 
-def calculate_interaction_weight(row):
+def calculate_user_means(df_interactions):
+    ratings_df = df_interactions[
+        (df_interactions['action'] == 'rating') | (df_interactions['rating_score'].notna())
+    ].copy()
+    if ratings_df.empty:
+        return {}
+    ratings_df['score'] = ratings_df.apply(
+        lambda r: float(r['rating_score']) if pd.notna(r.get('rating_score')) else 5.0, axis=1
+    )
+    return ratings_df.groupby('user_id')['score'].mean().to_dict()
+
+def calculate_interaction_weight(row, user_means):
     action = row.get('action', 'click')
     rating_score = row.get('rating_score', None)
+    user_id = str(row.get('user_id', ''))
     
-    if rating_score is not None and not pd.isna(rating_score):
-        return float(rating_score)
-    
-    if action == 'rating':
-        return 5.0
+    if action == 'rating' or (rating_score is not None and not pd.isna(rating_score)):
+        score = float(rating_score) if (rating_score is not None and not pd.isna(rating_score)) else 5.0
+        u_mean = user_means.get(user_id, 3.0)
+        # Chuẩn hóa đánh giá người dùng (Mean-Centering / Bias Normalization)
+        # Người khó tính (u_mean thấp) cho 4 sao -> Điểm quy đổi cao hơn
+        # Người dễ tính (u_mean cao) cho 4 sao -> Điểm quy đổi đúng thực tế
+        return max(0.5, 3.0 + (score - u_mean))
     elif action == 'add_to_cart':
-        return 3.0
+        return 5.0
     elif action == 'click':
-        return 1.5
+        return 1.0
     else:
         return 1.0
 
@@ -41,9 +55,10 @@ def get_collaborative_recommendations(user_id: str, top_n: int = 50):
     df_interactions['product_id'] = df_interactions['product_id'].astype(str)
     df_products['_id'] = df_products['_id'].astype(str)
     
-    df_interactions['weight'] = df_interactions.apply(calculate_interaction_weight, axis=1)
+    user_means = calculate_user_means(df_interactions)
+    df_interactions['weight'] = df_interactions.apply(lambda r: calculate_interaction_weight(r, user_means), axis=1)
     
-    # 1. User-Item Interaction Matrix
+    # 1. User-Item Interaction Matrix (Sum of weights)
     grouped_interactions = df_interactions.groupby(['user_id', 'product_id'])['weight'].sum().reset_index()
     user_item_matrix = grouped_interactions.pivot(index='user_id', columns='product_id', values='weight').fillna(0)
     
